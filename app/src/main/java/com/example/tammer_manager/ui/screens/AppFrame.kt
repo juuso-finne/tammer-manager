@@ -23,22 +23,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.components.NavigationMenu
 import kotlinx.coroutines.launch
 
 @Composable
 fun AppFrame(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    NavigationMenu(drawerState = drawerState, modifier =  modifier, onItemClick = {route -> println(route)}){
+    NavigationMenu(
+        drawerState = drawerState,
+        modifier =  modifier,
+        onItemClick = {route ->
+            navController.navigate(route)
+            scope.launch { drawerState.close() }
+        },
+        scope = scope
+    ){
         Scaffold(
             topBar = {
-                AppTitleBar(modifier) { scope.launch { drawerState.open() } }
+                AppTitleBar(
+                    modifier = modifier,
+                    openDrawer = {scope.launch { drawerState.open() }}
+                )
             }
         ) { innerPadding ->
             content(innerPadding)
@@ -65,7 +78,7 @@ fun AppTitleBar(
             ){
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "",
+                    contentDescription = "Open menu",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }

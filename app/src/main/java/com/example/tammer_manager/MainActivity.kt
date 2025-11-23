@@ -5,16 +5,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.rememberDrawerState
 import androidx.navigation.compose.NavHost
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tammer_manager.ui.screens.AppFrame
 import com.example.tammer_manager.ui.screens.Home
+import com.example.tammer_manager.ui.screens.PlayerImport
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +27,7 @@ class MainActivity : ComponentActivity() {
 fun App( context: Context) {
     val navController = rememberNavController()
 
-    AppFrame() {
+    AppFrame(navController = navController) {
         innerPadding ->
         NavHost(
             navController = navController,
@@ -37,6 +35,7 @@ fun App( context: Context) {
             startDestination = "home"
         ) {
             composable ("home") { Home(navController)}
+            composable("playerImport") { PlayerImport(navController) }
         }
     }
 }
