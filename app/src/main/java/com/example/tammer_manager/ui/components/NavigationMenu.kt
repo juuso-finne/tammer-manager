@@ -19,11 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 val items = listOf(
-    MenuItem("home", "Main menu")
+    MenuItem("home", "Main menu"),
+    MenuItem("playerImport", "Import Players")
 )
 
 
@@ -34,7 +36,7 @@ fun NavigationMenu(
     itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
     onItemClick: (String) -> Unit,
     scope: CoroutineScope,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,

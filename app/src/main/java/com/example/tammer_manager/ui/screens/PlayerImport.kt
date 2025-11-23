@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun Home(navController: NavHostController, modifier: Modifier = Modifier) {
+fun PlayerImport(navController: NavHostController, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -20,7 +20,7 @@ fun Home(navController: NavHostController, modifier: Modifier = Modifier) {
         Button(
             onClick = {}
         ) {
-            Text("Import players")
+            Text("Import from Excel")
         }
     }
 }

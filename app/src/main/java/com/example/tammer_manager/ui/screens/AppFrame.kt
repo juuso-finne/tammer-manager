@@ -23,12 +23,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.components.NavigationMenu
 import kotlinx.coroutines.launch
 
 @Composable
 fun AppFrame(
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -38,7 +40,10 @@ fun AppFrame(
     NavigationMenu(
         drawerState = drawerState,
         modifier =  modifier,
-        onItemClick = {route -> println(route)},
+        onItemClick = {route ->
+            navController.navigate(route)
+            scope.launch { drawerState.close() }
+        },
         scope = scope
     ){
         Scaffold(
