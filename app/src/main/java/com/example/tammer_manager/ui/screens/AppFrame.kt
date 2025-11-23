@@ -35,10 +35,18 @@ fun AppFrame(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    NavigationMenu(drawerState = drawerState, modifier =  modifier, onItemClick = {route -> println(route)}){
+    NavigationMenu(
+        drawerState = drawerState,
+        modifier =  modifier,
+        onItemClick = {route -> println(route)},
+        scope = scope
+    ){
         Scaffold(
             topBar = {
-                AppTitleBar(modifier) { scope.launch { drawerState.open() } }
+                AppTitleBar(
+                    modifier = modifier,
+                    openDrawer = {scope.launch { drawerState.open() }}
+                )
             }
         ) { innerPadding ->
             content(innerPadding)
@@ -65,7 +73,7 @@ fun AppTitleBar(
             ){
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "",
+                    contentDescription = "Open menu",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
