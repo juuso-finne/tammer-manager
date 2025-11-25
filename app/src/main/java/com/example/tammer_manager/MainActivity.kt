@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.navigation.compose.NavHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tammer_manager.ui.screens.AppFrame
+import com.example.tammer_manager.ui.screens.CreateTournament
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.PlayerImport
+import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +29,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App( context: Context) {
     val navController = rememberNavController()
+    val vmPlayerPool: PlayerPoolViewModel = viewModel()
 
     AppFrame(navController = navController) {
         innerPadding ->
@@ -34,8 +38,9 @@ fun App( context: Context) {
             modifier = Modifier.padding(innerPadding),
             startDestination = "home"
         ) {
-            composable ("home") { Home(navController)}
+            composable ("home") { Home(navController) }
             composable("playerImport") { PlayerImport(navController) }
+            composable (route = "createTournament") { CreateTournament(vmPlayerPool = vmPlayerPool) }
         }
     }
 }
