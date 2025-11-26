@@ -5,8 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.compose.NavHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
@@ -30,8 +32,12 @@ class MainActivity : ComponentActivity() {
 fun App( context: Context) {
     val navController = rememberNavController()
     val vmPlayerPool: PlayerPoolViewModel = viewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    AppFrame(navController = navController) {
+    AppFrame(
+        navController = navController,
+        snackbarHostState = snackbarHostState
+    ) {
         innerPadding ->
         NavHost(
             navController = navController,
@@ -42,7 +48,8 @@ fun App( context: Context) {
             composable("playerImport") { PlayerImport(
                 context = context,
                 vmPlayerPool = vmPlayerPool,
-                navController = navController
+                navController = navController,
+                snackBarHostState = snackbarHostState
             ) }
             composable (route = "enterPlayers") { EnterPlayers(
                 vmPlayerPool = vmPlayerPool

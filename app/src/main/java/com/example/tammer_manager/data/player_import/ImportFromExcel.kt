@@ -9,10 +9,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 fun importFromExcel(
     vmPlayerPool: PlayerPoolViewModel,
     context: Context,
+    onError: () -> Unit,
     uri: Uri?
 ){
     val tempList = mutableListOf<ImportedPlayer>()
-        uri?.let {
+    uri?.let {
+        try {
             val inputStream = context.contentResolver.openInputStream(uri)
             inputStream?.use { stream ->
                 val workbook = XSSFWorkbook(stream)
@@ -28,7 +30,10 @@ fun importFromExcel(
                     ))
                 }
             }
-        inputStream?.close()
+            inputStream?.close()
+        } catch (e: Exception){
+            onError()
         }
+    }
     vmPlayerPool.setPlayerPool(tempList)
 }
