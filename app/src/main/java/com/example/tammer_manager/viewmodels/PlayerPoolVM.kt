@@ -1,5 +1,6 @@
 package com.example.tammer_manager.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,15 +11,15 @@ import kotlin.collections.listOf
 
 
 class PlayerPoolViewModel (
+    private val savedStateHadle: SavedStateHandle
 ): ViewModel(){
-    private val _playerPool = MutableStateFlow(listOf<ImportedPlayer>())
-    val playerPool: StateFlow<List<ImportedPlayer>> = _playerPool.asStateFlow()
+    val playerPool = savedStateHadle.getStateFlow("playerPool", listOf<ImportedPlayer>())
 
     fun emptyPlayerPool(){
-        _playerPool.update { listOf<ImportedPlayer>() }
+        savedStateHadle["playerPool"] = listOf<ImportedPlayer>()
     }
 
     fun setPlayerPool(input: List<ImportedPlayer>){
-        _playerPool.update { input }
+        savedStateHadle["playerPool"] = input.toList()
     }
 }
