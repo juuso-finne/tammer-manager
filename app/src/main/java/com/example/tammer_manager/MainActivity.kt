@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tammer_manager.ui.screens.AppFrame
-import com.example.tammer_manager.ui.screens.CreateTournament
+import com.example.tammer_manager.ui.screens.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.PlayerImport
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
@@ -40,7 +40,7 @@ fun App( context: Context) {
         ) {
             composable ("home") { Home(navController) }
             composable("playerImport") { PlayerImport(navController) }
-            composable (route = "createTournament") { CreateTournament(vmPlayerPool = vmPlayerPool) }
+            composable (route = "enterPlayers") { EnterPlayers(vmPlayerPool = vmPlayerPool) }
         }
     }
 }

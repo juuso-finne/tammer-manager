@@ -14,7 +14,7 @@ import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 
 @Composable
-fun CreateTournament(
+fun EnterPlayers(
     vmPlayerPool: PlayerPoolViewModel,
     modifier: Modifier = Modifier
 ) {
