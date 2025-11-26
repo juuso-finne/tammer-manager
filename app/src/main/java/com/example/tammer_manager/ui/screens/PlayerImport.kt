@@ -46,7 +46,8 @@ fun PlayerImport(
                 context = context,
                 uri = uri,
                 vmPlayerPool = vmPlayerPool,
-                onError = { scope.launch { snackBarHostState.showSnackbar("Error loading file") } }
+                onError = { message  -> scope.launch { snackBarHostState.showSnackbar(message) } },
+                onSuccess = { navController.navigate("enterPlayers") }
             )
         }
         Text(
