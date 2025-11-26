@@ -39,8 +39,14 @@ fun App( context: Context) {
             startDestination = "home"
         ) {
             composable ("home") { Home(navController) }
-            composable("playerImport") { PlayerImport(navController) }
-            composable (route = "enterPlayers") { EnterPlayers(vmPlayerPool = vmPlayerPool) }
+            composable("playerImport") { PlayerImport(
+                context = context,
+                vmPlayerPool = vmPlayerPool,
+                navController = navController
+            ) }
+            composable (route = "enterPlayers") { EnterPlayers(
+                vmPlayerPool = vmPlayerPool
+            ) }
         }
     }
 }

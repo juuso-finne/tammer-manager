@@ -1,5 +1,8 @@
 package com.example.tammer_manager.ui.screens
 
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.tammer_manager.data.player_import.importFromExcel
+import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 
 @Composable
-fun PlayerImport(navController: NavHostController, modifier: Modifier = Modifier) {
+fun PlayerImport(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+    vmPlayerPool: PlayerPoolViewModel,
+    context: Context
+) {
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -25,13 +35,24 @@ fun PlayerImport(navController: NavHostController, modifier: Modifier = Modifier
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val documentPicker = rememberLauncherForActivityResult(
+            ActivityResultContracts.OpenDocument()){
+            uri -> importFromExcel(
+                context = context,
+                uri = uri,
+                vmPlayerPool = vmPlayerPool
+            )
+        }
         Text(
             text = "Import from:",
             fontSize = 32.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = {}
+            onClick = {documentPicker.launch(
+                arrayOf(
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ))}
         ) {
             Text(".xlsx file")
         }
