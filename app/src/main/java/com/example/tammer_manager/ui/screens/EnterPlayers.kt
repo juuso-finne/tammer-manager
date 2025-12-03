@@ -60,7 +60,7 @@ fun EnterPlayers(
                     .fillMaxWidth(),
                 players = vmPlayerPool.playerPool.collectAsState().value.filter(){ p ->
                     Regex(
-                        pattern = searchTerm,
+                        pattern = Regex.escape(searchTerm),
                         option= RegexOption.IGNORE_CASE
                     ).containsMatchIn(p.fullName)
                 }
