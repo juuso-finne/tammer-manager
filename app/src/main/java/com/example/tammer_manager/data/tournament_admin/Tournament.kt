@@ -1,5 +1,9 @@
 package com.example.tammer_manager.data.tournament_admin
 
-class Tournament (val name: String){
-    val registeredPlayers: List<RegisteredPlayer> = listOf()
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Tournament (var name: String, val maxRounds: Int): Parcelable{
+    var roundsCompleted = 0
 }
