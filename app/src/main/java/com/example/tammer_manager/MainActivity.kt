@@ -18,6 +18,7 @@ import com.example.tammer_manager.ui.screens.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.PlayerImport
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
+import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
 fun App( context: Context) {
     val navController = rememberNavController()
     val vmPlayerPool: PlayerPoolViewModel = viewModel()
+    val vmTournament: TournamentViewModel = viewModel()
     val snackbarHostState = remember { SnackbarHostState() }
 
     AppFrame(
@@ -52,7 +54,8 @@ fun App( context: Context) {
                 snackBarHostState = snackbarHostState
             ) }
             composable (route = "enterPlayers") { EnterPlayers(
-                vmPlayerPool = vmPlayerPool
+                vmPlayerPool = vmPlayerPool,
+                vmTournament = vmTournament
             ) }
         }
     }
