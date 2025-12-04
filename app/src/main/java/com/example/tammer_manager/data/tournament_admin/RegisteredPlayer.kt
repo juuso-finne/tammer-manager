@@ -4,8 +4,10 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class RegisteredPlayer (val fullName: String, val rating: Int): Parcelable{
-    var score = 0f
+data class RegisteredPlayer (
+    val fullName: String,
+    val rating: Int,
+    var isActive: Boolean = true,
+    var score: Float = 0f,
     var tpn: Int? = null
-    var isActive: Boolean = true
-}
+): Parcelable
