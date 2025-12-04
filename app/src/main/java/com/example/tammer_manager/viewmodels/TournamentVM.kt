@@ -33,19 +33,16 @@ class TournamentViewModel(
         val newList = registeredPlayers.value.toMutableList()
         val roundsCompleted = activeTournament.value?.roundsCompleted ?: 0
         if(roundsCompleted > 0){
-            savedStateHandle["registeredPlayers"] = newList.mapIndexed { i, p ->
-                if(i == index) p.copy(isActive = false) else p
-            }
-            return
+            newList[index] = newList[index].copy(isActive = false)
+        }else{
+            newList.removeAt(index)
         }
-        newList.removeAt(index)
         savedStateHandle["registeredPlayers"] = newList.toList()
     }
 
     fun activatePlayer(index: Int){
         val newList = registeredPlayers.value.toMutableList()
-        savedStateHandle["registeredPlayers"] = newList.mapIndexed { i, p ->
-            if(i == index) p.copy(isActive = true) else p
-        }
+        newList[index] = newList[index].copy(isActive = true)
+        savedStateHandle["registeredPlayers"] = newList.toList()
     }
 }
