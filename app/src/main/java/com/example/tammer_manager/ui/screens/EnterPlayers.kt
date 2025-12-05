@@ -51,63 +51,89 @@ fun EnterPlayers(
     modifier: Modifier = Modifier
 ) {
 
-    val (searchTerm, setSearchTerm) = remember{ mutableStateOf("") }
     val (selectedTab, setSelectedTab) = remember { mutableIntStateOf(0) }
     Column(
         modifier = Modifier.padding(horizontal = 5.dp)
     ){
         TabRow(selectedTab = selectedTab, setSelectedTab = setSelectedTab)
-        Column(
-            modifier = Modifier.weight(1f),
-        ){
-            Text(
-                text = "Imported players",
-                style = Typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(bottom = 5.dp)
-                    .fillMaxWidth()
-            )
-            PlayerPoolHeader()
-            HorizontalDivider()
 
-            PlayerPool(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                players = vmPlayerPool.playerPool.collectAsState().value.filter(){ p ->
-                    Regex(
-                        pattern = Regex.escape(searchTerm),
-                        option= RegexOption.IGNORE_CASE
-                    ).containsMatchIn(p.fullName)
-                },
-                vmTournament = vmTournament
+        if(selectedTab == SelectedTab.ENTER_PLAYERS.ordinal){
+            PlayerPoolContainer(
+                vmPlayerPool = vmPlayerPool,
+                vmTournament = vmTournament,
+                modifier = Modifier.weight(1f)
             )
-            SearchBar(
-                searchTerm = searchTerm,
-                setSearchTerm = setSearchTerm
-            )
+        } else{
+            RegisteredPlayerContainer(
+                vmTournament = vmTournament,
+                modifier = Modifier.weight(1f)
+                )
         }
+    }
+}
 
-
-        Column(modifier = Modifier.weight(1f)){
-            RegisteredHeader()
-            RegisteredPlayerList(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                players = vmTournament.registeredPlayers.collectAsState().value,
-                vmTournament = vmTournament
-            )
-
-        }
+@Composable
+fun RegisteredPlayerContainer(
+    vmTournament: TournamentViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier){
+        Text(
+            text = "Registered players:",
+            style = Typography.headlineSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(bottom = 5.dp)
+                .fillMaxWidth()
+        )
+        RegisteredHeader()
+        RegisteredPlayerList(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            players = vmTournament.registeredPlayers.collectAsState().value,
+            vmTournament = vmTournament
+        )
     }
 
 }
 
 @Composable
-fun PlayerPoolContainer(modifier: Modifier = Modifier) {
+fun PlayerPoolContainer(
+    vmPlayerPool: PlayerPoolViewModel,
+    vmTournament: TournamentViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier){
+        val (searchTerm, setSearchTerm) = remember{ mutableStateOf("") }
+        Text(
+            text = "Imported players",
+            style = Typography.headlineSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(bottom = 5.dp)
+                .fillMaxWidth()
+        )
+        PlayerPoolHeader()
+        HorizontalDivider()
 
+        PlayerPool(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            players = vmPlayerPool.playerPool.collectAsState().value.filter(){ p ->
+                Regex(
+                    pattern = Regex.escape(searchTerm),
+                    option= RegexOption.IGNORE_CASE
+                ).containsMatchIn(p.fullName)
+            },
+            vmTournament = vmTournament
+        )
+        SearchBar(
+            searchTerm = searchTerm,
+            setSearchTerm = setSearchTerm
+        )
+    }
 }
 
 @Composable
