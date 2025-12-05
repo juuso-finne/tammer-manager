@@ -12,13 +12,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,16 +39,24 @@ import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
+enum class SelectedTab (){
+    ENTER_PLAYERS,
+    VIEW_PLAYERS
+}
+
 @Composable
 fun EnterPlayers(
     vmPlayerPool: PlayerPoolViewModel,
     vmTournament: TournamentViewModel,
     modifier: Modifier = Modifier
 ) {
+
     val (searchTerm, setSearchTerm) = remember{ mutableStateOf("") }
+    val (selectedTab, setSelectedTab) = remember { mutableIntStateOf(0) }
     Column(
         modifier = Modifier.padding(horizontal = 5.dp)
     ){
+        TabRow(selectedTab = selectedTab, setSelectedTab = setSelectedTab)
         Column(
             modifier = Modifier.weight(1f),
         ){
@@ -77,8 +89,6 @@ fun EnterPlayers(
             )
         }
 
-        HorizontalDivider(thickness = 2.dp)
-
 
         Column(modifier = Modifier.weight(1f)){
             RegisteredHeader()
@@ -92,6 +102,11 @@ fun EnterPlayers(
 
         }
     }
+
+}
+
+@Composable
+fun PlayerPoolContainer(modifier: Modifier = Modifier) {
 
 }
 
@@ -286,6 +301,22 @@ fun TextRow(
         texts.drop(1).forEach { text ->
             Text(text = text, style = style, modifier = Modifier.padding(horizontal = 5.dp))
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TabRow(selectedTab: Int, setSelectedTab: (Int) -> Unit, modifier: Modifier = Modifier) {
+    PrimaryTabRow(selectedTabIndex = selectedTab) {
+        Tab(selected = selectedTab == SelectedTab.ENTER_PLAYERS.ordinal,
+            onClick = { setSelectedTab(SelectedTab.ENTER_PLAYERS.ordinal) },
+            text = {Text("Enter players")}
+        )
+
+        Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS.ordinal,
+            onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS.ordinal) },
+            text = {Text("View/remove players")}
+        )
     }
 }
 
