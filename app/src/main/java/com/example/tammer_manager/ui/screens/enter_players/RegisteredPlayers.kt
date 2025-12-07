@@ -1,4 +1,4 @@
-package com.example.tammer_manager.ui.screens.player_entry
+package com.example.tammer_manager.ui.screens.enter_players
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
