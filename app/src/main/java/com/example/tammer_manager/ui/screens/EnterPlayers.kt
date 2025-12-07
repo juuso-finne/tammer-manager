@@ -51,13 +51,13 @@ fun EnterPlayers(
     modifier: Modifier = Modifier
 ) {
 
-    val (selectedTab, setSelectedTab) = remember { mutableIntStateOf(0) }
+    val (selectedTab, setSelectedTab) = remember { mutableStateOf(SelectedTab.ENTER_PLAYERS) }
     Column(
         modifier = Modifier.padding(horizontal = 5.dp)
     ){
         TabRow(selectedTab = selectedTab, setSelectedTab = setSelectedTab)
 
-        if(selectedTab == SelectedTab.ENTER_PLAYERS.ordinal){
+        if(selectedTab == SelectedTab.ENTER_PLAYERS){
             PlayerPoolContainer(
                 vmPlayerPool = vmPlayerPool,
                 vmTournament = vmTournament,
@@ -332,15 +332,15 @@ fun TextRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabRow(selectedTab: Int, setSelectedTab: (Int) -> Unit, modifier: Modifier = Modifier) {
-    PrimaryTabRow(selectedTabIndex = selectedTab) {
-        Tab(selected = selectedTab == SelectedTab.ENTER_PLAYERS.ordinal,
-            onClick = { setSelectedTab(SelectedTab.ENTER_PLAYERS.ordinal) },
+fun TabRow(selectedTab: SelectedTab, setSelectedTab: (SelectedTab) -> Unit, modifier: Modifier = Modifier) {
+    PrimaryTabRow(selectedTabIndex = selectedTab.ordinal) {
+        Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_PLAYERS.ordinal,
+            onClick = { setSelectedTab(SelectedTab.ENTER_PLAYERS) },
             text = {Text("Enter players")}
         )
 
-        Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS.ordinal,
-            onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS.ordinal) },
+        Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS,
+            onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS) },
             text = {Text("View/remove players")}
         )
     }
