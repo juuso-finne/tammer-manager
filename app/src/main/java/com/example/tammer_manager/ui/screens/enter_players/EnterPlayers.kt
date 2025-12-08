@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -14,6 +15,7 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 fun EnterPlayers(
     vmPlayerPool: PlayerPoolViewModel,
     vmTournament: TournamentViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
 
@@ -27,6 +29,7 @@ fun EnterPlayers(
             PlayerPoolContainer(
                 vmPlayerPool = vmPlayerPool,
                 vmTournament = vmTournament,
+                navController = navController,
                 modifier = Modifier.weight(1f)
             )
         } else{

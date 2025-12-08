@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
@@ -32,6 +33,7 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 @Composable
 fun PlayerPoolContainer(
+    navController: NavController,
     vmPlayerPool: PlayerPoolViewModel,
     vmTournament: TournamentViewModel,
     modifier: Modifier = Modifier
@@ -66,7 +68,7 @@ fun PlayerPoolContainer(
             setSearchTerm = setSearchTerm
         )
 
-        ButtonRow()
+        ButtonRow(navController = navController)
     }
 }
 
@@ -149,19 +151,18 @@ fun SearchBar(
     OutlinedTextField(
         modifier = Modifier.padding(vertical = 5.dp),
         value = searchTerm,
-        placeholder = {Text("Enter name")},
         onValueChange = { setSearchTerm(it) },
         label = {Text("Search player")}
     )
 }
 
 @Composable
-fun ButtonRow(modifier: Modifier = Modifier) {
+fun ButtonRow(navController: NavController, modifier: Modifier = Modifier) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ){
-        Button(onClick = {}) { Text("Enter manually")}
-        Button(onClick = {}) { Text("Import player list")}
+        Button(onClick = {navController.navigate("manualEntry")}) { Text("Enter manually")}
+        Button(onClick = {navController.navigate("playerImport")}) { Text("Import player list")}
     }
 }
