@@ -34,14 +34,7 @@ fun RegisteredPlayerContainer(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier){
-        Text(
-            text = "Registered players:",
-            style = Typography.headlineSmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(vertical = 5.dp)
-                .fillMaxWidth()
-        )
+
         RegisteredHeader()
         RegisteredPlayerList(
             modifier = Modifier

@@ -41,15 +41,6 @@ fun ManualEntry(
         horizontalAlignment = Alignment.Companion.CenterHorizontally
     ) {
 
-        Text(
-            text = "Manual entry",
-            style = Typography.headlineSmall,
-            textAlign = TextAlign.Companion.Center,
-            modifier = Modifier.Companion
-                .padding(bottom = 5.dp)
-                .fillMaxWidth()
-        )
-
         TextField(
             label = { Text("Family name") },
             value = familyName,

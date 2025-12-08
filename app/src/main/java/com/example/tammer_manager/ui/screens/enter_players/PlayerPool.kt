@@ -43,14 +43,7 @@ fun PlayerPoolContainer(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         val (searchTerm, setSearchTerm) = remember{ mutableStateOf("") }
-        Text(
-            text = "Imported players",
-            style = Typography.headlineSmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(vertical = 5.dp)
-                .fillMaxWidth()
-        )
+
         PlayerPoolHeader()
         HorizontalDivider()
 
