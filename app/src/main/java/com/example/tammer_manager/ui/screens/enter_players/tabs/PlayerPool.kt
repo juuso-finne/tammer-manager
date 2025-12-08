@@ -1,4 +1,4 @@
-package com.example.tammer_manager.ui.screens.enter_players
+package com.example.tammer_manager.ui.screens.enter_players.tabs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.ui.screens.enter_players.TextRow
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import com.example.tammer_manager.viewmodels.TournamentViewModel

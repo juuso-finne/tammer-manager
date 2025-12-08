@@ -1,4 +1,4 @@
-package com.example.tammer_manager.ui.screens.enter_players
+package com.example.tammer_manager.ui.screens.enter_players.tabs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,16 +15,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.data.tournament_admin.RegisteredPlayer
+import com.example.tammer_manager.ui.screens.enter_players.TextRow
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
