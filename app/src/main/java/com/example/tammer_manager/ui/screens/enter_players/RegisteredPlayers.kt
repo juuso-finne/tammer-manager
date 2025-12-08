@@ -39,7 +39,7 @@ fun RegisteredPlayerContainer(
             style = Typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(bottom = 5.dp)
+                .padding(vertical = 5.dp)
                 .fillMaxWidth()
         )
         RegisteredHeader()

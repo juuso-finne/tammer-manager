@@ -19,24 +19,31 @@ fun EnterPlayers(
     modifier: Modifier = Modifier
 ) {
 
-    val (selectedTab, setSelectedTab) = remember { mutableStateOf(SelectedTab.ENTER_PLAYERS) }
+    val (selectedTab, setSelectedTab) = remember { mutableStateOf(SelectedTab.ENTER_FROM_LIST) }
     Column(
         modifier = Modifier.padding(horizontal = 5.dp)
     ){
         TabRow(selectedTab = selectedTab, setSelectedTab = setSelectedTab)
 
-        if(selectedTab == SelectedTab.ENTER_PLAYERS){
-            PlayerPoolContainer(
-                vmPlayerPool = vmPlayerPool,
-                vmTournament = vmTournament,
-                navController = navController,
-                modifier = Modifier.weight(1f)
-            )
-        } else{
-            RegisteredPlayerContainer(
-                vmTournament = vmTournament,
-                modifier = Modifier.weight(1f)
-            )
+        when (selectedTab) {
+            SelectedTab.ENTER_FROM_LIST -> {
+                PlayerPoolContainer(
+                    vmPlayerPool = vmPlayerPool,
+                    vmTournament = vmTournament,
+                    navController = navController,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            SelectedTab.VIEW_PLAYERS -> {
+                RegisteredPlayerContainer(
+                    vmTournament = vmTournament,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            SelectedTab.MANUAL_ENTRY -> {
+                ManualEntry(vmTournament = vmTournament)
+            }
         }
     }
 }

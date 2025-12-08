@@ -1,4 +1,4 @@
-package com.example.tammer_manager.ui.screens
+package com.example.tammer_manager.ui.screens.enter_players
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,72 +22,66 @@ import androidx.navigation.NavController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
-import org.apache.commons.lang3.math.NumberUtils.toInt
+import org.apache.commons.lang3.math.NumberUtils
 
 @Composable
 fun ManualEntry(
-    navController: NavController,
     vmTournament: TournamentViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
-    val (givenName, setGivenName) = remember{ mutableStateOf("") }
-    val (familyName, setFamilyName) = remember{ mutableStateOf("") }
+    val (givenName, setGivenName) = remember { mutableStateOf("") }
+    val (familyName, setFamilyName) = remember { mutableStateOf("") }
     val (rating, setRating) = remember { mutableIntStateOf(1000) }
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.Companion
             .fillMaxWidth()
             .padding(5.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Companion.CenterHorizontally
     ) {
 
         Text(
             text = "Manual entry",
             style = Typography.headlineSmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
+            textAlign = TextAlign.Companion.Center,
+            modifier = Modifier.Companion
                 .padding(bottom = 5.dp)
                 .fillMaxWidth()
         )
 
         TextField(
-            label = {Text("Family name")},
-            placeholder = {Text("Smith")},
+            label = { Text("Family name") },
             value = familyName,
             onValueChange = { setFamilyName(it) },
         )
 
         TextField(
-            label = {Text("Given name")},
-            placeholder = {Text("John")},
+            label = { Text("Given name") },
             value = givenName,
             onValueChange = { setGivenName(it) },
         )
 
 
         TextField(
-            label = {Text("Rating")},
+            label = { Text("Rating") },
             value = rating.toString(),
-            onValueChange = { setRating(toInt(it)) },
+            onValueChange = { setRating(NumberUtils.toInt(it)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-        ){
-            Button(
-                onClick = { vmTournament.addPlayer(ImportedPlayer(
-                    fullName = "$familyName, $givenName",
-                    rating = rating
-                )) },
-                enabled = !givenName.isEmpty() && !familyName.isEmpty())
-            { Text("Enter player")}
-
-
-            Button(onClick = {navController.navigate("enterPlayers")})
-            { Text("Return")}
-        }
+        Button(
+            onClick = {
+                vmTournament.addPlayer(
+                    ImportedPlayer(
+                        fullName = "$familyName, $givenName",
+                        rating = rating
+                    )
+                )
+            },
+            enabled = !givenName.isEmpty() && !familyName.isEmpty(),
+            modifier = Modifier.padding(top = 10.dp)
+        )
+        { Text("Enter player") }
     }
 }

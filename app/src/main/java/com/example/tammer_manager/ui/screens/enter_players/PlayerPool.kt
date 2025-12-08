@@ -38,14 +38,17 @@ fun PlayerPoolContainer(
     vmTournament: TournamentViewModel,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
         val (searchTerm, setSearchTerm) = remember{ mutableStateOf("") }
         Text(
             text = "Imported players",
             style = Typography.headlineSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(bottom = 5.dp)
+                .padding(vertical = 5.dp)
                 .fillMaxWidth()
         )
         PlayerPoolHeader()
@@ -68,7 +71,7 @@ fun PlayerPoolContainer(
             setSearchTerm = setSearchTerm
         )
 
-        ButtonRow(navController = navController)
+        Button(onClick = {navController.navigate("playerImport")}) { Text("Import player list")}
     }
 }
 
@@ -162,7 +165,6 @@ fun ButtonRow(navController: NavController, modifier: Modifier = Modifier) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ){
-        Button(onClick = {navController.navigate("manualEntry")}) { Text("Enter manually")}
-        Button(onClick = {navController.navigate("playerImport")}) { Text("Import player list")}
+
     }
 }

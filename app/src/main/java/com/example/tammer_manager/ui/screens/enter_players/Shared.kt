@@ -2,7 +2,6 @@ package com.example.tammer_manager.ui.screens.enter_players
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
@@ -15,18 +14,25 @@ import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.ui.theme.Typography
 
 enum class SelectedTab (){
-    ENTER_PLAYERS,
-    VIEW_PLAYERS
+    ENTER_FROM_LIST,
+    MANUAL_ENTRY,
+    VIEW_PLAYERS,
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabRow(selectedTab: SelectedTab, setSelectedTab: (SelectedTab) -> Unit, modifier: Modifier = Modifier) {
     PrimaryTabRow(selectedTabIndex = selectedTab.ordinal) {
-        Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_PLAYERS.ordinal,
-            onClick = { setSelectedTab(SelectedTab.ENTER_PLAYERS) },
-            text = {Text("Enter players")}
+        Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_FROM_LIST.ordinal,
+            onClick = { setSelectedTab(SelectedTab.ENTER_FROM_LIST) },
+            text = {Text("Enter from list")}
         )
+
+        Tab(selected = selectedTab == SelectedTab.MANUAL_ENTRY,
+            onClick = { setSelectedTab(SelectedTab.MANUAL_ENTRY) },
+            text = { Text("Enter manually") }
+            )
 
         Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS,
             onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS) },
