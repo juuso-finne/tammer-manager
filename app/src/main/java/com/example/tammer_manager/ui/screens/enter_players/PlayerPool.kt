@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +65,8 @@ fun PlayerPoolContainer(
             searchTerm = searchTerm,
             setSearchTerm = setSearchTerm
         )
+
+        ButtonRow()
     }
 }
 
@@ -150,4 +153,15 @@ fun SearchBar(
         onValueChange = { setSearchTerm(it) },
         label = {Text("Search player")}
     )
+}
+
+@Composable
+fun ButtonRow(modifier: Modifier = Modifier) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ){
+        Button(onClick = {}) { Text("Enter manually")}
+        Button(onClick = {}) { Text("Import player list")}
+    }
 }

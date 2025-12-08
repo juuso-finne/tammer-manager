@@ -2,6 +2,7 @@ package com.example.tammer_manager.ui.screens.enter_players
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
