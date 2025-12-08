@@ -7,11 +7,13 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.ui.theme.Typography
+import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 enum class SelectedTab (){
     ENTER_FROM_LIST,
@@ -22,8 +24,15 @@ enum class SelectedTab (){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabRow(selectedTab: SelectedTab, setSelectedTab: (SelectedTab) -> Unit, modifier: Modifier = Modifier) {
+fun TabRow(
+    vmTournament: TournamentViewModel,
+    selectedTab: SelectedTab,
+    setSelectedTab: (SelectedTab) -> Unit,
+    modifier: Modifier = Modifier) {
+
+    val numberOfRegisteredPlayers = vmTournament.registeredPlayers.collectAsState().value.size
     PrimaryTabRow(selectedTabIndex = selectedTab.ordinal) {
+
         Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_FROM_LIST.ordinal,
             onClick = { setSelectedTab(SelectedTab.ENTER_FROM_LIST) },
             text = {Text("Enter from list")}
@@ -36,7 +45,7 @@ fun TabRow(selectedTab: SelectedTab, setSelectedTab: (SelectedTab) -> Unit, modi
 
         Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS,
             onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS) },
-            text = {Text("View/remove players")}
+            text = {Text("View/remove players ($numberOfRegisteredPlayers)")}
         )
     }
 }

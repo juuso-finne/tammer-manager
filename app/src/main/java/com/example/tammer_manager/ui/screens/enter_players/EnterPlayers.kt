@@ -23,7 +23,11 @@ fun EnterPlayers(
     Column(
         modifier = Modifier.padding(horizontal = 5.dp)
     ){
-        TabRow(selectedTab = selectedTab, setSelectedTab = setSelectedTab)
+        TabRow(
+            selectedTab = selectedTab,
+            setSelectedTab = setSelectedTab,
+            vmTournament = vmTournament
+        )
 
         when (selectedTab) {
             SelectedTab.ENTER_FROM_LIST -> {
