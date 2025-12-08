@@ -2,6 +2,7 @@ package com.example.tammer_manager.ui.screens.enter_players
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ fun EnterPlayers(
     vmPlayerPool: PlayerPoolViewModel,
     vmTournament: TournamentViewModel,
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier
 ) {
 
@@ -49,7 +51,10 @@ fun EnterPlayers(
             }
 
             SelectedTab.MANUAL_ENTRY -> {
-                ManualEntry(vmTournament = vmTournament)
+                ManualEntry(
+                    vmTournament = vmTournament,
+                    snackbarHostState = snackbarHostState
+                )
             }
         }
     }

@@ -58,7 +58,8 @@ fun App( context: Context) {
             composable (route = "enterPlayers") { EnterPlayers(
                 vmPlayerPool = vmPlayerPool,
                 vmTournament = vmTournament,
-                navController = navController
+                navController = navController,
+                snackbarHostState = snackbarHostState
             ) }
         }
     }
