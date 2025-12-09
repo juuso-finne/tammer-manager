@@ -4,6 +4,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Tournament (var name: String, val maxRounds: Int): Parcelable {
-    var roundsCompleted = 0
-}
+data class Tournament (
+    var name: String,
+    val maxRounds: Int,
+    var roundsCompleted: Int = 0
+): Parcelable
