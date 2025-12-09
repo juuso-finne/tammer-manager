@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.tournament_admin
+package com.example.tammer_manager.data.tournament_admin.classes
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

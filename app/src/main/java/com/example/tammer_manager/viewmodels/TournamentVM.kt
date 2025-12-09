@@ -3,8 +3,8 @@ package com.example.tammer_manager.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.tammer_manager.data.player_import.ImportedPlayer
-import com.example.tammer_manager.data.tournament_admin.RegisteredPlayer
-import com.example.tammer_manager.data.tournament_admin.Tournament
+import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import kotlinx.coroutines.flow.StateFlow
 
 class TournamentViewModel(
