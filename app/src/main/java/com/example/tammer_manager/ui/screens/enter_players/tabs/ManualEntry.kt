@@ -75,7 +75,11 @@ fun ManualEntry(
                 setGivenName("")
                 setFamilyName("")
             },
-            enabled = !givenName.isEmpty() && !familyName.isEmpty(),
+            enabled =
+                !givenName.isEmpty() &&
+                !familyName.isEmpty() &&
+                rating > 0 && rating < 5000
+            ,
             modifier = Modifier.padding(top = 10.dp)
         )
         { Text("Enter player") }
