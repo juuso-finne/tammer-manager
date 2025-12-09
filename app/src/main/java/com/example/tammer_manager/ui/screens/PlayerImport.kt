@@ -63,7 +63,11 @@ fun PlayerImport(
                 ))
             }
         ) {
-            Text(".xlsx file")
+            Text(".xlsx file (TammerSh)")
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+        Button(onClick = { navController.navigate("enterPlayers") }) {
+            Text("Cancel")
         }
     }
 }
