@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class RegisteredPlayer (
     val fullName: String,
     val rating: Int,
+    val id: Int,
     var isActive: Boolean = true,
     var score: Float = 0f,
     var tpn: Int? = null

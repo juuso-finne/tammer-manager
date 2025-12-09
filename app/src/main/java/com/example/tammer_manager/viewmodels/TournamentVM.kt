@@ -14,18 +14,32 @@ class TournamentViewModel(
         key = "tournament",
         initialValue =  null
     )
-    val registeredPlayers:StateFlow<List<RegisteredPlayer>> = savedStateHandle.getStateFlow(
+    val registeredPlayers: StateFlow<List<RegisteredPlayer>> = savedStateHandle.getStateFlow(
         key ="registeredPlayers",
         initialValue = listOf()
+    )
+
+    val nextPlayerId: StateFlow<Int> = savedStateHandle.getStateFlow(
+        key = "nextPlayerId",
+        initialValue = 0
     )
 
     fun initateTournament(name: String, maxRounds: Int){
         savedStateHandle["tournament"] = Tournament(name, maxRounds)
     }
 
+    private fun getNextPlayerId(): Int{
+        savedStateHandle["nextPlayerId"] = nextPlayerId.value + 1
+        return nextPlayerId.value
+    }
+
     fun addPlayer(player: ImportedPlayer){
         val newList = registeredPlayers.value.toMutableList()
-        newList.add(RegisteredPlayer(fullName = player.fullName, rating = player.rating))
+        newList.add(RegisteredPlayer(
+            fullName = player.fullName,
+            rating = player.rating,
+            id = getNextPlayerId()
+        ))
         savedStateHandle["registeredPlayers"] = newList.toList()
     }
 
