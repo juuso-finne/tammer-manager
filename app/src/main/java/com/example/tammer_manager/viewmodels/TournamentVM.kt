@@ -3,8 +3,11 @@ package com.example.tammer_manager.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.tournament_admin.classes.Pairing
+import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
+import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlinx.coroutines.flow.StateFlow
 
 class TournamentViewModel(
@@ -15,13 +18,18 @@ class TournamentViewModel(
         initialValue =  null
     )
     val registeredPlayers: StateFlow<List<RegisteredPlayer>> = savedStateHandle.getStateFlow(
-        key ="registeredPlayers",
+        key = "registeredPlayers",
         initialValue = listOf()
     )
 
     val nextPlayerId: StateFlow<Int> = savedStateHandle.getStateFlow(
         key = "nextPlayerId",
         initialValue = 0
+    )
+
+    val currentRoundPairings: StateFlow<PairingList> = savedStateHandle.getStateFlow(
+        key = "currentRoundPairings",
+        initialValue = listOf()
     )
 
     fun initateTournament(name: String, maxRounds: Int){
@@ -58,5 +66,18 @@ class TournamentViewModel(
         val newList = registeredPlayers.value.toMutableList()
         newList[index] = newList[index].copy(isActive = true)
         savedStateHandle["registeredPlayers"] = newList.toList()
+    }
+
+    fun clearPairings(){
+        savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
+    }
+
+    fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){
+        val pairingList = currentRoundPairings.value.toMutableList()
+        val pairing = pairingList[index].toMutableMap()
+        pairing[playerColor]?.points = points
+
+        pairingList[index] = pairing
+        savedStateHandle["currentRoundPairings"] = pairingList
     }
 }
