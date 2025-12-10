@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +33,10 @@ import com.example.tammer_manager.ui.theme.Typography
 
 @Composable
 fun EnterResults(modifier: Modifier = Modifier) {
-    PairingItem()
+    Column() {
+        PairingItem()
+        PairingItem()
+    }
 }
 
 @Composable
@@ -37,16 +44,31 @@ fun PairingItem(
         modifier: Modifier = Modifier,
         borderThickness: Dp = 1.dp
 ) {
+    val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
+    
     Row(modifier = Modifier.height(IntrinsicSize.Max)){
         Column(
             verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
-            modifier = Modifier.fillMaxHeight().weight(1f)) {
-            PlayerScoreRow (modifier = Modifier.fillMaxHeight().weight(1f), color = PlayerColor.WHITE, points = null, name = "Shakinpelaaja, Sakke")
-            PlayerScoreRow( modifier = Modifier.fillMaxHeight().weight(1f), color = PlayerColor.BLACK, points = null, name = "Puuntuuppaaja, Paavo")
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f)) {
+            PlayerScoreRow (modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f), color = PlayerColor.WHITE, points = null, name = "Shakinpelaaja, Sakke")
+            PlayerScoreRow( modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f), color = PlayerColor.BLACK, points = null, name = "Puuntuuppaaja, Paavo")
         }
 
-        IconButton(onClick = {}, modifier = Modifier.background(Color.White).fillMaxHeight()) {
-            Icon(imageVector = Icons.Default.Menu, contentDescription = "",)
+        Column() {
+            IconButton(
+                onClick = { setIsMenuOpen(!isMenuOpen) }, modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxHeight()
+            ) {
+                Icon(imageVector = Icons.Default.Menu, contentDescription = "",)
+            }
+            ScoringMenu(isOpen = isMenuOpen, setIsOpen = setIsMenuOpen, modifier = Modifier)
         }
     }
 }
@@ -87,7 +109,9 @@ fun PlayerScoreRow(
             text = name,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(horizontal = 2.dp).weight(1f),
+            modifier = Modifier
+                .padding(horizontal = 2.dp)
+                .weight(1f),
             style = Typography.bodyLarge
         )
 
@@ -102,4 +126,37 @@ fun PlayerScoreRow(
             style = Typography.headlineSmall
         )
     }
+}
+
+@Composable
+fun ScoringMenu(
+    isOpen: Boolean,
+    setIsOpen: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    DropdownMenu(
+        expanded = isOpen,
+        onDismissRequest = {setIsOpen(false)}
+    ) {
+        ScoringMenuItem(1f,0f)
+        ScoringMenuItem(.5f, .5f)
+    }
+}
+
+@Composable
+fun ScoringMenuItem(
+    pointsWhite: Float,
+    pointsBlack: Float,
+    modifier: Modifier = Modifier
+) {
+    val whitePointsString = if (pointsWhite == 0.5f) "½" else "%,.0f".format(locale = null, pointsWhite)
+    val blackPointsString = if (pointsBlack == 0.5f) "½" else "%,.0f".format(locale = null, pointsBlack)
+
+    DropdownMenuItem(
+        text = {
+            Text(text = "$whitePointsString - $blackPointsString",
+                style = Typography.bodyLarge
+            )
+        },
+        onClick = {})
 }
