@@ -54,7 +54,7 @@ fun EnterResults(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(pairingList.size){ i ->
-                PairingItem(vmTournament = vmTournament, pairing = pairingList[i])
+                PairingItem(vmTournament = vmTournament, pairing = pairingList[i], index = i)
             }
         }
         Button(onClick = {
@@ -65,22 +65,34 @@ fun EnterResults(
 
 @Composable
 fun PairingItem(
+    index: Int,
     vmTournament: TournamentViewModel,
     pairing: Pairing,
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp
 ) {
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
+
+    val setScore: (Float, Float) -> Unit = { whitePlayerScore, blackPlayerScore ->
+        vmTournament.setPairingScore(index = index, playerColor = PlayerColor.WHITE, points = whitePlayerScore)
+        vmTournament.setPairingScore(index = index, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
+    }
     
     Row(modifier = Modifier.height(IntrinsicSize.Max)){
         Column(
             verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f)) {
-            PlayerScoreRow (modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f), color = PlayerColor.WHITE, pairingData = pairing[PlayerColor.WHITE], vmTournament = vmTournament)
+                .weight(1f)
+        ) {
+            PlayerScoreRow (
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                color = PlayerColor.WHITE,
+                pairingData = pairing[PlayerColor.WHITE],
+                vmTournament = vmTournament)
+
             PlayerScoreRow( modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f), color = PlayerColor.BLACK, pairingData = pairing[PlayerColor.BLACK], vmTournament = vmTournament)
@@ -94,7 +106,7 @@ fun PairingItem(
             ) {
                 Icon(imageVector = Icons.Default.Menu, contentDescription = "",)
             }
-            ScoringMenu(isOpen = isMenuOpen, setIsOpen = setIsMenuOpen, modifier = Modifier)
+            ScoringMenu(isOpen = isMenuOpen, setIsOpen = setIsMenuOpen, modifier = Modifier, setScore = setScore)
         }
     }
 }
@@ -158,6 +170,7 @@ fun PlayerScoreRow(
 
 @Composable
 fun ScoringMenu(
+    setScore: (Float, Float) -> Unit,
     isOpen: Boolean,
     setIsOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -166,8 +179,16 @@ fun ScoringMenu(
         expanded = isOpen,
         onDismissRequest = {setIsOpen(false)}
     ) {
-        ScoringMenuItem(1f,0f)
-        ScoringMenuItem(.5f, .5f)
+        listOf(
+            Pair(1f, 0f),
+            Pair(.5f, .5f),
+            Pair(0f, 1f),
+            Pair(0f, 0f),
+            Pair(.5f, 0f),
+            Pair(0f, .5f),
+        ).forEach {
+            ScoringMenuItem(it.first,it.second, setScore = setScore, setIsOpen = setIsOpen)
+        }
     }
 }
 
@@ -175,6 +196,8 @@ fun ScoringMenu(
 fun ScoringMenuItem(
     pointsWhite: Float,
     pointsBlack: Float,
+    setScore: (Float, Float) -> Unit,
+    setIsOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val whitePointsString = if (pointsWhite == 0.5f) "½" else "%,.0f".format(locale = null, pointsWhite)
@@ -186,5 +209,8 @@ fun ScoringMenuItem(
                 style = Typography.bodyLarge
             )
         },
-        onClick = {})
+        onClick = {
+            setScore(pointsWhite, pointsBlack)
+            setIsOpen(false)
+        })
 }

@@ -3,6 +3,7 @@ package com.example.tammer_manager.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -80,7 +81,7 @@ class TournamentViewModel(
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){
         val pairingList = currentRoundPairings.value.toMutableList()
         val pairing = pairingList[index].toMutableMap()
-        pairing[playerColor]?.points = points
+        pairing[playerColor] = pairing[playerColor]?.copy(points = points) ?: HalfPairing()
 
         pairingList[index] = pairing
         savedStateHandle["currentRoundPairings"] = pairingList
