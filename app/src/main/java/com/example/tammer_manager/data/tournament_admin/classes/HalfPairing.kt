@@ -5,9 +5,9 @@ import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class HalfPairing(
+data class HalfPairing(
     val playerID: Int? = null,
-    val points: Float = 0f
+    var points: Float? = null
 ): Parcelable
 
 typealias Pairing = Map<PlayerColor, HalfPairing>
