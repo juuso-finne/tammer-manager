@@ -8,17 +8,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,21 +32,43 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
+import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.ui.theme.Typography
+import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 @Composable
-fun EnterResults(modifier: Modifier = Modifier) {
-    Column() {
-        PairingItem()
-        PairingItem()
+fun EnterResults(
+    vmTournament: TournamentViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val pairingList = vmTournament.currentRoundPairings.collectAsState().value
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 5.dp).weight(1f),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(pairingList.size){ i ->
+                PairingItem(vmTournament = vmTournament, pairing = pairingList[i])
+            }
+        }
+        Button(onClick = {
+            vmTournament.generatePairs()
+        }) { Text("Generate pairs") }
     }
 }
 
 @Composable
 fun PairingItem(
-        modifier: Modifier = Modifier,
-        borderThickness: Dp = 1.dp
+    vmTournament: TournamentViewModel,
+    pairing: Pairing,
+    modifier: Modifier = Modifier,
+    borderThickness: Dp = 1.dp
 ) {
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
     
@@ -54,10 +80,10 @@ fun PairingItem(
                 .weight(1f)) {
             PlayerScoreRow (modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), color = PlayerColor.WHITE, points = null, name = "Shakinpelaaja, Sakke")
+                .weight(1f), color = PlayerColor.WHITE, pairingData = pairing[PlayerColor.WHITE], vmTournament = vmTournament)
             PlayerScoreRow( modifier = Modifier
                 .fillMaxHeight()
-                .weight(1f), color = PlayerColor.BLACK, points = null, name = "Puuntuuppaaja, Paavo")
+                .weight(1f), color = PlayerColor.BLACK, pairingData = pairing[PlayerColor.BLACK], vmTournament = vmTournament)
         }
 
         Column() {
@@ -75,12 +101,14 @@ fun PairingItem(
 
 @Composable
 fun PlayerScoreRow(
+    vmTournament: TournamentViewModel,
     color: PlayerColor,
-    name: String,
-    points: Float?,
+    pairingData: HalfPairing?,
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
 ) {
+    val playerList = vmTournament.registeredPlayers.collectAsState().value
+
     Row(modifier = modifier
         .border(
             width = borderThickness,
@@ -106,7 +134,7 @@ fun PlayerScoreRow(
             }) {}
 
         Text(
-            text = name,
+            text = playerList.find { it.id == pairingData?.playerID }?.fullName ?: "-",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -116,10 +144,10 @@ fun PlayerScoreRow(
         )
 
         Text(
-            text = when(points){
+            text = when(pairingData?.points){
                 null -> "-"
                 0.5f -> "½"
-                else -> "%,.0f".format(locale = null, points)
+                else -> "%,.0f".format(locale = null, pairingData.points)
             },
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 2.dp),

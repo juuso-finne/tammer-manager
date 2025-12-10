@@ -64,7 +64,9 @@ fun App( context: Context) {
             ) }
 
             composable (route = "enterResults") {
-                EnterResults()
+                EnterResults(
+                    vmTournament = vmTournament
+                )
             }
         }
     }

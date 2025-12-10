@@ -8,6 +8,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.data.tournament_admin.pairing.generateSwissPairs
 import kotlinx.coroutines.flow.StateFlow
 
 class TournamentViewModel(
@@ -70,6 +71,10 @@ class TournamentViewModel(
 
     fun clearPairings(){
         savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
+    }
+
+    fun generatePairs(){
+        savedStateHandle["currentRoundPairings"] = generateSwissPairs(registeredPlayers.value.filter { it.isActive })
     }
 
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){
