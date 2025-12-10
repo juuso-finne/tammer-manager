@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class HalfPairing(
-    val playerID: Int,
-    val points: Float
+    val playerID: Int? = null,
+    val points: Float = 0f
 ): Parcelable
 
 typealias Pairing = Map<PlayerColor, HalfPairing>
