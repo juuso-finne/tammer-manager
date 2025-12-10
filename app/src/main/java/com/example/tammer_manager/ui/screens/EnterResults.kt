@@ -4,10 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +29,26 @@ import com.example.tammer_manager.ui.theme.Typography
 
 @Composable
 fun EnterResults(modifier: Modifier = Modifier) {
+    PairingItem()
+}
 
+@Composable
+fun PairingItem(
+        modifier: Modifier = Modifier,
+        borderThickness: Dp = 1.dp
+) {
+    Row(modifier = Modifier.height(IntrinsicSize.Max)){
+        Column(
+            verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
+            modifier = Modifier.fillMaxHeight().weight(1f)) {
+            PlayerScoreRow (modifier = Modifier.fillMaxHeight().weight(1f), color = PlayerColor.WHITE, points = null, name = "Shakinpelaaja, Sakke")
+            PlayerScoreRow( modifier = Modifier.fillMaxHeight().weight(1f), color = PlayerColor.BLACK, points = null, name = "Puuntuuppaaja, Paavo")
+        }
+
+        IconButton(onClick = {}, modifier = Modifier.background(Color.White).fillMaxHeight()) {
+            Icon(imageVector = Icons.Default.Menu, contentDescription = "",)
+        }
+    }
 }
 
 @Composable
