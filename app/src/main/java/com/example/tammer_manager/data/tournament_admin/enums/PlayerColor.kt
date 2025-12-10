@@ -1,6 +1,8 @@
 package com.example.tammer_manager.data.tournament_admin.enums
 
-enum class PlayerColor {
-    WHITE,
-    BLACK
+import androidx.compose.ui.graphics.Color
+
+enum class PlayerColor (val colorValue: Color) {
+    WHITE (colorValue = Color.White),
+    BLACK (colorValue = Color.Black)
 }
