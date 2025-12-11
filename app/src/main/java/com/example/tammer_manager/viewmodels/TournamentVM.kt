@@ -111,12 +111,6 @@ class TournamentViewModel(
         playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
     }
 
-    private fun addToMatchHistory(id: Int, item: MatchHistoryItem){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == id }
-        playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
-    }
-
     fun clearPairings(){
         savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
     }
