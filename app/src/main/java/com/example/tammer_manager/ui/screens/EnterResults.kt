@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -49,14 +51,20 @@ fun EnterResults(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val pairingList = vmTournament.currentRoundPairings.collectAsState().value
+
+        Text(text = "Round X pairings", style = Typography.headlineMedium)
+
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 5.dp).weight(1f),
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(pairingList.size){ i ->
                 PairingItem(vmTournament = vmTournament, pairing = pairingList[i], index = i)
             }
         }
+
         Button(onClick = {
             vmTournament.generatePairs()
         }) { Text("Generate pairs") }
@@ -78,33 +86,43 @@ fun PairingItem(
         vmTournament.setPairingScore(index = index, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
     }
     
-    Row(modifier = Modifier.height(IntrinsicSize.Max)){
+    Row(
+        modifier = Modifier.height(IntrinsicSize.Max),
+        horizontalArrangement = Arrangement.spacedBy(borderThickness * -1))
+    {
         Column(
             verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
         ) {
-            PlayerScoreRow (
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f),
-                color = PlayerColor.WHITE,
-                pairingData = pairing[PlayerColor.WHITE],
-                vmTournament = vmTournament)
-
-            PlayerScoreRow( modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f), color = PlayerColor.BLACK, pairingData = pairing[PlayerColor.BLACK], vmTournament = vmTournament)
+            PlayerColor.entries.sortedBy { it.ordinal }.forEach {
+                PlayerScoreRow (
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    color = it,
+                    pairingData = pairing[it],
+                    vmTournament = vmTournament)
+            }
         }
 
         Column() {
             IconButton(
-                onClick = { setIsMenuOpen(!isMenuOpen) }, modifier = Modifier
-                    .background(Color.White)
+                onClick = { setIsMenuOpen(!isMenuOpen) },
+                modifier = Modifier
+                    .background(Color.Blue)
                     .fillMaxHeight()
+                    .border(
+                        width = borderThickness,
+                        color = Color.Black
+                    )
             ) {
-                Icon(imageVector = Icons.Default.Menu, contentDescription = "",)
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Enter result for pair ${index + 1}",
+                    tint=Color.White
+                )
             }
             ScoringMenu(isOpen = isMenuOpen, setIsOpen = setIsMenuOpen, modifier = Modifier, setScore = setScore)
         }
@@ -177,17 +195,25 @@ fun ScoringMenu(
 ) {
     DropdownMenu(
         expanded = isOpen,
-        onDismissRequest = {setIsOpen(false)}
+        onDismissRequest = {setIsOpen(false)},
     ) {
         listOf(
             Pair(1f, 0f),
             Pair(.5f, .5f),
             Pair(0f, 1f),
+        ).forEach {
+            ScoringMenuItem(it.first,it.second, setScore = setScore, setIsOpen = setIsOpen)
+            HorizontalDivider()
+        }
+        Spacer(Modifier.height(20.dp))
+        HorizontalDivider()
+        listOf(
             Pair(0f, 0f),
             Pair(.5f, 0f),
             Pair(0f, .5f),
         ).forEach {
             ScoringMenuItem(it.first,it.second, setScore = setScore, setIsOpen = setIsOpen)
+            HorizontalDivider()
         }
     }
 }
