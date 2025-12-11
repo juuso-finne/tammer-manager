@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
+import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -43,6 +44,28 @@ class TournamentViewModel(
         savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
     }
 
+    fun finishRound(){
+        advanceRound()
+
+        currentRoundPairings.value.forEach { pairing ->
+            pairing.forEach { item ->
+                val ownColor = item.key
+                item.value.playerID?.let{
+                    val newItem = MatchHistoryItem(
+                        opponentId = pairing[ownColor.reverse()]?.playerID,
+                        round = activeTournament.value?.roundsCompleted ?: 0,
+                        result = item.value.points ?: 0f,
+                        color = ownColor,
+                    )
+                    addToPlayerScore(id = it, amount = item.value.points ?: 0f)
+                    addToMatchHistory(id = it, item = newItem)
+                }
+            }
+        }
+
+        clearPairings()
+    }
+
     private fun getNextPlayerId(): Int{
         savedStateHandle["nextPlayerId"] = nextPlayerId.value + 1
         return nextPlayerId.value
@@ -79,6 +102,12 @@ class TournamentViewModel(
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == id }
         playerList[index] = playerList[index].let { it.copy(score = it.score + amount) }
+    }
+
+    private fun addToMatchHistory(id: Int, item: MatchHistoryItem){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == id }
+        playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
     }
 
     fun clearPairings(){
