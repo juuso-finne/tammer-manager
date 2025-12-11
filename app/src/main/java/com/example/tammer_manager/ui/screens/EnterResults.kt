@@ -53,18 +53,30 @@ fun EnterResults(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
-            val completedRounds = vmTournament.activeTournament.collectAsState().value?.roundsCompleted ?: 0
 
-            Text(text = "Round ${completedRounds + 1}", style = Typography.headlineMedium)
+            val activeTournament = vmTournament.activeTournament.collectAsState().value
+            val completedRounds = activeTournament?.roundsCompleted ?: 0
+            val maxRounds = activeTournament?.maxRounds ?: 0
 
-            LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(pairingList.size) { i ->
-                    PairingItem(vmTournament = vmTournament, pairing = pairingList[i], index = i)
+            Text(
+                text = "Round ${completedRounds + 1} / $maxRounds",
+                style = Typography.headlineMedium
+            )
+
+            if (!pairingList.isEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(pairingList.size) { i ->
+                        PairingItem(
+                            vmTournament = vmTournament,
+                            pairing = pairingList[i],
+                            index = i
+                        )
+                    }
                 }
             }
 
