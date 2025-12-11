@@ -38,6 +38,11 @@ class TournamentViewModel(
         savedStateHandle["tournament"] = Tournament(name, maxRounds)
     }
 
+    private fun advanceRound(){
+        val oldValue = activeTournament.value?.roundsCompleted ?: 0
+        savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
+    }
+
     private fun getNextPlayerId(): Int{
         savedStateHandle["nextPlayerId"] = nextPlayerId.value + 1
         return nextPlayerId.value
@@ -68,6 +73,12 @@ class TournamentViewModel(
         val newList = registeredPlayers.value.toMutableList()
         newList[index] = newList[index].copy(isActive = true)
         savedStateHandle["registeredPlayers"] = newList.toList()
+    }
+
+    fun addToPlayerScore(id: Int, amount: Float){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == id }
+        playerList[index] = playerList[index].let { it.copy(score = it.score + amount) }
     }
 
     fun clearPairings(){
