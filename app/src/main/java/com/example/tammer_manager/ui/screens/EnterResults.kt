@@ -180,6 +180,11 @@ fun PlayerScoreRow(
     val playerList = vmTournament.registeredPlayers.collectAsState().value
     val player = playerList.find { it.id == pairingData?.playerID }
 
+    val score = player?.score ?: 0f
+    val scoreAsText =
+        if (score % 1.0 == 0.0) "%,.0f".format(score)
+        else "%,.1f".format(score)
+
     Row(modifier = modifier
         .border(
             width = borderThickness,
@@ -205,7 +210,7 @@ fun PlayerScoreRow(
             }) {}
 
         Text(
-            text = "${ player?.fullName ?: '-' } (${player?.score})",
+            text = "${ player?.fullName ?: '-' } ($scoreAsText)",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
