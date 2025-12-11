@@ -53,8 +53,9 @@ fun EnterResults(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
+            val completedRounds = vmTournament.activeTournament.collectAsState().value?.roundsCompleted ?: 0
 
-            Text(text = "Round X pairings", style = Typography.headlineMedium)
+            Text(text = "Round ${completedRounds + 1}", style = Typography.headlineMedium)
 
             LazyColumn(
                 modifier = Modifier
@@ -67,9 +68,33 @@ fun EnterResults(
                 }
             }
 
-            Button(onClick = {
-                vmTournament.generatePairs()
-            }) { Text("Generate pairs") }
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = { vmTournament.generatePairs() },
+                    enabled = pairingList.isEmpty()
+                ) { Text("Generate pairs") }
+
+                Button(
+                    enabled =
+                        pairingList.all { pairing ->
+                            pairing.all {
+                                it.value.points != null
+                            }
+                        }
+                                && !pairingList.isEmpty(),
+                    onClick = { vmTournament.finishRound() }
+                ) { Text("Finish round") }
+            }
+
+            Button(
+                onClick = {vmTournament.clearPairings()},
+                enabled = !pairingList.isEmpty()
+            ){
+                Text("Clear pairs")
+            }
         }
     }?: NoActiveTournament()
 }
@@ -141,6 +166,7 @@ fun PlayerScoreRow(
     borderThickness: Dp = 1.dp,
 ) {
     val playerList = vmTournament.registeredPlayers.collectAsState().value
+    val player = playerList.find { it.id == pairingData?.playerID }
 
     Row(modifier = modifier
         .border(
@@ -167,7 +193,7 @@ fun PlayerScoreRow(
             }) {}
 
         Text(
-            text = playerList.find { it.id == pairingData?.playerID }?.fullName ?: "-",
+            text = "${ player?.fullName ?: '-' } (${player?.score})",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
