@@ -10,5 +10,6 @@ data class RegisteredPlayer (
     val id: Int,
     var isActive: Boolean = true,
     var score: Float = 0f,
-    var tpn: Int? = null
+    var tpn: Int? = null,
+    val matchHistory: MatchHistory = listOf()
 ): Parcelable
