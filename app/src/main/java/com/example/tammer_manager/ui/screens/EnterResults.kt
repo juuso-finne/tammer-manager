@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -45,30 +46,32 @@ fun EnterResults(
     vmTournament: TournamentViewModel,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val pairingList = vmTournament.currentRoundPairings.collectAsState().value
-
-        Text(text = "Round X pairings", style = Typography.headlineMedium)
-
-        LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+    vmTournament.activeTournament.collectAsState().value?.let {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(pairingList.size){ i ->
-                PairingItem(vmTournament = vmTournament, pairing = pairingList[i], index = i)
-            }
-        }
+            val pairingList = vmTournament.currentRoundPairings.collectAsState().value
 
-        Button(onClick = {
-            vmTournament.generatePairs()
-        }) { Text("Generate pairs") }
-    }
+            Text(text = "Round X pairings", style = Typography.headlineMedium)
+
+            LazyColumn(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(pairingList.size) { i ->
+                    PairingItem(vmTournament = vmTournament, pairing = pairingList[i], index = i)
+                }
+            }
+
+            Button(onClick = {
+                vmTournament.generatePairs()
+            }) { Text("Generate pairs") }
+        }
+    }?: NoActiveTournament()
 }
 
 @Composable
@@ -238,5 +241,6 @@ fun ScoringMenuItem(
         onClick = {
             setScore(pointsWhite, pointsBlack)
             setIsOpen(false)
-        })
+        }
+    )
 }
