@@ -47,7 +47,7 @@ fun App( context: Context) {
             modifier = Modifier.padding(innerPadding),
             startDestination = "home"
         ) {
-            composable ("home") { Home(navController) }
+            composable ("home") { Home(vmTournament = vmTournament) }
 
             composable("playerImport") { PlayerImport(
                 context = context,

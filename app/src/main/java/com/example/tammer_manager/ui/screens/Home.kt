@@ -9,18 +9,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.tammer_manager.data.tournament_admin.classes.Tournament
+import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 @Composable
-fun Home(navController: NavHostController, modifier: Modifier = Modifier) {
+fun Home(
+    vmTournament: TournamentViewModel,
+    modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = {}
+            onClick = {
+                vmTournament.initateTournament(name = "Palceholder", maxRounds = 5)
+            }
         ) {
-            Text("Import players")
+            Text("Create tournament")
         }
     }
 }
