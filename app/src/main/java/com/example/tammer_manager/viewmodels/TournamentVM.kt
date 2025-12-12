@@ -81,6 +81,10 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = newList.toList()
     }
 
+    fun findPlayerById(id: Int): RegisteredPlayer?{
+        return registeredPlayers.value.find(){it.id == id}
+    }
+
     fun removePlayer(index: Int){
         val newList = registeredPlayers.value.toMutableList()
         val roundsCompleted = activeTournament.value?.roundsCompleted ?: 0

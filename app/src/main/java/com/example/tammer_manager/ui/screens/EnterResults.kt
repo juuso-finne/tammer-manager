@@ -177,8 +177,8 @@ fun PlayerScoreRow(
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
 ) {
-    val playerList = vmTournament.registeredPlayers.collectAsState().value
-    val player = playerList.find { it.id == pairingData?.playerID }
+
+    val player = vmTournament.findPlayerById(pairingData?.playerID ?: 0)
 
     val score = player?.score ?: 0f
     val scoreAsText =
