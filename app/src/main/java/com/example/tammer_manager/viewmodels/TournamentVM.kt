@@ -87,8 +87,8 @@ class TournamentViewModel(
 
     fun removePlayer(index: Int){
         val newList = registeredPlayers.value.toMutableList()
-        val roundsCompleted = activeTournament.value?.roundsCompleted ?: 0
-        if(roundsCompleted > 0){
+        val hasRecord = !newList[index].matchHistory.isEmpty()
+        if(hasRecord || isPaired()){
             newList[index] = newList[index].copy(isActive = false)
         }else{
             newList.removeAt(index)
