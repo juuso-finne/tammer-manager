@@ -8,8 +8,8 @@ data class RegisteredPlayer (
     val fullName: String,
     val rating: Int,
     val id: Int,
+    var tpn: Int,
     var isActive: Boolean = true,
     var score: Float = 0f,
-    var tpn: Int? = null,
     val matchHistory: MatchHistory = listOf()
 ): Parcelable

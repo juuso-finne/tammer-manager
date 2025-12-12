@@ -21,6 +21,8 @@ import com.example.tammer_manager.ui.screens.PlayerImport
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
+const val TPN_ASSIGNMENT_CUTOFF = 4
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
