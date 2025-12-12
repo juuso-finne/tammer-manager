@@ -113,6 +113,11 @@ class TournamentViewModel(
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == id }
         playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
+    fun isPaired(): Boolean{
+        return !currentRoundPairings.value.isEmpty()
     }
 
     fun clearPairings(){
