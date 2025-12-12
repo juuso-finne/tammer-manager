@@ -12,4 +12,13 @@ data class RegisteredPlayer (
     var isActive: Boolean = true,
     var score: Float = 0f,
     val matchHistory: MatchHistory = listOf()
-): Parcelable
+): Parcelable{
+
+    fun getColorBalance():Int{
+        return matchHistory.sumOf() { match ->
+            match.opponentId?.let{
+                match.color.balance
+            } ?: 0
+        }
+    }
+}
