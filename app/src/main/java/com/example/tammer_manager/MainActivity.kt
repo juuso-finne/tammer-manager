@@ -14,6 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tammer_manager.ui.screens.AppFrame
+import com.example.tammer_manager.ui.screens.EnterResults
 import com.example.tammer_manager.ui.screens.enter_players.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.PlayerImport
@@ -46,7 +47,7 @@ fun App( context: Context) {
             modifier = Modifier.padding(innerPadding),
             startDestination = "home"
         ) {
-            composable ("home") { Home(navController) }
+            composable ("home") { Home(vmTournament = vmTournament) }
 
             composable("playerImport") { PlayerImport(
                 context = context,
@@ -61,6 +62,12 @@ fun App( context: Context) {
                 navController = navController,
                 snackbarHostState = snackbarHostState
             ) }
+
+            composable (route = "enterResults") {
+                EnterResults(
+                    vmTournament = vmTournament
+                )
+            }
         }
     }
 }

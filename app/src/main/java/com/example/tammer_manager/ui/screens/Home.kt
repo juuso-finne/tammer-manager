@@ -9,18 +9,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.tournament_admin.classes.Tournament
+import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 @Composable
-fun Home(navController: NavHostController, modifier: Modifier = Modifier) {
+fun Home(
+    vmTournament: TournamentViewModel,
+    modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = {}
+            onClick = {
+                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5)
+                listOf(
+                    ImportedPlayer("Hannu Hanhi", 2000),
+                    ImportedPlayer("Aku Ankka", 1900),
+                    ImportedPlayer("Sari Shakinpelaaja", 1800),
+                    ImportedPlayer("Sakke Shakinpelaaja", 1700),
+                    ImportedPlayer("Paavo Puuntuuppaaja", 1600),
+                    ImportedPlayer("Kaino Vieno", 1500),
+                    ImportedPlayer("Antti Antinpoika", 1400),
+                ).forEach { vmTournament.addPlayer(it) }
+            }
         ) {
-            Text("Import players")
+            Text("Create placeholder tournament [DEBUG/DEV]")
         }
     }
 }

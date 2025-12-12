@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.tournament_admin
+package com.example.tammer_manager.data.tournament_admin.classes
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -7,7 +7,9 @@ import kotlinx.parcelize.Parcelize
 data class RegisteredPlayer (
     val fullName: String,
     val rating: Int,
+    val id: Int,
     var isActive: Boolean = true,
     var score: Float = 0f,
-    var tpn: Int? = null
+    var tpn: Int? = null,
+    val matchHistory: MatchHistory = listOf()
 ): Parcelable
