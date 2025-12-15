@@ -8,8 +8,71 @@ import org.junit.Test
 class RegisteredPlayerTest {
 
     lateinit var player: RegisteredPlayer
+    lateinit var matchHistoryA: MatchHistory
+    lateinit var matchHistoryB: MatchHistory
+
     @Before
     fun setUp() {
+        matchHistoryA = listOf(
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 1,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 2,
+                result = 1f,
+                color = PlayerColor.BLACK
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 3,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+            MatchHistoryItem(
+                opponentId = null,
+                round = 3,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 4,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+        )
+
+        matchHistoryB = listOf(
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 1,
+                result = 1f,
+                color = PlayerColor.BLACK
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 2,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 3,
+                result = 1f,
+                color = PlayerColor.WHITE
+            ),
+            MatchHistoryItem(
+                opponentId = 1,
+                round = 4,
+                result = 1f,
+                color = PlayerColor.BLACK
+            ),
+        )
+
         player = RegisteredPlayer(
             fullName = "X",
             rating = 1500,
@@ -17,35 +80,21 @@ class RegisteredPlayerTest {
             tpn = 0,
             isActive = true,
             score = 0f,
-            matchHistory = listOf(
-                MatchHistoryItem(
-                    opponentId = 1,
-                    round = 1,
-                    result = 1f,
-                    color = PlayerColor.WHITE
-                ),                MatchHistoryItem(
-                    opponentId = 1,
-                    round = 1,
-                    result = 1f,
-                    color = PlayerColor.BLACK
-                ),                MatchHistoryItem(
-                    opponentId = 1,
-                    round = 1,
-                    result = 1f,
-                    color = PlayerColor.WHITE
-                ),                MatchHistoryItem(
-                    opponentId = 1,
-                    round = 1,
-                    result = 1f,
-                    color = PlayerColor.WHITE
-                ),
-            ),
+            matchHistory = matchHistoryA
         )
     }
 
     @Test
-    fun `Method getColorBalance returns correct value`(){
+    fun `Color Balance returns correct value`(){
         assertThat(player.getColorBalance()).isEqualTo(2)
+        assertThat(player.copy(matchHistory = matchHistoryB).getColorBalance()).isEqualTo(0)
+    }
+
+    @Test
+    fun `Same color in last n matches returns correct value`(){
+        assertThat(player.sameColorInLastNRounds(2)).isTrue()
+        assertThat(player.sameColorInLastNRounds(3)).isFalse()
+        assertThat(player.copy(matchHistory = matchHistoryB).sameColorInLastNRounds(2)).isFalse()
     }
 
 }

@@ -21,4 +21,8 @@ data class RegisteredPlayer (
             } ?: 0
         }
     }
+
+    fun sameColorInLastNRounds(n: Int): Boolean{
+        return true
+    }
 }
