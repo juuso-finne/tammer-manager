@@ -85,7 +85,7 @@ class RegisteredPlayerTest {
     }
 
     @Test
-    fun `Color Balance returns correct value`(){
+    fun `Color balance returns correct value`(){
         assertThat(player.getColorBalance()).isEqualTo(2)
         assertThat(player.copy(matchHistory = matchHistoryB).getColorBalance()).isEqualTo(0)
     }

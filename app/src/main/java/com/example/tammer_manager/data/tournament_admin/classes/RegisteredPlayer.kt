@@ -23,6 +23,18 @@ data class RegisteredPlayer (
     }
 
     fun sameColorInLastNRounds(n: Int): Boolean{
+        val sortedHistory = matchHistory.sortedByDescending { it.round }.filter { it.opponentId != null }
+        if (sortedHistory.size < n || n <= 0){
+            return false
+        }
+
+        val initalColor = sortedHistory[0].color
+
+        for (i in 1..<n){
+            if (sortedHistory[i].color != initalColor){
+                return false
+            }
+        }
         return true
     }
 }
