@@ -22,10 +22,13 @@ fun passesAbsoluteCriteria(
             return false
         }
 
-        if (
-            isFinalRound &&
+        var isTopScorersMeeting =
             playerA.isTopScorer(roundsCompleted = roundsCompleted) &&
             playerB.isTopScorer(roundsCompleted = roundsCompleted) &&
+            isFinalRound
+
+        if (
+            !isTopScorersMeeting &&
             colorPreferenceA?.strength == ColorPreferenceStrength.ABSOLUTE &&
             colorPreferenceB?.strength == ColorPreferenceStrength.ABSOLUTE &&
             colorPreferenceA.preferredColor == colorPreferenceB.preferredColor
