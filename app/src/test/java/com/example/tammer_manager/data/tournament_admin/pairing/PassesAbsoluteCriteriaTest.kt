@@ -39,7 +39,7 @@ class PassesAbsoluteCriteriaTest {
 
         assertThat(passesAbsoluteCriteria(
             pairing =  listOf(Pair(playerA, playerB)),
-            completedRounds =  1,
+            roundsCompleted =  1,
             colorPreferenceMap = mapOf()
         )).isFalse()
     }
@@ -97,7 +97,7 @@ class PassesAbsoluteCriteriaTest {
 
         assertThat(passesAbsoluteCriteria(
             pairing =  listOf(Pair(playerA, playerB)),
-            completedRounds =  3,
+            roundsCompleted =  3,
             colorPreferenceMap = colorPreferences,
             isFinalRound = true
         )).isFalse()
@@ -133,7 +133,7 @@ class PassesAbsoluteCriteriaTest {
 
         assertThat(passesAbsoluteCriteria(
             pairing =  listOf(Pair(playerA, playerB)),
-            completedRounds =  1,
+            roundsCompleted =  1,
             colorPreferenceMap = mapOf()
         )).isTrue()
     }
