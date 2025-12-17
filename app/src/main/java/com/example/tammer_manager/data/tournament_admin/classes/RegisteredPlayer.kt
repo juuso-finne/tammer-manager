@@ -1,7 +1,10 @@
 package com.example.tammer_manager.data.tournament_admin.classes
 
 import android.os.Parcelable
+import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
+import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlinx.parcelize.Parcelize
+import kotlin.math.abs
 
 @Parcelize
 data class RegisteredPlayer (
@@ -39,6 +42,36 @@ data class RegisteredPlayer (
     }
 
     fun getColorPreference(): ColorPreference{
-        return ColorPreference()
+        val sortedHistory = matchHistory.sortedByDescending { it.round }.filter { it.opponentId != null }
+
+        if (sortedHistory.isEmpty()){
+            return ColorPreference()
+        }
+
+        val colorBalance = getColorBalance()
+
+        var strength = when(abs(colorBalance)){
+            0 -> ColorPreferenceStrength.MILD
+            1 -> ColorPreferenceStrength.STRONG
+            else -> ColorPreferenceStrength.ABSOLUTE
+        }
+
+        var preferredColor = sortedHistory.first().color.reverse()
+
+        if (colorBalance < 0){
+            preferredColor = PlayerColor.WHITE
+        } else if (colorBalance > 0){
+            preferredColor = PlayerColor.BLACK
+        }
+
+        if (sameColorInLastNRounds(2)){
+            strength = ColorPreferenceStrength.ABSOLUTE
+        }
+
+        return ColorPreference(
+            strength = strength,
+            preferredColor = preferredColor,
+            colorBalance = colorBalance
+        )
     }
 }

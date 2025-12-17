@@ -140,7 +140,7 @@ class RegisteredPlayerTest {
 
         assertThat(playerC.getColorPreference()).isEqualTo(ColorPreference(
             preferredColor = PlayerColor.WHITE,
-            colorBalance = 1,
+            colorBalance = -1,
             strength = ColorPreferenceStrength.STRONG
         ))
 
