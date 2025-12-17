@@ -37,4 +37,8 @@ data class RegisteredPlayer (
         }
         return true
     }
+
+    fun getColorPreference(): ColorPreference{
+        return ColorPreference()
+    }
 }
