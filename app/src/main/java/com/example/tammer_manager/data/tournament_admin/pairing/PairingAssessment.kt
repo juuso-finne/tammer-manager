@@ -1,17 +1,18 @@
 package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
+import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 
 fun passesAbsoluteCriteria(
-    pairing: List<Pair<RegisteredPlayer, RegisteredPlayer>>,
+    candidate: List<Pair<RegisteredPlayer, RegisteredPlayer>>,
     roundsCompleted:Int,
     colorPreferenceMap: Map<Int, ColorPreference>,
     isFinalRound: Boolean = false
 ): Boolean{
 
-    pairing.forEach {
+    candidate.forEach {
         val playerA = it.first
         val playerB = it.second
 
@@ -22,7 +23,7 @@ fun passesAbsoluteCriteria(
             return false
         }
 
-        var isTopScorersMeeting =
+        val isTopScorersMeeting =
             playerA.isTopScorer(roundsCompleted = roundsCompleted) &&
             playerB.isTopScorer(roundsCompleted = roundsCompleted) &&
             isFinalRound
@@ -38,4 +39,8 @@ fun passesAbsoluteCriteria(
     }
 
     return true
+}
+
+fun assessPairing(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): PairingAssessmentCriteria{
+    TODO()
 }
