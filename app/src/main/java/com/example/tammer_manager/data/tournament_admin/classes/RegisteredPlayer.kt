@@ -74,4 +74,8 @@ data class RegisteredPlayer (
             colorBalance = colorBalance
         )
     }
+
+    fun isTopScorer(roundsCompleted: Int): Boolean{
+        return score > roundsCompleted / 2f
+    }
 }
