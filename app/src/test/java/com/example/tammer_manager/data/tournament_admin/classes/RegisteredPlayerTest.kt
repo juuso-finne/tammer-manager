@@ -2,129 +2,58 @@ package com.example.tammer_manager.data.tournament_admin.classes
 
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.utils.generatePlayers
+import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 
 class RegisteredPlayerTest {
-
-    lateinit var player: RegisteredPlayer
-    lateinit var matchHistoryA: MatchHistory
-    lateinit var matchHistoryB: MatchHistory
-    lateinit var matchHistoryC: MatchHistory
+    lateinit var playerA: RegisteredPlayer
+    lateinit var playerB: RegisteredPlayer
+    lateinit var playerC: RegisteredPlayer
+    lateinit var playerD: RegisteredPlayer
 
     @Before
     fun setUp() {
-        matchHistoryA = listOf(
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 1,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 2,
-                result = 1f,
-                color = PlayerColor.BLACK
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 3,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = null,
-                round = 3,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 4,
-                result = 1f,
-                color = PlayerColor.WHITE
-            )
-        )
+        val (a, b, c ,d) = generatePlayers(4)
+        playerA = a
+        playerB = b
+        playerC = c
+        playerD = d
 
-        matchHistoryB = listOf(
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 1,
-                result = 1f,
-                color = PlayerColor.BLACK
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 2,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 3,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 4,
-                result = 1f,
-                color = PlayerColor.BLACK
-            )
-        )
+        simulateMatch(playerA, playerD, 1f, 0f, 1)
+        simulateMatch(playerD, playerA, 0f, 1f, 2)
+        simulateMatch(playerA, playerD, 1f, 0f, 3)
+        simulateMatch(playerA, null, 1f, 0f, 4)
+        simulateMatch(playerA, playerD, 1f, 0f, 5)
 
-        matchHistoryC = listOf(
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 1,
-                result = 1f,
-                color = PlayerColor.BLACK
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 2,
-                result = 1f,
-                color = PlayerColor.WHITE
-            ),
-            MatchHistoryItem(
-                opponentId = 1,
-                round = 3,
-                result = 1f,
-                color = PlayerColor.BLACK
-            ),
-        )
+        simulateMatch(playerD, playerB, 0f, 1f, 1)
+        simulateMatch(playerB, playerD, 1f, 0f, 2)
+        simulateMatch(playerB, playerD, 1f, 0f, 3)
+        simulateMatch(playerD, playerB, 0f, 1f, 4)
 
-        player = RegisteredPlayer(
-            fullName = "X",
-            rating = 1500,
-            id = 0,
-            tpn = 0,
-            isActive = true,
-            score = 0f,
-            matchHistory = matchHistoryA
-        )
+        simulateMatch(playerD, playerC, 0f, 1f, 1)
+        simulateMatch(playerC, playerD, 1f, 0f, 2)
+        simulateMatch(playerD, playerC, 0f, 1f, 3)
     }
 
     @Test
     fun `Color balance returns correct value`(){
-        assertThat(player.getColorBalance()).isEqualTo(2)
-        assertThat(player.copy(matchHistory = matchHistoryB).getColorBalance()).isEqualTo(0)
+        assertThat(playerA.getColorBalance()).isEqualTo(2)
+        assertThat(playerB.getColorBalance()).isEqualTo(0)
+        assertThat(playerC.getColorBalance()).isEqualTo(-1)
     }
 
     @Test
     fun `Same color in last n matches returns correct value`(){
-        assertThat(player.sameColorInLastNRounds(2)).isTrue()
-        assertThat(player.sameColorInLastNRounds(3)).isFalse()
-        assertThat(player.copy(matchHistory = matchHistoryB).sameColorInLastNRounds(2)).isFalse()
+        assertThat(playerA.sameColorInLastNRounds(2)).isTrue()
+        assertThat(playerA.sameColorInLastNRounds(3)).isFalse()
+        assertThat(playerB.sameColorInLastNRounds(2)).isFalse()
     }
 
     @Test
     fun `Color preference returns correct value`(){
-        val playerA = player.copy(matchHistory = matchHistoryA)
-        val playerB = player.copy(matchHistory = matchHistoryB)
-        val playerC = player.copy(matchHistory = matchHistoryC)
 
         assertThat(playerA.getColorPreference()).isEqualTo(ColorPreference(
             preferredColor = PlayerColor.BLACK,
@@ -144,7 +73,7 @@ class RegisteredPlayerTest {
             strength = ColorPreferenceStrength.STRONG
         ))
 
-        assertThat(player.copy(matchHistory = listOf()).getColorPreference()).isEqualTo(
+        assertThat(playerA.copy(matchHistory = listOf()).getColorPreference()).isEqualTo(
             ColorPreference())
     }
 
