@@ -44,3 +44,19 @@ fun passesAbsoluteCriteria(
 fun assessPairing(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): PairingAssessmentCriteria{
     TODO()
 }
+
+fun topScorerOrOpponentColorImbalance(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+    return true
+}
+
+fun topScorersOrOpponentsColorstreak(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+    return true
+}
+
+fun colorpreferenceConflict(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+    return true
+}
+
+fun strongColorpreferenceConflict(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+    return true
+}
