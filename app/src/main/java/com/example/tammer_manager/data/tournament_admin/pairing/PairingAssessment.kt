@@ -49,16 +49,18 @@ fun assessPairing(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): PairingA
 fun topScorerOrOpponentColorImbalance(
     candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
     roundsCompleted: Int,
+    maxRounds: Int,
     colorPreferenceMap: Map<Int, ColorPreference>
 ): Boolean{
     return true
 }
 
-/**Minimise the number of topscorers or topscorers' opponents who get a colour difference higher than +2 or lower than -2*/
+/**Minimise the number of topscorers or topscorers' opponents who get the same colour three times in a row.*/
 fun topScorersOrOpponentsColorstreak(
     candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
     roundsCompleted: Int,
-    colorPreferenceMap: Map<Int, ColorPreference>
+    colorPreferenceMap: Map<Int, ColorPreference>,
+    maxRounds: Int,
 ): Boolean{
     return true
 }
