@@ -45,18 +45,36 @@ fun assessPairing(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): PairingA
     TODO()
 }
 
-fun topScorerOrOpponentColorImbalance(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+/**Minimise the number of topscorers or topscorers' opponents who get a colour difference higher than +2 or lower than -2*/
+fun topScorerOrOpponentColorImbalance(
+    candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
+    roundsCompleted: Int,
+    colorPreferenceMap: Map<Int, ColorPreference>
+): Boolean{
     return true
 }
 
-fun topScorersOrOpponentsColorstreak(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+/**Minimise the number of topscorers or topscorers' opponents who get a colour difference higher than +2 or lower than -2*/
+fun topScorersOrOpponentsColorstreak(
+    candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
+    roundsCompleted: Int,
+    colorPreferenceMap: Map<Int, ColorPreference>
+): Boolean{
     return true
 }
 
-fun colorpreferenceConflict(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+/**Minimise the number of players who do not get their colour preference.*/
+fun colorpreferenceConflict(
+    candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
+    colorPreferenceMap: Map<Int, ColorPreference>
+): Boolean{
     return true
 }
 
-fun strongColorpreferenceConflict(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): Boolean{
+/**Minimise the number of players who do not get their strong colour preference.*/
+fun strongColorpreferenceConflict(
+    candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
+    colorPreferenceMap: Map<Int, ColorPreference>
+): Boolean{
     return true
 }
