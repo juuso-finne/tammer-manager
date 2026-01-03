@@ -2,6 +2,8 @@ package com.example.tammer_manager.data.tournament_admin.classes
 
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.data.tournament_admin.pairing.colorpreferenceConflict
+import com.example.tammer_manager.data.tournament_admin.pairing.strongColorpreferenceConflict
 import com.example.tammer_manager.data.tournament_admin.pairing.topScorerOrOpponentColorImbalance
 import com.example.tammer_manager.data.tournament_admin.pairing.topScorersOrOpponentsColorstreak
 import com.example.tammer_manager.utils.generatePlayers
@@ -57,7 +59,7 @@ class PairingAssessmentCriteriaTest {
     }
 
     @Test
-    fun `Topscorers or opponents with color difference absolute value of more than 2 is counted correctly`(){
+    fun `Topscorers or opponents with color difference absolute value of more than 2 are recognized`(){
         val playerE = playerA.copy(score = 2f)
         val playerF = playerB.copy(score = 2f)
 
@@ -103,7 +105,7 @@ class PairingAssessmentCriteriaTest {
     }
 
     @Test
-    fun `topscorers or topscorers' opponents who get the same colour three times in a row is counted correctly`(){
+    fun `topscorers or topscorers' opponents who get the same colour three times in a row are recognized`(){
         val playerE = playerA.copy()
         val playerF = playerB.copy()
         val playerG = playerC.copy()
@@ -141,5 +143,88 @@ class PairingAssessmentCriteriaTest {
         defaultColorPreferenceMap[playerF.id] = playerF.getColorPreference()
 
         assertThat(testDriver()).isFalse()
+    }
+
+    @Test
+    fun `Color preference conflicts are recognized`(){
+
+        fun testDriver(
+            candidate: Pair<RegisteredPlayer, RegisteredPlayer> = Pair(playerA, playerB),
+            colorPreferenceMap: Map<Int, ColorPreference>,
+        ): Boolean{
+            return colorpreferenceConflict(
+                candidate = candidate,
+                colorPreferenceMap = colorPreferenceMap,
+            )
+        }
+
+        val colorPreferenceMap = mutableMapOf<Int, ColorPreference>()
+
+        colorPreferenceMap[playerA.id] = ColorPreference(
+            strength = ColorPreferenceStrength.MILD,
+            colorBalance = -1,
+            preferredColor = PlayerColor.WHITE
+        )
+
+        colorPreferenceMap[playerB.id] = ColorPreference(
+            strength = ColorPreferenceStrength.MILD,
+            colorBalance = 1,
+            preferredColor = PlayerColor.BLACK
+        )
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isFalse()
+
+        colorPreferenceMap[playerB.id] = ColorPreference(
+            strength = ColorPreferenceStrength.MILD,
+            colorBalance = -1,
+            preferredColor = PlayerColor.WHITE
+        )
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isTrue()
+
+        colorPreferenceMap[playerB.id] = colorPreferenceMap[playerB.id]!!.copy(strength = ColorPreferenceStrength.NONE)
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isFalse()
+    }
+
+    @Test
+    fun `Strong color preference conflicts are recognized`(){
+        fun testDriver(
+            candidate: Pair<RegisteredPlayer, RegisteredPlayer> = Pair(playerA, playerB),
+            colorPreferenceMap: Map<Int, ColorPreference>,
+        ): Boolean{
+            return strongColorpreferenceConflict(
+                candidate = candidate,
+                colorPreferenceMap = colorPreferenceMap,
+            )
+        }
+
+        val colorPreferenceMap = mutableMapOf<Int, ColorPreference>()
+
+        colorPreferenceMap[playerA.id] = ColorPreference(
+            strength = ColorPreferenceStrength.MILD,
+            colorBalance = -1,
+            preferredColor = PlayerColor.WHITE
+        )
+
+        colorPreferenceMap[playerB.id] = ColorPreference(
+            strength = ColorPreferenceStrength.MILD,
+            colorBalance = -1,
+            preferredColor = PlayerColor.WHITE
+        )
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isFalse()
+
+        colorPreferenceMap[playerB.id] = ColorPreference(
+            strength = ColorPreferenceStrength.STRONG,
+            colorBalance = -1,
+            preferredColor = PlayerColor.WHITE
+        )
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isTrue()
+
+        colorPreferenceMap[playerB.id] = colorPreferenceMap[playerB.id]!!.copy(strength = ColorPreferenceStrength.NONE)
+
+        assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isFalse()
     }
 }
