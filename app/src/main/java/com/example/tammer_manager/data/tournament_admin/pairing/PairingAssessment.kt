@@ -4,6 +4,8 @@ import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
+import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import kotlin.math.abs
 
 fun passesAbsoluteCriteria(
     candidate: List<Pair<RegisteredPlayer, RegisteredPlayer>>,
@@ -52,7 +54,40 @@ fun topScorerOrOpponentColorImbalance(
     maxRounds: Int,
     colorPreferenceMap: Map<Int, ColorPreference>
 ): Boolean{
-    return true
+
+    if (roundsCompleted + 1 < maxRounds){
+        return false
+    }
+
+    val playerA = candidate.first
+    val playerB = candidate.second
+
+    if(!playerA.isTopScorer(roundsCompleted) && !playerB.isTopScorer(roundsCompleted)){
+        return false
+    }
+
+    val preferenceA = colorPreferenceMap[playerA.id] ?: ColorPreference()
+    val preferenceB = colorPreferenceMap[playerB.id] ?: ColorPreference()
+
+    if (preferenceA.strength == ColorPreferenceStrength.NONE || preferenceB.strength == ColorPreferenceStrength.NONE){
+        return false
+    }
+
+    var assignedColorA: PlayerColor? = null
+    var assignedColorB: PlayerColor? = null
+
+    if (preferenceA > preferenceB){
+        assignedColorA = preferenceA.preferredColor
+        assignedColorB = preferenceA.preferredColor?.reverse()
+    } else{
+        assignedColorB = preferenceB.preferredColor
+        assignedColorA = preferenceB.preferredColor?.reverse()
+    }
+
+    val newBalanceA = abs(preferenceA.colorBalance + (assignedColorA?.balance ?: 0))
+    val newBalanceB = abs(preferenceB.colorBalance + (assignedColorB?.balance ?: 0))
+
+    return (newBalanceA > 2 || newBalanceB > 2)
 }
 
 /**Minimise the number of topscorers or topscorers' opponents who get the same colour three times in a row.*/
