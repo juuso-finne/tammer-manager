@@ -5,7 +5,7 @@ import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.pairing.colorpreferenceConflict
 import com.example.tammer_manager.data.tournament_admin.pairing.strongColorpreferenceConflict
 import com.example.tammer_manager.data.tournament_admin.pairing.topScorerOrOpponentColorImbalance
-import com.example.tammer_manager.data.tournament_admin.pairing.topScorersOrOpponentsColorstreak
+import com.example.tammer_manager.data.tournament_admin.pairing.topScorersOrOpponentsColorStreak
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
@@ -127,7 +127,7 @@ class PairingAssessmentCriteriaTest {
             colorPreferenceMap: Map<Int, ColorPreference> = defaultColorPreferenceMap,
             maxRounds: Int? = null,
         ): Boolean{
-            return topScorersOrOpponentsColorstreak(
+            return topScorersOrOpponentsColorStreak(
                 candidate = candidate,
                 roundsCompleted = roundsCompleted,
                 colorPreferenceMap = colorPreferenceMap,

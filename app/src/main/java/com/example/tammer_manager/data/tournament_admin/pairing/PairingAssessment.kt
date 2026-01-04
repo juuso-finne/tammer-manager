@@ -73,8 +73,8 @@ fun topScorerOrOpponentColorImbalance(
         return false
     }
 
-    var assignedColorA: PlayerColor? = null
-    var assignedColorB: PlayerColor? = null
+    var assignedColorA: PlayerColor?
+    var assignedColorB: PlayerColor?
 
     if (preferenceA > preferenceB){
         assignedColorA = preferenceA.preferredColor
@@ -91,13 +91,32 @@ fun topScorerOrOpponentColorImbalance(
 }
 
 /**Minimise the number of topscorers or topscorers' opponents who get the same colour three times in a row.*/
-fun topScorersOrOpponentsColorstreak(
+fun topScorersOrOpponentsColorStreak(
     candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
     roundsCompleted: Int,
     colorPreferenceMap: Map<Int, ColorPreference>,
     maxRounds: Int,
 ): Boolean{
-    return true
+
+    if (roundsCompleted + 1 < maxRounds){
+        return false
+    }
+
+    val playerA = candidate.first
+    val playerB = candidate.second
+
+    if(!playerA.isTopScorer(roundsCompleted) && !playerB.isTopScorer(roundsCompleted)){
+        return false
+    }
+
+    val preferenceA = colorPreferenceMap[playerA.id] ?: ColorPreference()
+    val preferenceB = colorPreferenceMap[playerB.id] ?: ColorPreference()
+
+    if(preferenceA.preferredColor != preferenceB.preferredColor){
+        return false
+    }
+
+    return playerA.sameColorInLastNRounds(2) && playerB.sameColorInLastNRounds(2)
 }
 
 /**Minimise the number of players who do not get their colour preference.*/
