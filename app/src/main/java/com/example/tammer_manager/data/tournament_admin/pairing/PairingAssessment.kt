@@ -142,5 +142,16 @@ fun strongColorpreferenceConflict(
     candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
     colorPreferenceMap: Map<Int, ColorPreference>
 ): Boolean{
-    return true
+    val playerA = candidate.first
+    val playerB = candidate.second
+
+    val preferenceA = colorPreferenceMap[playerA.id] ?: ColorPreference()
+    val preferenceB = colorPreferenceMap[playerB.id] ?: ColorPreference()
+
+
+    if (preferenceA < ColorPreference(strength = ColorPreferenceStrength.STRONG) || preferenceB < ColorPreference(strength = ColorPreferenceStrength.STRONG)){
+        return false
+    }
+
+    return preferenceA.preferredColor == preferenceB.preferredColor
 }
