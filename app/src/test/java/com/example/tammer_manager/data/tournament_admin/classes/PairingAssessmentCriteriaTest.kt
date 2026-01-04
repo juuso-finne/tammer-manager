@@ -202,7 +202,7 @@ class PairingAssessmentCriteriaTest {
         val colorPreferenceMap = mutableMapOf<Int, ColorPreference>()
 
         colorPreferenceMap[playerA.id] = ColorPreference(
-            strength = ColorPreferenceStrength.MILD,
+            strength = ColorPreferenceStrength.STRONG,
             colorBalance = -1,
             preferredColor = PlayerColor.WHITE
         )
