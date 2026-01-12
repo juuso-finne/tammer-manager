@@ -1,5 +1,7 @@
 package com.example.tammer_manager.data.combinatorics
 
+import kotlin.math.min
+
 /**
  * All possible index combinations of length [k] of a list whose length is [listLength], in lexicographic order
  */
@@ -132,12 +134,53 @@ class ReverseIndexCombinationSequence (private val listLength: Int, private val 
 class IndexSwaps (private val sizeS1: Int, private val sizeS2: Int): Iterable<Pair<IntArray, IntArray>>{
     override fun iterator(): Iterator<Pair<IntArray, IntArray>> {
         return object: Iterator<Pair<IntArray, IntArray>>{
-            override fun next(): Pair<IntArray, IntArray> {
-                TODO("Not yet implemented")
-            }
+            var i = 0
+            val max = min(sizeS1, sizeS2)
+
+            var s1Iterator: Iterator<IntArray> = ReverseIndexCombinationSequence(sizeS1, i).iterator()
+            var s2Iterator: Iterator<IntArray> = IndexCombinationSequence(sizeS2, i).iterator()
+            var currentS1: IntArray = s1Iterator.next()
+
+            var nextPair: Pair<IntArray, IntArray>? = null
 
             override fun hasNext(): Boolean {
-                TODO("Not yet implemented")
+                if (nextPair != null) return true
+
+                while (true) {
+
+                    // 1. Can we emit another s2 for current s1?
+                    if (s2Iterator.hasNext()) {
+                        nextPair = Pair(currentS1, s2Iterator.next())
+                        return true
+                    }
+
+                    // 2. Can we advance s1?
+                    if (s1Iterator.hasNext()) {
+                        currentS1 = s1Iterator.next()
+                        s2Iterator = IndexCombinationSequence(sizeS2, i).iterator()
+                        continue
+                    }
+
+                    // 3. Can we advance i?
+                    i++
+                    if (i > max) return false
+
+
+                    s1Iterator = ReverseIndexCombinationSequence(sizeS1, i).iterator()
+                    if (!s1Iterator.hasNext()) {
+                        continue
+                    }
+
+                    currentS1 = s1Iterator.next()
+                    s2Iterator = IndexCombinationSequence(sizeS2, i).iterator()
+                }
+            }
+
+            override fun next(): Pair<IntArray, IntArray> {
+                if (!hasNext()) throw NoSuchElementException()
+                val result = nextPair!!
+                nextPair = null
+                return result
             }
         }
     }
