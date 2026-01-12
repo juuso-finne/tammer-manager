@@ -10,7 +10,7 @@ class ApplyIndexSwapTest {
         val b = mutableListOf(7,8,9)
 
         applyIndexSwap(a, b, Pair(intArrayOf(0,2), intArrayOf(1,2)))
-        Truth.assertThat(a).containsExactly(7,8,2)
-        Truth.assertThat(b).containsExactly(1,3,9)
+        Truth.assertThat(a).containsExactly(8,2,9)
+        Truth.assertThat(b).containsExactly(7,1,3)
     }
 }

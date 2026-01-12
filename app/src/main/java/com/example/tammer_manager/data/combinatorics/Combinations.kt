@@ -209,5 +209,12 @@ class IndexSwaps (private val sizeS1: Int, private val sizeS2: Int): Iterable<Pa
  * @param indexListPair a pair of aligned index arrays describing the swap
  */
 fun <T> applyIndexSwap (s1: MutableList<T>, s2: MutableList<T>, indexListPair: Pair<IntArray, IntArray>){
-    TODO("Not yet implemented")
+    val s1Swaps = indexListPair.first
+    val s2Swaps = indexListPair.second
+
+    for (i in 0 until s1Swaps.size) {
+        val temp = s1[s1Swaps[i]]
+        s1[s1Swaps[i]] = s2[s2Swaps[i]]
+        s2[s2Swaps[i]] = temp
+    }
 }

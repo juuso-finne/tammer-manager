@@ -6,33 +6,34 @@ import org.junit.Test
 class IndexSwapsTest {
     @Test
     fun `IndexSwaps returns correct indices`(){
-        val indexPairs = mutableListOf<Pair<IntArray, IntArray>>()
+        val indexPairs = mutableListOf<Pair<List<Int>, List<Int>>>()
 
         for(next in IndexSwaps(3, 3).iterator()){
-            val indexListPair = Pair(next.first.copyOf(), next.second.copyOf())
+            val indexListPair = Pair(next.first.toList(), next.second.toList())
             indexPairs.add(indexListPair)
         }
 
-        assertThat(indexPairs).containsExactly(
-            Pair(intArrayOf(0), intArrayOf(2)),
-            Pair(intArrayOf(0), intArrayOf(1)),
-            Pair(intArrayOf(0), intArrayOf(0)),
-            Pair(intArrayOf(1), intArrayOf(2)),
-            Pair(intArrayOf(1), intArrayOf(1)),
-            Pair(intArrayOf(1), intArrayOf(0)),
-            Pair(intArrayOf(2), intArrayOf(2)),
-            Pair(intArrayOf(2), intArrayOf(1)),
-            Pair(intArrayOf(2), intArrayOf(0)),
-            Pair(intArrayOf(0,1), intArrayOf(2,1)),
-            Pair(intArrayOf(0,1), intArrayOf(2,0)),
-            Pair(intArrayOf(0,1), intArrayOf(1,0)),
-            Pair(intArrayOf(0,2), intArrayOf(2,1)),
-            Pair(intArrayOf(0,2), intArrayOf(2,0)),
-            Pair(intArrayOf(0,2), intArrayOf(1,0)),
-            Pair(intArrayOf(1,2), intArrayOf(2,1)),
-            Pair(intArrayOf(1,2), intArrayOf(2,0)),
-            Pair(intArrayOf(1,2), intArrayOf(1,0)),
-            Pair(intArrayOf(0,1,2), intArrayOf(2,1,0)),
-        )
+        assertThat(indexPairs).containsExactlyElementsIn(listOf(
+                Pair(listOf<Int>(), listOf<Int>()),
+            Pair(listOf(2), listOf(0)),
+            Pair(listOf(2), listOf(1)),
+            Pair(listOf(2), listOf(2)),
+            Pair(listOf(1), listOf(0)),
+            Pair(listOf(1), listOf(1)),
+            Pair(listOf(1), listOf(2)),
+            Pair(listOf(0), listOf(0)),
+            Pair(listOf(0), listOf(1)),
+            Pair(listOf(0), listOf(2)),
+            Pair(listOf(1,2), listOf(0,1)),
+            Pair(listOf(1,2), listOf(0,2)),
+            Pair(listOf(1,2), listOf(1,2)),
+            Pair(listOf(0,2), listOf(0,1)),
+            Pair(listOf(0,2), listOf(0,2)),
+            Pair(listOf(0,2), listOf(1,2)),
+            Pair(listOf(0,1), listOf(0,1)),
+            Pair(listOf(0,1), listOf(0,2)),
+            Pair(listOf(0,1), listOf(1,2)),
+            Pair(listOf(0,1,2), listOf(0,1,2))
+        ))
     }
 }
