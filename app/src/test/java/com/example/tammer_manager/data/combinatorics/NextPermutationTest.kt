@@ -27,8 +27,13 @@ class NextPermutationTest {
         assertThat(changedIndices).containsExactly(5,6)
 
         val b = mutableListOf(5,4,3,2,1)
-        nextPermutation(b, mutableListOf(), 3)
+        nextPermutation(b, changedIndices, 3)
         assertThat(changedIndices).containsExactly(2)
+    }
 
+    @Test
+    fun `Returns false after last possible permutation`(){
+        val a = mutableListOf("A", "B", "C", "D", "E", "F", "G")
+        assertThat(nextPermutation(a, mutableListOf())).isFalse()
     }
 }
