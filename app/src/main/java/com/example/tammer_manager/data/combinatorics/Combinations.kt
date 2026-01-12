@@ -6,14 +6,43 @@ package com.example.tammer_manager.data.combinatorics
 class IndexCombinationSequence (private val listLength: Int, private val k: Int): Iterable<IntArray>{
     override fun iterator(): Iterator<IntArray> {
         return object: Iterator<IntArray>{
+            val lengthDifference = listLength - k
+            var current: IntArray? = null
+            var hasNext =
+                k >= 0 &&
+                        listLength > 0 &&
+                        k <= listLength
+
             override fun next(): IntArray {
-                TODO("Not yet implemented")
+                if (!hasNext) throw NoSuchElementException()
+
+                if(current == null){
+                    current = IntArray(k){it}
+                    hasNext = k != listLength && k != 0
+                    return current!!
+                }
+
+                for (i in current!!.lastIndex downTo 0){
+                    if (current!![i] - i >= lengthDifference){
+                        continue
+                    }
+
+                    current!![i]++
+
+                    for(offset in 0 until k - i){
+                        current!![i + offset] = current!![i] + offset
+                    }
+                    hasNext = i > 0 || current!!.first() < lengthDifference
+                    return current!!
+                }
+
+                hasNext = false
+                return current!!
             }
 
             override fun hasNext(): Boolean {
-                TODO("Not yet implemented")
+                return hasNext
             }
-
         }
     }
 }
