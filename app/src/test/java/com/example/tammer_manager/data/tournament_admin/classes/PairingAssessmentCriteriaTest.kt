@@ -227,4 +227,61 @@ class PairingAssessmentCriteriaTest {
 
         assertThat(testDriver(colorPreferenceMap = colorPreferenceMap)).isFalse()
     }
+
+    @Test
+    fun `Plus operator returns expected result`(){
+        val a = PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames = 1,
+            topScorerOrOpponentColorImbalanceCount = 2,
+            topScorersOrOpponentsColorstreakCount = 3,
+            colorpreferenceConflicts = 4,
+            strongColorpreferenceConflicts = 5
+        )
+
+        val b = PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames = 2,
+            topScorerOrOpponentColorImbalanceCount = 2,
+            topScorersOrOpponentsColorstreakCount = 2,
+            colorpreferenceConflicts = 2,
+            strongColorpreferenceConflicts = 2
+        )
+
+        assertThat(a + b).isEqualTo(
+            PairingAssessmentCriteria(
+                pabAssigneeUnplayedGames = 3,
+                topScorerOrOpponentColorImbalanceCount = 4,
+                topScorersOrOpponentsColorstreakCount = 5,
+                colorpreferenceConflicts = 6,
+                strongColorpreferenceConflicts = 7
+            )
+        )
+    }
+    @Test
+    fun `Minus operator returns expected result`(){
+        val a = PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames = 9,
+            topScorerOrOpponentColorImbalanceCount = 8,
+            topScorersOrOpponentsColorstreakCount = 7,
+            colorpreferenceConflicts = 6,
+            strongColorpreferenceConflicts = 5
+        )
+
+        val b = PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames = 2,
+            topScorerOrOpponentColorImbalanceCount = 2,
+            topScorersOrOpponentsColorstreakCount = 2,
+            colorpreferenceConflicts = 2,
+            strongColorpreferenceConflicts = 2
+        )
+
+        assertThat(a - b).isEqualTo(
+            PairingAssessmentCriteria(
+                pabAssigneeUnplayedGames = 7,
+                topScorerOrOpponentColorImbalanceCount = 6,
+                topScorersOrOpponentsColorstreakCount = 5,
+                colorpreferenceConflicts = 4,
+                strongColorpreferenceConflicts = 3
+            )
+        )
+    }
 }
