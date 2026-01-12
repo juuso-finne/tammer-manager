@@ -43,8 +43,55 @@ fun passesAbsoluteCriteria(
     return true
 }
 
-fun assessPairing(candidate: Pair<RegisteredPlayer, RegisteredPlayer>): PairingAssessmentCriteria{
-    TODO()
+fun assessPairing(
+    candidate: Pair<RegisteredPlayer, RegisteredPlayer>,
+    roundsCompleted: Int,
+    maxRounds: Int,
+    colorPreferenceMap: Map<Int, ColorPreference>
+): PairingAssessmentCriteria{
+    val output = PairingAssessmentCriteria()
+
+    if (
+        topScorerOrOpponentColorImbalance(
+            candidate,
+            roundsCompleted,
+            maxRounds,
+            colorPreferenceMap
+        )
+    ){
+        output.topScorerOrOpponentColorImbalanceCount++
+    }
+
+    if (
+        topScorersOrOpponentsColorStreak(
+            candidate,
+            roundsCompleted,
+            colorPreferenceMap,
+            maxRounds
+        )
+    ) {
+        output.topScorersOrOpponentsColorstreakCount++
+    }
+
+    if (
+        colorpreferenceConflict(
+            candidate,
+            colorPreferenceMap
+        )
+    ) {
+        output.colorpreferenceConflicts++
+    }
+
+    if (
+        strongColorpreferenceConflict(
+            candidate,
+            colorPreferenceMap
+        )
+    ) {
+        output.strongColorpreferenceConflicts++
+    }
+
+    return output
 }
 
 /**Minimise the number of topscorers or topscorers' opponents who get a colour difference higher than +2 or lower than -2*/
