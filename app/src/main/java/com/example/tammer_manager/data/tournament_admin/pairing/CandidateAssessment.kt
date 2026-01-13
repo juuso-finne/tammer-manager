@@ -12,19 +12,63 @@ fun assessCandidate(
     score: CandidateAssessmentScore,
     roundsCompleted: Int,
     colorPreferenceMap: Map<Int, ColorPreference>,
-    isFinalRound: Boolean = false
-):Boolean{
+    maxRounds: Int
+){
     if (score.currentIndividualAssessments.isEmpty()){
         for (i in 0 until min(s1.size, s2.size)){
             val pair = Pair(s1[i], s2[i])
             if (!passesAbsoluteCriteria(
                 candidate = pair,
                 roundsCompleted = roundsCompleted,
-                colorPreferenceMap = colorPreferenceMap
+                colorPreferenceMap = colorPreferenceMap,
+                isFinalRound = maxRounds - roundsCompleted <= 1
             )){
-                return false
+                score.isValidCandidate = false
+                return
             }
+
+            val assessment = assessPairing(
+                candidate = pair,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                colorPreferenceMap = colorPreferenceMap
+            )
+
+            score.currentIndividualAssessments[i] = assessment
+            score.currentTotal += assessment
         }
+        score.isValidCandidate = true
+        return
     }
-    return true
+
+    for (i in changedIndices){
+        val pair = Pair(s1[i], s2[i])
+        if (!passesAbsoluteCriteria(
+                candidate = pair,
+                roundsCompleted = roundsCompleted,
+                colorPreferenceMap = colorPreferenceMap,
+                isFinalRound = maxRounds - roundsCompleted <= 1
+            )){
+            score.currentTotal.reset()
+            score.currentIndividualAssessments.clear()
+            score.isValidCandidate = false
+            return
+        }
+
+        val newAssessment = assessPairing(
+            candidate = pair,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            colorPreferenceMap = colorPreferenceMap
+        )
+
+        val oldAssessment = score.currentIndividualAssessments[i]
+        score.currentTotal -= oldAssessment
+        score.currentTotal += newAssessment
+
+        score.currentIndividualAssessments[i] = newAssessment
+    }
+
+    score.isValidCandidate = true
+    return
 }
