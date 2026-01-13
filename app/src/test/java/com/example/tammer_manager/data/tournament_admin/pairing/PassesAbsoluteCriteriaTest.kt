@@ -1,8 +1,6 @@
 package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
-import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
-import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.utils.generatePlayers
@@ -18,7 +16,7 @@ class PassesAbsoluteCriteriaTest {
         simulateMatch(playerA, playerB, 0f, 1f, 1)
 
         assertThat(passesAbsoluteCriteria(
-            candidate =  listOf(Pair(playerA, playerB)),
+            candidate = Pair(playerA, playerB),
             roundsCompleted =  1,
             colorPreferenceMap = mapOf()
         )).isFalse()
@@ -38,7 +36,7 @@ class PassesAbsoluteCriteriaTest {
         )
 
         assertThat(passesAbsoluteCriteria(
-            candidate =  listOf(Pair(playerA, playerB)),
+            candidate = Pair(playerA, playerB),
             roundsCompleted =  3,
             colorPreferenceMap = colorPreferences,
             isFinalRound = true
@@ -75,7 +73,7 @@ class PassesAbsoluteCriteriaTest {
         )
 
         assertThat(passesAbsoluteCriteria(
-            candidate =  listOf(Pair(playerA, playerB)),
+            candidate =  Pair(playerA, playerB),
             roundsCompleted =  3,
             colorPreferenceMap = colorPreferences,
             isFinalRound = true
@@ -89,7 +87,7 @@ class PassesAbsoluteCriteriaTest {
         simulateMatch(playerB, playerC, 1f, 0f, 1)
 
         assertThat(passesAbsoluteCriteria(
-            candidate =  listOf(Pair(playerA, playerB)),
+            candidate = Pair(playerA, playerB),
             roundsCompleted =  1,
             colorPreferenceMap = mapOf()
         )).isTrue()
