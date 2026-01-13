@@ -245,8 +245,9 @@ class PairingAssessmentCriteriaTest {
             colorpreferenceConflicts = 2,
             strongColorpreferenceConflicts = 2
         )
+        a += b
 
-        assertThat(a + b).isEqualTo(
+        assertThat(a).isEqualTo(
             PairingAssessmentCriteria(
                 pabAssigneeUnplayedGames = 3,
                 topScorerOrOpponentColorImbalanceCount = 4,
@@ -274,7 +275,8 @@ class PairingAssessmentCriteriaTest {
             strongColorpreferenceConflicts = 2
         )
 
-        assertThat(a - b).isEqualTo(
+        a -= b
+        assertThat(a).isEqualTo(
             PairingAssessmentCriteria(
                 pabAssigneeUnplayedGames = 7,
                 topScorerOrOpponentColorImbalanceCount = 6,

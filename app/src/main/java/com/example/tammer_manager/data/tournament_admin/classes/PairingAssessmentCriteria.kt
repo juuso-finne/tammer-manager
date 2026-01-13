@@ -18,24 +18,22 @@ data class PairingAssessmentCriteria(
     var strongColorpreferenceConflicts: Int = 0
 ): Comparable<PairingAssessmentCriteria>{
 
-    operator fun plus(other: PairingAssessmentCriteria): PairingAssessmentCriteria{
-        return PairingAssessmentCriteria(
-            pabAssigneeUnplayedGames = this.pabAssigneeUnplayedGames + other.pabAssigneeUnplayedGames,
-            topScorerOrOpponentColorImbalanceCount = this.topScorerOrOpponentColorImbalanceCount + other.topScorerOrOpponentColorImbalanceCount,
-            topScorersOrOpponentsColorstreakCount = this.topScorersOrOpponentsColorstreakCount + other.topScorersOrOpponentsColorstreakCount,
-            colorpreferenceConflicts = this.colorpreferenceConflicts + other.colorpreferenceConflicts,
-            strongColorpreferenceConflicts = this.strongColorpreferenceConflicts + other.strongColorpreferenceConflicts
-        )
+    operator fun plusAssign(other: PairingAssessmentCriteria){
+
+        this.pabAssigneeUnplayedGames += other.pabAssigneeUnplayedGames
+        this.topScorerOrOpponentColorImbalanceCount += other.topScorerOrOpponentColorImbalanceCount
+        this.topScorersOrOpponentsColorstreakCount += other.topScorersOrOpponentsColorstreakCount
+        this.colorpreferenceConflicts += other.colorpreferenceConflicts
+        this.strongColorpreferenceConflicts += other.strongColorpreferenceConflicts
+
     }
 
-    operator fun minus(other: PairingAssessmentCriteria): PairingAssessmentCriteria{
-        return PairingAssessmentCriteria(
-            pabAssigneeUnplayedGames = this.pabAssigneeUnplayedGames - other.pabAssigneeUnplayedGames,
-            topScorerOrOpponentColorImbalanceCount = this.topScorerOrOpponentColorImbalanceCount - other.topScorerOrOpponentColorImbalanceCount,
-            topScorersOrOpponentsColorstreakCount = this.topScorersOrOpponentsColorstreakCount - other.topScorersOrOpponentsColorstreakCount,
-            colorpreferenceConflicts = this.colorpreferenceConflicts - other.colorpreferenceConflicts,
-            strongColorpreferenceConflicts = this.strongColorpreferenceConflicts - other.strongColorpreferenceConflicts
-        )
+    operator fun minusAssign(other: PairingAssessmentCriteria){
+        this.pabAssigneeUnplayedGames -= other.pabAssigneeUnplayedGames
+        this.topScorerOrOpponentColorImbalanceCount -= other.topScorerOrOpponentColorImbalanceCount
+        this.topScorersOrOpponentsColorstreakCount -= other.topScorersOrOpponentsColorstreakCount
+        this.colorpreferenceConflicts -= other.colorpreferenceConflicts
+        this.strongColorpreferenceConflicts -= other.strongColorpreferenceConflicts
     }
 
     override fun compareTo(other: PairingAssessmentCriteria): Int =
