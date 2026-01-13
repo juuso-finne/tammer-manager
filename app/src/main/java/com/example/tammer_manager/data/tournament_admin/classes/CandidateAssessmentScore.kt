@@ -13,5 +13,7 @@ data class CandidateAssessmentScore(
 
     val currentTotal: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
-    val currentIndividualAssessments: MutableList<PairingAssessmentCriteria> = mutableListOf()
+    val currentIndividualAssessments: MutableList<PairingAssessmentCriteria> = mutableListOf(),
+
+    var isValidCandidate: Boolean = false
 )
