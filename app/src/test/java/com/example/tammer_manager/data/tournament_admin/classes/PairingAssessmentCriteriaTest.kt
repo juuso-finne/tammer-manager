@@ -286,4 +286,19 @@ class PairingAssessmentCriteriaTest {
             )
         )
     }
+
+    @Test
+    fun `Reset methods resets the object`(){
+        val a = PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames = 9,
+            topScorerOrOpponentColorImbalanceCount = 8,
+            topScorersOrOpponentsColorstreakCount = 7,
+            colorpreferenceConflicts = 6,
+            strongColorpreferenceConflicts = 5
+        )
+
+        a.reset()
+
+        assertThat(a).isEqualTo(PairingAssessmentCriteria())
+    }
 }

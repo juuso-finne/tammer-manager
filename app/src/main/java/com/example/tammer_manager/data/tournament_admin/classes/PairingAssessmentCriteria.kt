@@ -44,4 +44,12 @@ data class PairingAssessmentCriteria(
             { it.colorpreferenceConflicts },
             { it.strongColorpreferenceConflicts }
         ).compare(this, other)
+
+    fun reset(){
+        this.pabAssigneeUnplayedGames = 0
+        this.topScorerOrOpponentColorImbalanceCount = 0
+        this.topScorersOrOpponentsColorstreakCount= 0
+        this.colorpreferenceConflicts = 0
+        this.strongColorpreferenceConflicts = 0
+    }
 }
