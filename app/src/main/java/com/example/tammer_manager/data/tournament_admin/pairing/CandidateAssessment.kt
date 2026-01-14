@@ -34,7 +34,7 @@ fun assessCandidate(
                 colorPreferenceMap = colorPreferenceMap
             )
 
-            score.currentIndividualAssessments[i] = assessment
+            score.currentIndividualAssessments.add(assessment)
             score.currentTotal += assessment
         }
         score.isValidCandidate = true
