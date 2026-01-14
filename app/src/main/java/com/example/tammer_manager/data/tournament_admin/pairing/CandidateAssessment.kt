@@ -10,8 +10,8 @@ fun assessCandidate(
     s2: List<RegisteredPlayer>,
     changedIndices: MutableList<Int>,
     score: CandidateAssessmentScore,
-    roundsCompleted: Int,
     colorPreferenceMap: Map<Int, ColorPreference>,
+    roundsCompleted: Int,
     maxRounds: Int
 ){
     if (score.currentIndividualAssessments.isEmpty()){
