@@ -15,7 +15,7 @@ data class RegisteredPlayer (
     var isActive: Boolean = true,
     var score: Float = 0f,
     var matchHistory: MatchHistory = listOf()
-): Parcelable{
+): Parcelable, Comparable<RegisteredPlayer>{
 
     fun getColorBalance():Int{
         return matchHistory.sumOf() { match ->
@@ -77,5 +77,9 @@ data class RegisteredPlayer (
 
     fun isTopScorer(roundsCompleted: Int): Boolean{
         return score > roundsCompleted / 2f
+    }
+
+    override fun compareTo(other: RegisteredPlayer): Int {
+        return compareValuesBy(this, other, {-it.score}, {it.tpn})
     }
 }
