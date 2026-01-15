@@ -9,7 +9,7 @@ data class CandidateAssessmentScore(
         strongColorpreferenceConflicts = Int.MAX_VALUE
     ),
 
-    val bestCandidate : MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
+    val bestCandidate : MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>> = mutableListOf(),
 
     val currentTotal: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
