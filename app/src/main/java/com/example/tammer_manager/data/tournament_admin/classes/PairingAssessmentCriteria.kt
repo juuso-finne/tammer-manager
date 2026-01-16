@@ -36,6 +36,21 @@ data class PairingAssessmentCriteria(
         this.strongColorpreferenceConflicts -= other.strongColorpreferenceConflicts
     }
 
+    operator fun plus(other: PairingAssessmentCriteria): PairingAssessmentCriteria {
+        return PairingAssessmentCriteria(
+            pabAssigneeUnplayedGames =
+                this.pabAssigneeUnplayedGames + other.pabAssigneeUnplayedGames,
+            topScorerOrOpponentColorImbalanceCount =
+                this.topScorerOrOpponentColorImbalanceCount + other.topScorerOrOpponentColorImbalanceCount,
+            topScorersOrOpponentsColorstreakCount =
+                this.topScorersOrOpponentsColorstreakCount + other.topScorersOrOpponentsColorstreakCount,
+            colorpreferenceConflicts =
+                this.colorpreferenceConflicts + other.colorpreferenceConflicts,
+            strongColorpreferenceConflicts =
+                this.strongColorpreferenceConflicts + other.strongColorpreferenceConflicts
+        )
+    }
+
     override fun compareTo(other: PairingAssessmentCriteria): Int =
         compareBy<PairingAssessmentCriteria>(
             { it.pabAssigneeUnplayedGames },
