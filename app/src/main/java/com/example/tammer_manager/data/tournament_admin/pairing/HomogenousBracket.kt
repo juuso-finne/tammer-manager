@@ -62,8 +62,6 @@ fun iterateS2(
     lookForBestScore: Boolean,
     checkCompatibility: Boolean
 ): Boolean{
-
-    var foundViableCandidate = false
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
     val byeInBracket = isLastBracket && s2.size % 2 == 1
@@ -103,7 +101,7 @@ fun iterateS2(
                     roundsCompleted = roundsCompleted,
                     maxRounds = maxRounds,
                     lookForBestScore = false,
-                    incomingDownfloaters = s2.subList(maxPairs, s2.size).toMutableList().also{it.addAll(limbo)}
+                    incomingDownfloaters = s2.subList(maxPairs, s2.size).toMutableList().also{it.addAll(limbo)}.sorted()
                 )
             )
 
@@ -111,8 +109,6 @@ fun iterateS2(
                 continue
             }
         }
-
-        foundViableCandidate = true
 
         if(!lookForBestScore){
             return true
@@ -125,5 +121,5 @@ fun iterateS2(
         }
 
     }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
-    return foundViableCandidate
+    return score.isValidCandidate
 }

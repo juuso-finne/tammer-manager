@@ -2,7 +2,6 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
-import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
@@ -10,6 +9,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.math.min
 
 fun pairHeterogenousBracket(
+    output: MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>>,
     remainingPlayers: MutableList<RegisteredPlayer>,
     residentPlayers: List<RegisteredPlayer>,
     colorPreferenceMap: Map<Int, ColorPreference>,
@@ -17,21 +17,21 @@ fun pairHeterogenousBracket(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    incomingDownfloaters:List<RegisteredPlayer> = listOf()
+    incomingDownfloaters:List<RegisteredPlayer>
 ):Boolean{
-    val mdpsToPair = min(incomingDownfloaters.size, maxPairs)
-    val s1 = incomingDownfloaters.take(mdpsToPair).toMutableList()
-    val limbo = incomingDownfloaters.takeLast(incomingDownfloaters.size - mdpsToPair).toMutableList()
+    val isLastBracket = remainingPlayers.isEmpty()
 
+    val mdpsToPair = min(incomingDownfloaters.size, maxPairs)
+
+    val s1 = incomingDownfloaters.take(mdpsToPair).toMutableList()
     val s2 = residentPlayers.toMutableList()
 
+    val limbo = incomingDownfloaters.takeLast(incomingDownfloaters.size - mdpsToPair).toMutableList()
+    val s2Downfloats = mutableListOf<RegisteredPlayer>()
 
     val mdpPairingScore = CandidateAssessmentScore()
-    if(s1.isEmpty()){
-        mdpPairingScore.bestTotal = PairingAssessmentCriteria()
-        mdpPairingScore.isValidCandidate = true
-    }
-
+    val remainderPairingScore = CandidateAssessmentScore()
+    val combinedScore = CandidateAssessmentScore()
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size)){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
@@ -53,9 +53,64 @@ fun pairHeterogenousBracket(
 
             val remainder = s2Copy.subList(mdpsToPair, s2Copy.size)
             val remainderPairs = (maxPairs - mdpsToPair)
-            val remainderPairingScore = CandidateAssessmentScore()
+
+            val s1R = remainder.subList(0, remainderPairs)
+            val s2R = remainder.subList(remainderPairs, remainder.size)
+
+            if(iterateHomogenousBracket(
+                remainingPlayers = remainingPlayers,
+                s1 = s1R,
+                s2 = s2R,
+                limbo = limbo,
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                maxPairs = remainderPairs,
+                score = remainderPairingScore,
+                lookForBestScore = lookForBestScore
+            )){
+                if (!lookForBestScore){
+                    return true
+                }
+
+                combinedScore.isValidCandidate = true
+
+                combinedScore.currentTotal.reset()
+                combinedScore.currentTotal += mdpPairingScore.bestTotal + remainderPairingScore.bestTotal
+
+                if(combinedScore.currentTotal < combinedScore.bestTotal){
+                    combinedScore.updateHiScore(mutableListOf(), mutableListOf())
+                    combinedScore.bestCandidate.addAll(remainderPairingScore.bestCandidate)
+                    combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
+
+                    s2Downfloats.clear()
+                    s2Downfloats.addAll(s2R.subList(remainderPairs * 2, s2R.size))
+                }
+
+                if (combinedScore.bestTotal == PairingAssessmentCriteria()){
+                    break
+                }
+            }
         }
         applyIndexSwap(s1, s2, swappingIndices)
     }
-    return false
+
+    if (!combinedScore.isValidCandidate){
+        return false
+    }
+
+    output.addAll(combinedScore.bestCandidate)
+
+    if (isLastBracket){
+        return combinedScore.isValidCandidate
+    }
+
+    return nextBracket(
+        remainingPlayers = remainingPlayers,
+        colorPreferenceMap = colorPreferenceMap,
+        roundsCompleted = roundsCompleted,
+        maxRounds = maxRounds,
+        lookForBestScore = true,
+        incomingDownfloaters = limbo.plus(s2Downfloats)
+    )
 }
