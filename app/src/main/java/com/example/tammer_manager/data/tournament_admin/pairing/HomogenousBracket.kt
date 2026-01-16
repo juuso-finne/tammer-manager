@@ -20,12 +20,6 @@ fun iterateHomogenousBracket(
     score: CandidateAssessmentScore,
     lookForBestScore: Boolean
 ): Boolean{
-    if (s1.isEmpty()){
-        score.bestTotal = PairingAssessmentCriteria()
-        score.isValidCandidate = true
-        return true
-    }
-
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
         applyIndexSwap(s1, s2, swappingIndices)

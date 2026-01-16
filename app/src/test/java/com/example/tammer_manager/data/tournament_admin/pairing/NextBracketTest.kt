@@ -53,7 +53,7 @@ class NextBracketTest {
     fun `nextBracket outputs the best pairings`(){
         val pairings = mutableListOf<Pair<RegisteredPlayer, RegisteredPlayer?>>()
 
-        nextBracket(
+        val success = nextBracket(
             output = pairings,
             remainingPlayers = players.sorted().toMutableList(),
             colorPreferenceMap = colorPreferenceMap,
@@ -68,6 +68,8 @@ class NextBracketTest {
             println(it.second)
             println("-----")
         }
+
+        println("Success: $success")
     }
 
 }

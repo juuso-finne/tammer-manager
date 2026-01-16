@@ -53,6 +53,9 @@ fun <T: Comparable<T>> swapWithFirstLarger(list: MutableList<T>, startIndex: Int
  *         final permutation has been reached
  */
 fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: MutableList<Int>, length: Int = list.size): Boolean {
+    if (length <= 0){
+        return false
+    }
     changedIndices.clear()
     val cutOff = length - 1
     changedIndices.add(cutOff)
