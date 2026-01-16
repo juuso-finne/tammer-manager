@@ -4,6 +4,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 
 fun nextBracket(
+    output: MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>>,
     remainingPlayers: MutableList<RegisteredPlayer>,
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
@@ -11,5 +12,39 @@ fun nextBracket(
     lookForBestScore: Boolean = true,
     incomingDownfloaters:List<RegisteredPlayer> = listOf()
 ): Boolean{
-    return true
+    val residentPlayers = mutableListOf<RegisteredPlayer>()
+    fetchNextBracket(remainingPlayers = remainingPlayers, residentPlayers = residentPlayers)
+
+    val totalPlayers = incomingDownfloaters.size + residentPlayers.size
+
+    for (maxPairs in totalPlayers/2 downTo 0){
+        if(pairHeterogenousBracket(
+                output = output,
+                remainingPlayers = remainingPlayers,
+                residentPlayers = residentPlayers,
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                maxPairs = maxPairs,
+                lookForBestScore = lookForBestScore,
+                incomingDownfloaters = incomingDownfloaters
+        )){
+            return true
+        }
+    }
+    return false
+}
+
+fun fetchNextBracket(
+    remainingPlayers: MutableList<RegisteredPlayer>,
+    residentPlayers: MutableList<RegisteredPlayer>
+){
+    val bracketScore = remainingPlayers.first().score
+
+    while(!remainingPlayers.isEmpty()){
+        if (remainingPlayers.first().score != bracketScore){
+            return
+        }
+        remainingPlayers.removeFirst().also{residentPlayers.add(it)}
+    }
 }

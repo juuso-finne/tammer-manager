@@ -106,6 +106,7 @@ fun pairHeterogenousBracket(
     }
 
     return nextBracket(
+        output = output,
         remainingPlayers = remainingPlayers,
         colorPreferenceMap = colorPreferenceMap,
         roundsCompleted = roundsCompleted,
