@@ -16,7 +16,7 @@ fun iterateHomogenousBracket(
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
     maxRounds: Int,
-    maxPairs: Int = s1.size/2,
+    maxPairs: Int,
     score: CandidateAssessmentScore,
     lookForBestScore: Boolean
 ): Boolean{
@@ -33,7 +33,8 @@ fun iterateHomogenousBracket(
             maxPairs = maxPairs,
             limbo = limbo,
             score = score,
-            lookForBestScore = lookForBestScore
+            lookForBestScore = lookForBestScore,
+            checkCompatibility = true
         )){
             return true
         }
@@ -52,7 +53,8 @@ fun iterateS2(
     maxRounds: Int,
     maxPairs: Int,
     score: CandidateAssessmentScore,
-    lookForBestScore: Boolean
+    lookForBestScore: Boolean,
+    checkCompatibility: Boolean
 ): Boolean{
 
     var foundViableCandidate = false
@@ -86,20 +88,22 @@ fun iterateS2(
             continue
         }
 
-        val compatibleWithLowerBrackets = (
-            isLastBracket ||
-            nextBracket(
-                remainingPlayers = remainingPlayers.toMutableList(),
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                lookForBestScore = false,
-                incomingDownfloaters = s2.subList(maxPairs, s2.size).toMutableList().also{it.addAll(limbo)}
+        if(checkCompatibility){
+            val compatibleWithLowerBrackets = (
+                isLastBracket ||
+                nextBracket(
+                    remainingPlayers = remainingPlayers.toMutableList(),
+                    colorPreferenceMap = colorPreferenceMap,
+                    roundsCompleted = roundsCompleted,
+                    maxRounds = maxRounds,
+                    lookForBestScore = false,
+                    incomingDownfloaters = s2.subList(maxPairs, s2.size).toMutableList().also{it.addAll(limbo)}
+                )
             )
-        )
 
-        if(!compatibleWithLowerBrackets){
-            continue
+            if(!compatibleWithLowerBrackets){
+                continue
+            }
         }
 
         foundViableCandidate = true
@@ -108,12 +112,7 @@ fun iterateS2(
             return true
         }
 
-        score.bestTotal = score.currentTotal
-        score.bestCandidate.clear()
-
-        for (i in 0 until s1.size){
-            score.bestCandidate.add(Pair(s1[i], s2[i]))
-        }
+        score.updateHiScore(s1, s2)
 
         if (score.currentTotal == PairingAssessmentCriteria()){
             return true
