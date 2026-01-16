@@ -14,7 +14,8 @@ data class RegisteredPlayer (
     var tpn: Int,
     var isActive: Boolean = true,
     var score: Float = 0f,
-    var matchHistory: MatchHistory = listOf()
+    var matchHistory: MatchHistory = listOf(),
+    var receivedPairingBye: Boolean = false
 ): Parcelable, Comparable<RegisteredPlayer>{
 
     fun getColorBalance():Int{
