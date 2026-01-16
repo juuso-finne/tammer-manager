@@ -16,4 +16,16 @@ data class CandidateAssessmentScore(
     val currentIndividualAssessments: MutableList<PairingAssessmentCriteria> = mutableListOf(),
 
     var isValidCandidate: Boolean = false
-)
+){
+    fun updateHiScore(
+        s1: List<RegisteredPlayer>,
+        s2: List<RegisteredPlayer>
+    ){
+        this.bestTotal = this.currentTotal
+        this.bestCandidate.clear()
+
+        for (i in 0 until s1.size){
+            this.bestCandidate.add(Pair(s1[i], s2[i]))
+        }
+    }
+}
