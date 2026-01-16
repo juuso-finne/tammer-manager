@@ -23,6 +23,8 @@ fun assessCandidate(
                 colorPreferenceMap = colorPreferenceMap,
                 isFinalRound = maxRounds - roundsCompleted <= 1
             )){
+                score.currentTotal.reset()
+                score.currentIndividualAssessments.clear()
                 score.isValidCandidate = false
                 return
             }
