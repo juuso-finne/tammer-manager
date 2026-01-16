@@ -40,7 +40,7 @@ fun iterateHomogenousBracket(
             limbo = limbo,
             score = score,
             lookForBestScore = lookForBestScore,
-            checkCompatibility = true
+            isRemainder = true
         )){
             return true
         }
@@ -60,11 +60,11 @@ fun iterateS2(
     maxPairs: Int,
     score: CandidateAssessmentScore,
     lookForBestScore: Boolean,
-    checkCompatibility: Boolean
+    isRemainder: Boolean
 ): Boolean{
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
-    val byeInBracket = isLastBracket && s2.size % 2 == 1
+    val byeInBracket = isLastBracket && isRemainder && (s2.size + s1.size) % 2 == 1
 
     do{
         assessCandidate(
@@ -92,7 +92,7 @@ fun iterateS2(
             continue
         }
 
-        if(checkCompatibility){
+        if(isRemainder){
             val compatibleWithLowerBrackets = (
                 isLastBracket ||
                 nextBracket(

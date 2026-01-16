@@ -48,7 +48,7 @@ fun pairHeterogenousBracket(
                 limbo = limbo,
                 score = mdpPairingScore,
                 lookForBestScore = lookForBestScore,
-                checkCompatibility = false
+                isRemainder = false
             )){
 
             val remainder = s2Copy.subList(mdpsToPair, s2Copy.size)
