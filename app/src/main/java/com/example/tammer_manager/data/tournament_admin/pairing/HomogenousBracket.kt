@@ -26,7 +26,7 @@ fun iterateHomogenousBracket(
         return true
     }
 
-    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size)){
+    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
         applyIndexSwap(s1, s2, swappingIndices)
         if (iterateS2(
@@ -96,6 +96,7 @@ fun iterateS2(
             val compatibleWithLowerBrackets = (
                 isLastBracket ||
                 nextBracket(
+                    output = mutableListOf(),
                     remainingPlayers = remainingPlayers.toMutableList(),
                     colorPreferenceMap = colorPreferenceMap,
                     roundsCompleted = roundsCompleted,

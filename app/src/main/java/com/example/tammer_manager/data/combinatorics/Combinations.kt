@@ -59,7 +59,7 @@ class ReverseIndexCombinationSequence (private val listLength: Int, private val 
             var current: IntArray? = null
             var hasNext =
                 k >= 0 &&
-                        listLength > 0 &&
+                        listLength >= 0 &&
                         k <= listLength
 
             override fun next(): IntArray {

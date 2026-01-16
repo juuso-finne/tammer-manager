@@ -33,7 +33,7 @@ fun pairHeterogenousBracket(
     val remainderPairingScore = CandidateAssessmentScore()
     val combinedScore = CandidateAssessmentScore()
 
-    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size)){
+    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
         applyIndexSwap(s1, s2, swappingIndices)
         val s2Copy = s2.sorted().toMutableList()
