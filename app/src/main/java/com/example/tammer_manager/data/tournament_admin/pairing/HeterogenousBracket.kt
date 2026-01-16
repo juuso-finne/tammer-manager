@@ -21,6 +21,10 @@ fun pairHeterogenousBracket(
 ):Boolean{
     val isLastBracket = remainingPlayers.isEmpty()
 
+    if(isLastBracket && maxPairs < (incomingDownfloaters.size + residentPlayers.size) / 2){
+        return false
+    }
+
     val mdpsToPair = min(incomingDownfloaters.size, maxPairs)
 
     val s1 = incomingDownfloaters.take(mdpsToPair).toMutableList()
