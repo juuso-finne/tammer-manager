@@ -32,7 +32,7 @@ class NextBracketTest {
         playerD = d
         playerE = e
 
-        playerF = playerE.copy(id = 6, tpn = 6)
+        playerF = playerE.copy(fullName = "Player 6", id = 6, tpn = 6)
         players.add(playerF)
 
         simulateMatch(playerA, playerB, 1f, 0f, 1)
@@ -55,7 +55,7 @@ class NextBracketTest {
 
         nextBracket(
             output = pairings,
-            remainingPlayers = players.toMutableList(),
+            remainingPlayers = players.sorted().toMutableList(),
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = 2,
             maxRounds = 4,

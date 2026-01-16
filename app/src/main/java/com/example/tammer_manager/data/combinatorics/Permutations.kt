@@ -2,22 +2,22 @@ package com.example.tammer_manager.data.combinatorics
 
 /**
  * Removes the element at index [i], appends it to the end of the list,
- * and checks whether the element now at position [i] is smaller than
+ * and checks whether the element now at position [i] is bigger than
  * the last element.
  */
 fun <T: Comparable<T>> popAndShift(list: MutableList<T>, i: Int):Boolean{
     list.removeAt(i).also { list.add(it) }
-    return list[i] < list.last()
+    return list[i] > list.last()
 }
 
 /**
  * Swaps the element at [startIndex] with the first element to its right
- * that is strictly smaller than it.
+ * that is strictly bigger than it.
  */
-fun <T: Comparable<T>> swapWithFirstSmaller(list: MutableList<T>, startIndex: Int): Boolean{
+fun <T: Comparable<T>> swapWithFirstLarger(list: MutableList<T>, startIndex: Int): Boolean{
     val firstItem = list[startIndex]
     for(i in startIndex + 1..<list.size){
-        if(list[i] < firstItem){
+        if(list[i] > firstItem){
             list[startIndex] = list[i]
             list[i] = firstItem
             return true
@@ -32,7 +32,7 @@ fun <T: Comparable<T>> swapWithFirstSmaller(list: MutableList<T>, startIndex: In
  *
  * ### Preconditions
  * - The first [length] elements of [list] **must be sorted in strictly
- *   descending order** before the first invocation.
+ *   ascending order** before the first invocation.
  * - The contents of [list] **must not be modified externally** between
  *   successive calls.
  * - Only indices in the range `0 until length` may be accessed or
@@ -41,7 +41,7 @@ fun <T: Comparable<T>> swapWithFirstSmaller(list: MutableList<T>, startIndex: In
  * ### Undefined behavior
  * The behavior of this function is undefined if any of the preconditions
  * are violated, including (but not limited to):
- * - The input list is not initially sorted in descending order
+ * - The input list is not initially sorted in ascending order
  * - Elements within the permutation prefix are modified between calls
  * - Indices outside the permutation prefix are accessed or relied upon
  *
@@ -61,7 +61,7 @@ fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: Mu
     }
     for (i in cutOff - 1 downTo 0){
         changedIndices.add(i)
-        if (swapWithFirstSmaller(list, i)){
+        if (swapWithFirstLarger(list, i)){
             return true
         }
 
