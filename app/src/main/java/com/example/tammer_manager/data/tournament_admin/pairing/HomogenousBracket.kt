@@ -103,6 +103,7 @@ fun iterateS2(
             )
 
             if(!compatibleWithLowerBrackets){
+                score.reset()
                 continue
             }
         }
