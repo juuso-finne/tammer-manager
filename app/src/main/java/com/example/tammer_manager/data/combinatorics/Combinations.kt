@@ -12,7 +12,7 @@ class IndexCombinationSequence (private val listLength: Int, private val k: Int)
             var current: IntArray? = null
             var hasNext =
                 k >= 0 &&
-                        listLength > 0 &&
+                        listLength >= 0 &&
                         k <= listLength
 
             override fun next(): IntArray {
