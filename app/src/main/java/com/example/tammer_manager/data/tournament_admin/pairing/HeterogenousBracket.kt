@@ -90,7 +90,7 @@ fun pairHeterogenousBracket(
                     combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
 
                     s2Downfloats.clear()
-                    s2Downfloats.addAll(s2R.subList(remainderPairs * 2, s2R.size))
+                    s2Downfloats.addAll(s2R.subList(remainderPairs, s2R.size))
                 }
 
                 if (combinedScore.bestTotal == PairingAssessmentCriteria()){
