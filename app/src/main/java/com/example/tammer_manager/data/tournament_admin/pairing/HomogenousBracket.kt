@@ -61,6 +61,11 @@ fun iterateS2(
     val byeInBracket = isLastBracket && isRemainder && (s2.size + s1.size) % 2 == 1
 
     do{
+        if (byeInBracket && s2.last().receivedPairingBye){
+            score.reset()
+            continue
+        }
+
         assessCandidate(
             s1 = s1,
             s2 = s2,
@@ -72,9 +77,6 @@ fun iterateS2(
         )
 
         if(byeInBracket){
-            if (s2.last().receivedPairingBye ){
-                score.isValidCandidate = false
-            }
             score.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
         }
 
