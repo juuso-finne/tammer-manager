@@ -41,7 +41,7 @@ class NextBracketTest {
 
         simulateMatch(playerA, playerD, 1f, 0f, 2)
         simulateMatch(playerB, playerE, 1f, 0f, 2)
-        simulateMatch(playerC, playerF, 1f, 0f, 2)
+        simulateMatch(playerF, playerC, 1f, 0f, 2)
 
         colorPreferenceMap = players.associateBy(
             {it.id},

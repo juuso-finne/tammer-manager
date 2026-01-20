@@ -17,6 +17,18 @@ fun nextBracket(
 
     val totalPlayers = incomingDownfloaters.size + residentPlayers.size
 
+    if(residentPlayers.size == 1 && incomingDownfloaters.isEmpty() && remainingPlayers.isNotEmpty()){
+        return nextBracket(
+            output = output,
+            remainingPlayers = if (lookForBestScore) remainingPlayers else remainingPlayers.toMutableList(),
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            lookForBestScore = lookForBestScore,
+            incomingDownfloaters = listOf(residentPlayers.first())
+        )
+    }
+
     for (maxPairs in totalPlayers/2 downTo 0){
         if(pairHeterogenousBracket(
                 output = output,
