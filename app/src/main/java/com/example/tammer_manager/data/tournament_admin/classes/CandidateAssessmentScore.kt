@@ -28,4 +28,10 @@ data class CandidateAssessmentScore(
             this.bestCandidate.add(Pair(s1[i], s2[i]))
         }
     }
+
+    fun reset(){
+        this.currentTotal.reset()
+        this.currentIndividualAssessments.clear()
+        this.isValidCandidate = false
+    }
 }
