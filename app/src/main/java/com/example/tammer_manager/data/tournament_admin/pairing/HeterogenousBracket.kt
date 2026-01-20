@@ -53,7 +53,8 @@ fun pairHeterogenousBracket(
                 score = mdpPairingScore,
                 lookForBestScore = lookForBestScore,
                 isRemainder = false
-            )){
+            )
+        ){
 
             val remainder = s2Copy.subList(mdpsToPair, s2Copy.size)
             val remainderPairs = (maxPairs - mdpsToPair)
@@ -72,7 +73,8 @@ fun pairHeterogenousBracket(
                 maxPairs = remainderPairs,
                 score = remainderPairingScore,
                 lookForBestScore = lookForBestScore
-            )){
+            )
+            ){
                 if (!lookForBestScore){
                     return true
                 }
