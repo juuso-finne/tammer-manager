@@ -21,7 +21,7 @@ data class CandidateAssessmentScore(
         s1: List<RegisteredPlayer>,
         s2: List<RegisteredPlayer>
     ){
-        this.bestTotal = this.currentTotal
+        this.bestTotal = this.currentTotal.copy()
         this.bestCandidate.clear()
 
         for (i in 0 until s1.size){
