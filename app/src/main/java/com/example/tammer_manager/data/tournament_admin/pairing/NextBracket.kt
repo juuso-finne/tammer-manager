@@ -45,6 +45,6 @@ fun fetchNextBracket(
         if (remainingPlayers.first().score != bracketScore){
             return
         }
-        remainingPlayers.removeFirst().also{residentPlayers.add(it)}
+        remainingPlayers.removeAt(0).also{residentPlayers.add(it)}
     }
 }
