@@ -38,8 +38,13 @@ fun pairHeterogenousBracket(
     val combinedScore = CandidateAssessmentScore()
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
+
+        mdpPairingScore.resetHiScore()
+        remainderPairingScore.resetHiScore()
+
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
         applyIndexSwap(s1, s2, swappingIndices)
+
         val s2Copy = s2.sorted().toMutableList()
         if (iterateS2(
                 remainingPlayers = remainingPlayers,
@@ -72,7 +77,8 @@ fun pairHeterogenousBracket(
                 maxRounds = maxRounds,
                 maxPairs = remainderPairs,
                 score = remainderPairingScore,
-                lookForBestScore = lookForBestScore
+                lookForBestScore = lookForBestScore,
+                downfloats = s2Downfloats
             )
             ){
                 if (!lookForBestScore){
@@ -88,9 +94,6 @@ fun pairHeterogenousBracket(
                     combinedScore.updateHiScore(mutableListOf(), mutableListOf())
                     combinedScore.bestCandidate.addAll(remainderPairingScore.bestCandidate)
                     combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
-
-                    s2Downfloats.clear()
-                    s2Downfloats.addAll(s2R.subList(remainderPairs, s2R.size))
                 }
 
                 if (combinedScore.bestTotal == PairingAssessmentCriteria()){

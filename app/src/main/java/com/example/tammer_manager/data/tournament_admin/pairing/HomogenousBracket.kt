@@ -18,7 +18,8 @@ fun iterateHomogenousBracket(
     maxRounds: Int,
     maxPairs: Int,
     score: CandidateAssessmentScore,
-    lookForBestScore: Boolean
+    lookForBestScore: Boolean,
+    downfloats : MutableList<RegisteredPlayer> = mutableListOf()
 ): Boolean{
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
@@ -34,7 +35,8 @@ fun iterateHomogenousBracket(
             limbo = limbo,
             score = score,
             lookForBestScore = lookForBestScore,
-            isRemainder = true
+            isRemainder = true,
+            downfloats = downfloats
         )){
             return true
         }
@@ -54,7 +56,8 @@ fun iterateS2(
     maxPairs: Int,
     score: CandidateAssessmentScore,
     lookForBestScore: Boolean,
-    isRemainder: Boolean
+    isRemainder: Boolean,
+    downfloats : MutableList<RegisteredPlayer> = mutableListOf()
 ): Boolean{
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
@@ -62,7 +65,7 @@ fun iterateS2(
 
     do{
         if (byeInBracket && s2.last().receivedPairingBye){
-            score.reset()
+            score.resetCurrentScore()
             continue
         }
 
@@ -89,6 +92,8 @@ fun iterateS2(
         }
 
         if(isRemainder){
+            downfloats.clear()
+            downfloats.addAll(s2.subList(maxPairs, s2.size))
             val compatibleWithLowerBrackets = (
                 isLastBracket ||
                 nextBracket(
@@ -98,12 +103,12 @@ fun iterateS2(
                     roundsCompleted = roundsCompleted,
                     maxRounds = maxRounds,
                     lookForBestScore = false,
-                    incomingDownfloaters = s2.subList(maxPairs, s2.size).toMutableList().also{it.addAll(limbo)}.sorted()
+                    incomingDownfloaters = downfloats.plus(limbo).sorted()
                 )
             )
 
             if(!compatibleWithLowerBrackets){
-                score.reset()
+                score.resetCurrentScore()
                 continue
             }
         }
