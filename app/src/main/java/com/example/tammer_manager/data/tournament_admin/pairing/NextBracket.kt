@@ -2,6 +2,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import kotlin.math.min
 
 fun nextBracket(
     output: MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>>,
@@ -15,7 +16,7 @@ fun nextBracket(
     val residentPlayers = mutableListOf<RegisteredPlayer>()
     fetchNextBracket(remainingPlayers = remainingPlayers, residentPlayers = residentPlayers)
 
-    val totalPlayers = incomingDownfloaters.size + residentPlayers.size
+    val totalPlayers = min(incomingDownfloaters.size + residentPlayers.size, residentPlayers.size * 2)
 
     if(residentPlayers.size == 1 && incomingDownfloaters.isEmpty() && remainingPlayers.isNotEmpty()){
         return nextBracket(

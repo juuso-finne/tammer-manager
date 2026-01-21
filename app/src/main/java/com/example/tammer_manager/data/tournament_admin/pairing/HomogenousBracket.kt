@@ -17,15 +17,19 @@ fun iterateHomogenousBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    score: CandidateAssessmentScore,
+    remainderPairingScore: CandidateAssessmentScore,
+    mdpPairingScore: CandidateAssessmentScore,
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf()
-): Boolean{
-    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
+){
+    for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
+
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
+        remainderPairingScore.resetCurrentScore()
+
         applyIndexSwap(s1, s2, swappingIndices)
-        if (iterateS2Permutations(
+        iterateS2Permutations(
             remainingPlayers = remainingPlayers,
             s1 = s1,
             s2 = s2.sorted().toMutableList(),
@@ -34,15 +38,22 @@ fun iterateHomogenousBracket(
             maxRounds = maxRounds,
             maxPairs = maxPairs,
             limbo = limbo,
-            score = score,
+            remainderPairingScore = remainderPairingScore,
+            combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
-            downfloats = downfloats
-        )){
-            return true
+            downfloats = downfloats,
+            mdpPairingScore = mdpPairingScore
+        )
+        if (!combinedScore.isValidCandidate) {
+            continue
         }
+
+        if (!lookForBestScore || combinedScore.bestTotal == PairingAssessmentCriteria()) {
+            return
+        }
+
         applyIndexSwap(s1, s2, swappingIndices)
     }
-    return false
 }
 
 fun iterateS2Permutations(
@@ -54,17 +65,19 @@ fun iterateS2Permutations(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    score: CandidateAssessmentScore,
     lookForBestScore: Boolean,
+    remainderPairingScore: CandidateAssessmentScore,
+    mdpPairingScore: CandidateAssessmentScore,
+    combinedScore: CandidateAssessmentScore,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf()
-): Boolean{
+){
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
     val byeInBracket = isLastBracket && (s2.size + s1.size) % 2 == 1
 
     do{
         if (byeInBracket && s2.last().receivedPairingBye){
-            score.resetCurrentScore()
+            remainderPairingScore.resetCurrentScore()
             continue
         }
 
@@ -72,21 +85,17 @@ fun iterateS2Permutations(
             s1 = s1,
             s2 = s2,
             changedIndices = changedIndices,
-            score = score,
+            score = remainderPairingScore,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
         if(byeInBracket){
-            score.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            remainderPairingScore.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
         }
 
-        if(!score.isValidCandidate){
-            continue
-        }
-
-        if(lookForBestScore && score.currentTotal >= score.bestTotal){
+        if(!remainderPairingScore.isValidCandidate){
             continue
         }
 
@@ -106,20 +115,19 @@ fun iterateS2Permutations(
         )
 
         if(!compatibleWithLowerBrackets){
-            score.resetCurrentScore()
             continue
         }
 
-        if(!lookForBestScore){
-            return true
-        }
+        combinedScore.resetCurrentScore()
+        combinedScore.currentTotal += remainderPairingScore.currentTotal
+        combinedScore.currentTotal += mdpPairingScore.currentTotal
+        combinedScore.isValidCandidate = true
 
-        score.updateHiScore(s1, s2)
+        combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))
 
-        if (score.currentTotal == PairingAssessmentCriteria()){
-            return true
+        if(!lookForBestScore || combinedScore.bestTotal == PairingAssessmentCriteria()){
+            return
         }
 
     }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
-    return score.isValidCandidate
 }

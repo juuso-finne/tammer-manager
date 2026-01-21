@@ -7,6 +7,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessm
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import kotlinx.coroutines.flow.combine
 import kotlin.math.min
 
 fun pairHeterogenousBracket(
@@ -40,7 +41,7 @@ fun pairHeterogenousBracket(
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
-        mdpPairingScore.resetAll()
+        mdpPairingScore.resetCurrentScore()
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
 
@@ -56,12 +57,20 @@ fun pairHeterogenousBracket(
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds,
-            maxPairs = mdpsToPair,
+            maxPairs = maxPairs,
             mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
             remainderPairingScore = remainderPairingScore
         )
+
+        if(combinedScore.isValidCandidate && !lookForBestScore){
+            return true
+        }
+
+        if(combinedScore.isValidCandidate && combinedScore.bestTotal == PairingAssessmentCriteria()){
+            break
+        }
 
         applyIndexSwap(s1, s2, swappingIndices)
     }
@@ -127,12 +136,10 @@ fun iterateMdps(
         combinedScore.currentTotal += mdpPairingScore.currentTotal.copy()
 
         val remainder = s2.subList(s1.size, s2.size)
-        val remainderPairs = (maxPairs - s1.size)
+        val remainderPairs = (remainder.size/2)
 
         val s1R = remainder.subList(0, remainderPairs)
         val s2R = remainder.subList(remainderPairs, remainder.size)
-
-        remainderPairingScore.resetAll()
 
         iterateHomogenousBracket(
             remainingPlayers = remainingPlayers,
@@ -143,7 +150,8 @@ fun iterateMdps(
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds,
             maxPairs = remainderPairs,
-            score = remainderPairingScore,
+            remainderPairingScore = remainderPairingScore,
+            mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
             downfloats = s2Downfloats
@@ -157,16 +165,13 @@ fun iterateMdps(
             return
         }
 
-        if(combinedScore.currentTotal < combinedScore.bestTotal){
-            combinedScore.updateHiScore(mutableListOf(), mutableListOf())
-            combinedScore.bestCandidate.addAll(remainderPairingScore.bestCandidate)
-            combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
-        }
+        combinedScore.updateHiScore(mutableListOf())
+
 
         if (combinedScore.bestTotal == PairingAssessmentCriteria()){
             return
         }
 
-    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
+    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = s1.size))
     return
 }
