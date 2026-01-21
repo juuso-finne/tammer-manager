@@ -2,6 +2,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
+import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
@@ -46,18 +47,15 @@ fun pairHeterogenousBracket(
         applyIndexSwap(s1, s2, swappingIndices)
 
         val s2Copy = s2.sorted().toMutableList()
-        if (iterateS2(
-                remainingPlayers = remainingPlayers,
+        if (iterateMdps(
                 s1 = s1,
                 s2 = s2Copy,
                 colorPreferenceMap = colorPreferenceMap,
                 roundsCompleted = roundsCompleted,
                 maxRounds = maxRounds,
                 maxPairs = mdpsToPair,
-                limbo = limbo,
                 score = mdpPairingScore,
-                lookForBestScore = lookForBestScore,
-                isRemainder = false
+                lookForBestScore = lookForBestScore
             )
         ){
 
@@ -123,4 +121,50 @@ fun pairHeterogenousBracket(
         lookForBestScore = true,
         incomingDownfloaters = limbo.plus(s2Downfloats)
     )
+}
+
+fun iterateMdps(
+    s1: List<RegisteredPlayer>,
+    s2: MutableList<RegisteredPlayer>,
+    colorPreferenceMap: Map<Int, ColorPreference>,
+    roundsCompleted: Int,
+    maxRounds: Int,
+    maxPairs: Int,
+    score: CandidateAssessmentScore,
+    lookForBestScore: Boolean,
+): Boolean{
+    val changedIndices = mutableListOf<Int>()
+
+    do{
+
+        assessCandidate(
+            s1 = s1,
+            s2 = s2,
+            changedIndices = changedIndices,
+            score = score,
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds
+        )
+
+        if(!score.isValidCandidate){
+            continue
+        }
+
+        if(lookForBestScore && score.currentTotal >= score.bestTotal){
+            continue
+        }
+
+        if(!lookForBestScore){
+            return true
+        }
+
+        score.updateHiScore(s1, s2)
+
+        if (score.currentTotal == PairingAssessmentCriteria()){
+            return true
+        }
+
+    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
+    return score.isValidCandidate
 }

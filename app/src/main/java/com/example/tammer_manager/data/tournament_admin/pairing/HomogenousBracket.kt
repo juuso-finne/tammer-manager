@@ -24,7 +24,7 @@ fun iterateHomogenousBracket(
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
         applyIndexSwap(s1, s2, swappingIndices)
-        if (iterateS2(
+        if (iterateS2Permutations(
             remainingPlayers = remainingPlayers,
             s1 = s1,
             s2 = s2.sorted().toMutableList(),
@@ -35,7 +35,6 @@ fun iterateHomogenousBracket(
             limbo = limbo,
             score = score,
             lookForBestScore = lookForBestScore,
-            isRemainder = true,
             downfloats = downfloats
         )){
             return true
@@ -45,7 +44,7 @@ fun iterateHomogenousBracket(
     return false
 }
 
-fun iterateS2(
+fun iterateS2Permutations(
     remainingPlayers: MutableList<RegisteredPlayer>,
     s1: List<RegisteredPlayer>,
     s2: MutableList<RegisteredPlayer>,
@@ -56,12 +55,11 @@ fun iterateS2(
     maxPairs: Int,
     score: CandidateAssessmentScore,
     lookForBestScore: Boolean,
-    isRemainder: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf()
 ): Boolean{
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
-    val byeInBracket = isLastBracket && isRemainder && (s2.size + s1.size) % 2 == 1
+    val byeInBracket = isLastBracket && (s2.size + s1.size) % 2 == 1
 
     do{
         if (byeInBracket && s2.last().receivedPairingBye){
@@ -91,26 +89,24 @@ fun iterateS2(
             continue
         }
 
-        if(isRemainder){
-            downfloats.clear()
-            downfloats.addAll(s2.subList(maxPairs, s2.size))
-            val compatibleWithLowerBrackets = (
-                isLastBracket ||
-                nextBracket(
-                    output = mutableListOf(),
-                    remainingPlayers = remainingPlayers.toMutableList(),
-                    colorPreferenceMap = colorPreferenceMap,
-                    roundsCompleted = roundsCompleted,
-                    maxRounds = maxRounds,
-                    lookForBestScore = false,
-                    incomingDownfloaters = downfloats.plus(limbo).sorted()
-                )
+        downfloats.clear()
+        downfloats.addAll(s2.subList(maxPairs, s2.size))
+        val compatibleWithLowerBrackets = (
+            isLastBracket ||
+            nextBracket(
+                output = mutableListOf(),
+                remainingPlayers = remainingPlayers.toMutableList(),
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                lookForBestScore = false,
+                incomingDownfloaters = downfloats.plus(limbo).sorted()
             )
+        )
 
-            if(!compatibleWithLowerBrackets){
-                score.resetCurrentScore()
-                continue
-            }
+        if(!compatibleWithLowerBrackets){
+            score.resetCurrentScore()
+            continue
         }
 
         if(!lookForBestScore){
