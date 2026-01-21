@@ -40,65 +40,29 @@ fun pairHeterogenousBracket(
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
-        mdpPairingScore.resetHiScore()
-        remainderPairingScore.resetHiScore()
+        mdpPairingScore.resetAll()
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
+
         applyIndexSwap(s1, s2, swappingIndices)
 
         val s2Copy = s2.sorted().toMutableList()
-        if (iterateMdps(
-                s1 = s1,
-                s2 = s2Copy,
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                maxPairs = mdpsToPair,
-                score = mdpPairingScore,
-                lookForBestScore = lookForBestScore
-            )
-        ){
+        iterateMdps(
+            limbo = limbo,
+            remainingPlayers = remainingPlayers,
+            s2Downfloats = s2Downfloats,
+            s1 = s1,
+            s2 = s2Copy,
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            maxPairs = mdpsToPair,
+            mdpPairingScore = mdpPairingScore,
+            combinedScore = combinedScore,
+            lookForBestScore = lookForBestScore,
+            remainderPairingScore = remainderPairingScore
+        )
 
-            val remainder = s2Copy.subList(mdpsToPair, s2Copy.size)
-            val remainderPairs = (maxPairs - mdpsToPair)
-
-            val s1R = remainder.subList(0, remainderPairs)
-            val s2R = remainder.subList(remainderPairs, remainder.size)
-
-            if(iterateHomogenousBracket(
-                remainingPlayers = remainingPlayers,
-                s1 = s1R,
-                s2 = s2R,
-                limbo = limbo,
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                maxPairs = remainderPairs,
-                score = remainderPairingScore,
-                lookForBestScore = lookForBestScore,
-                downfloats = s2Downfloats
-            )
-            ){
-                if (!lookForBestScore){
-                    return true
-                }
-
-                combinedScore.isValidCandidate = true
-
-                combinedScore.currentTotal.reset()
-                combinedScore.currentTotal += mdpPairingScore.bestTotal + remainderPairingScore.bestTotal
-
-                if(combinedScore.currentTotal < combinedScore.bestTotal){
-                    combinedScore.updateHiScore(mutableListOf(), mutableListOf())
-                    combinedScore.bestCandidate.addAll(remainderPairingScore.bestCandidate)
-                    combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
-                }
-
-                if (combinedScore.bestTotal == PairingAssessmentCriteria()){
-                    break
-                }
-            }
-        }
         applyIndexSwap(s1, s2, swappingIndices)
     }
 
@@ -124,47 +88,85 @@ fun pairHeterogenousBracket(
 }
 
 fun iterateMdps(
+    remainingPlayers: MutableList<RegisteredPlayer>,
+    limbo: MutableList<RegisteredPlayer>,
+    s2Downfloats: MutableList<RegisteredPlayer>,
     s1: List<RegisteredPlayer>,
     s2: MutableList<RegisteredPlayer>,
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    score: CandidateAssessmentScore,
+    mdpPairingScore: CandidateAssessmentScore,
+    remainderPairingScore: CandidateAssessmentScore,
+    combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
-): Boolean{
+){
     val changedIndices = mutableListOf<Int>()
 
     do{
-
         assessCandidate(
             s1 = s1,
             s2 = s2,
             changedIndices = changedIndices,
-            score = score,
+            score = mdpPairingScore,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        if(!score.isValidCandidate){
+        if(!mdpPairingScore.isValidCandidate){
             continue
         }
 
-        if(lookForBestScore && score.currentTotal >= score.bestTotal){
+        if(lookForBestScore && mdpPairingScore.currentTotal >= combinedScore.bestTotal){
+            continue
+        }
+
+        combinedScore.currentTotal.reset()
+        combinedScore.currentTotal += mdpPairingScore.currentTotal.copy()
+
+        val remainder = s2.subList(s1.size, s2.size)
+        val remainderPairs = (maxPairs - s1.size)
+
+        val s1R = remainder.subList(0, remainderPairs)
+        val s2R = remainder.subList(remainderPairs, remainder.size)
+
+        remainderPairingScore.resetAll()
+
+        iterateHomogenousBracket(
+            remainingPlayers = remainingPlayers,
+            s1 = s1R,
+            s2 = s2R,
+            limbo = limbo,
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            maxPairs = remainderPairs,
+            score = remainderPairingScore,
+            combinedScore = combinedScore,
+            lookForBestScore = lookForBestScore,
+            downfloats = s2Downfloats
+        )
+
+        if(!combinedScore.isValidCandidate){
             continue
         }
 
         if(!lookForBestScore){
-            return true
+            return
         }
 
-        score.updateHiScore(s1, s2)
+        if(combinedScore.currentTotal < combinedScore.bestTotal){
+            combinedScore.updateHiScore(mutableListOf(), mutableListOf())
+            combinedScore.bestCandidate.addAll(remainderPairingScore.bestCandidate)
+            combinedScore.bestCandidate.addAll(mdpPairingScore.bestCandidate)
+        }
 
-        if (score.currentTotal == PairingAssessmentCriteria()){
-            return true
+        if (combinedScore.bestTotal == PairingAssessmentCriteria()){
+            return
         }
 
     }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
-    return score.isValidCandidate
+    return
 }

@@ -18,6 +18,7 @@ fun iterateHomogenousBracket(
     maxRounds: Int,
     maxPairs: Int,
     score: CandidateAssessmentScore,
+    combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf()
 ): Boolean{
