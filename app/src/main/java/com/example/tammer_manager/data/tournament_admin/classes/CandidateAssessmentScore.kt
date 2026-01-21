@@ -32,14 +32,4 @@ data class CandidateAssessmentScore(
         this.currentIndividualAssessments.clear()
         this.isValidCandidate = false
     }
-
-    fun resetHiScore(){
-        this.bestTotal.setToMax()
-        this.bestCandidate.clear()
-    }
-
-    fun resetAll(){
-        this.resetCurrentScore()
-        this.resetHiScore()
-    }
 }
