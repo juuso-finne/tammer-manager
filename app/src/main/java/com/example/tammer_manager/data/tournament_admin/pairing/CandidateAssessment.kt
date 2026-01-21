@@ -23,7 +23,7 @@ fun assessCandidate(
                 colorPreferenceMap = colorPreferenceMap,
                 isFinalRound = maxRounds - roundsCompleted <= 1
             )){
-                score.reset()
+                score.resetCurrentScore()
                 return
             }
 
@@ -49,7 +49,7 @@ fun assessCandidate(
                 colorPreferenceMap = colorPreferenceMap,
                 isFinalRound = maxRounds - roundsCompleted <= 1
             )){
-            score.reset()
+            score.resetCurrentScore()
             return
         }
 

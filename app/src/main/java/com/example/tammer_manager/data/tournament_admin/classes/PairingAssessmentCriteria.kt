@@ -67,4 +67,12 @@ data class PairingAssessmentCriteria(
         this.colorpreferenceConflicts = 0
         this.strongColorpreferenceConflicts = 0
     }
+
+    fun setToMax(){
+        this.pabAssigneeUnplayedGames = Int.MAX_VALUE
+        this.topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE
+        this.topScorersOrOpponentsColorstreakCount= Int.MAX_VALUE
+        this.colorpreferenceConflicts = Int.MAX_VALUE
+        this.strongColorpreferenceConflicts = Int.MAX_VALUE
+    }
 }
