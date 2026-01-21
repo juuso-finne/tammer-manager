@@ -35,6 +35,7 @@ fun assessCandidate(
             )
 
             score.currentIndividualAssessments.add(assessment)
+            score.currentCandidate.add(pair)
             score.currentTotal += assessment
         }
         score.isValidCandidate = true
@@ -65,6 +66,7 @@ fun assessCandidate(
         score.currentTotal += newAssessment
 
         score.currentIndividualAssessments[i] = newAssessment
+        score.currentCandidate[i] = pair
     }
 
     score.isValidCandidate = true
