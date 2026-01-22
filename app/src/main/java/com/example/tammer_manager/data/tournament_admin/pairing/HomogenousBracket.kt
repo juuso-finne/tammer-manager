@@ -125,6 +125,10 @@ fun iterateS2Permutations(
             downfloats.clear()
             downfloats.addAll(limbo)
             downfloats.addAll(s2.subList(maxPairs, s2.size))
+
+            if(byeInBracket){
+                combinedScore.bestCandidate.add(Pair(s2.last(), null))
+            }
         }
 
         if(!lookForBestScore || remainderPairingScore.currentTotal == PairingAssessmentCriteria()){

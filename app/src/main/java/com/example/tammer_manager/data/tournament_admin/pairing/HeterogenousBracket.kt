@@ -7,7 +7,6 @@ import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessm
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
-import kotlinx.coroutines.flow.combine
 import kotlin.math.min
 
 fun pairHeterogenousBracket(
@@ -48,7 +47,7 @@ fun pairHeterogenousBracket(
         applyIndexSwap(s1, s2, swappingIndices)
 
         val s2Copy = s2.sorted().toMutableList()
-        iterateMdps(
+        iterateMdpOpponents(
             limbo = limbo,
             remainingPlayers = remainingPlayers,
             s2Downfloats = s2Downfloats,
@@ -95,7 +94,7 @@ fun pairHeterogenousBracket(
     )
 }
 
-fun iterateMdps(
+fun iterateMdpOpponents(
     remainingPlayers: MutableList<RegisteredPlayer>,
     limbo: MutableList<RegisteredPlayer>,
     s2Downfloats: MutableList<RegisteredPlayer>,
