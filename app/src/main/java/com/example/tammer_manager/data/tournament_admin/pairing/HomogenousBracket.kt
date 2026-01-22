@@ -24,7 +24,10 @@ fun iterateHomogenousBracket(
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     bestBracketScore: PairingAssessmentCriteria
 ){
-    val bestRemainderScore = bestPossibleScore(s1.plus(s2), colorPreferenceMap)
+    val bestRemainderScore =
+        if (lookForBestScore) bestPossibleScore(s1.plus(s2), colorPreferenceMap)
+        else PairingAssessmentCriteria()
+
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
