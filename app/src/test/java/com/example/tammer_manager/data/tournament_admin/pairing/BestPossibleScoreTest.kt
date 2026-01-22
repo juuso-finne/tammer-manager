@@ -27,12 +27,12 @@ class BestPossibleScoreTest {
         simulateMatch(playerB, playerF, 0f, 0f, 1)
 
         simulateMatch(playerF, playerC, 0f, 0f, 1)
-        simulateMatch(playerC, playerF, 0f, 0f, 1)
+        simulateMatch(playerC, playerF, 0f, 0f, 2)
 
         simulateMatch(playerF, playerD, 0f, 0f, 1)
-        simulateMatch(playerD, playerF, 0f, 0f, 1)
+        simulateMatch(playerD, playerF, 0f, 0f, 2)
 
-        val colorPreferenceMap = players.associateBy(
+        var colorPreferenceMap = players.associateBy(
             {it.id},
             {it.getColorPreference()}
         )
@@ -46,10 +46,15 @@ class BestPossibleScoreTest {
 
         simulateMatch(playerE, playerF, 0f, 0f, 1)
 
+        colorPreferenceMap = players.associateBy(
+            {it.id},
+            {it.getColorPreference()}
+        )
+
         assertThat(bestPossibleScore(players, colorPreferenceMap)).isEqualTo(
             PairingAssessmentCriteria(
                 colorpreferenceConflicts = 2,
-                strongColorpreferenceConflicts = 2
+                strongColorpreferenceConflicts = 1
             )
         )
     }

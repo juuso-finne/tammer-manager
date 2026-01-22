@@ -4,7 +4,11 @@ import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessm
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
+import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.max
 
 fun assessCandidate(
     s1: List<RegisteredPlayer>,
@@ -75,5 +79,49 @@ fun assessCandidate(
 }
 
 fun bestPossibleScore(players: List<RegisteredPlayer>, colorPreferenceMap: Map<Int, ColorPreference>): PairingAssessmentCriteria{
-    return PairingAssessmentCriteria()
+
+    var white = 0
+    var black = 0
+
+    var strongWhite = 0
+    var strongBlack = 0
+
+    var neutral = 0
+
+    for (i in 0 until players.size) {
+        val it = players[i]
+        val preference = colorPreferenceMap[it.id] ?: ColorPreference()
+
+        if(preference.strength == ColorPreferenceStrength.NONE){
+            neutral++
+            continue
+        }
+
+        if(preference.preferredColor == PlayerColor.WHITE){
+            white++
+            if(preference.strength >= ColorPreferenceStrength.STRONG){
+                strongWhite++
+            }
+            continue
+        }
+
+        black++
+        if(preference.strength >= ColorPreferenceStrength.STRONG){
+            strongBlack++
+        }
+    }
+
+    val colorConflicts = (abs(white - black) - neutral) / 2
+
+    val potentialStrongConflictWhite = strongWhite - black - neutral
+    val potentialStrongConflictBlack = strongBlack - white - neutral
+
+    val potentialStrongConflicts = max(potentialStrongConflictBlack, potentialStrongConflictWhite)/2
+
+    val strongConflicts = max(potentialStrongConflicts, 0)
+
+    return PairingAssessmentCriteria(
+        colorpreferenceConflicts = colorConflicts,
+        strongColorpreferenceConflicts = strongConflicts
+    )
 }
