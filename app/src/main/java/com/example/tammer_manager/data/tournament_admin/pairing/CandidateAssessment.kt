@@ -2,6 +2,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
+import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.math.min
 
@@ -71,4 +72,8 @@ fun assessCandidate(
 
     score.isValidCandidate = true
     return
+}
+
+fun bestPossibleScore(players: List<RegisteredPlayer>, colorPreferenceMap: Map<Int, ColorPreference>): PairingAssessmentCriteria{
+    return PairingAssessmentCriteria()
 }
