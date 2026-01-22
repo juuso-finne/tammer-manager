@@ -21,7 +21,6 @@ class NextBracketTest {
     lateinit var playerG: RegisteredPlayer
     lateinit var playerH: RegisteredPlayer
     lateinit var playerI: RegisteredPlayer
-    lateinit var playerJ: RegisteredPlayer
 
     lateinit var players: MutableList<RegisteredPlayer>
 
@@ -29,7 +28,7 @@ class NextBracketTest {
 
     @Before
     fun setup(){
-        players = generatePlayers(10).toMutableList()
+        players = generatePlayers(9).toMutableList()
 
         players.sort()
         
@@ -42,29 +41,29 @@ class NextBracketTest {
         playerE = e
 
 
-        val (f,g,h,i,j) = players.subList(5, 10)
+        val (f,g,h,i) = players.subList(5, 9)
 
         playerF = f
         playerG = g
         playerH = h
         playerI = i
-        playerJ = j
+        //playerJ = j
 
-        players.removeAt(4)
+        //players.removeAt(4)
 
-        simulateMatch(playerF, playerA, 0f, 1f, 1)
-        simulateMatch(playerG, playerB, 1f, 0f, 1)
-        simulateMatch(playerC, playerH, .5f, .5f, 1)
-        simulateMatch(playerI, playerD, 0f, 1f, 1)
-        simulateMatch(playerJ, null, 1f, 0f, 1)
-        playerJ.receivedPairingBye = true
-
-        simulateMatch(playerA, playerG, 0f, 1f, 2)
-        simulateMatch(playerD, playerJ, 1f, 0f, 2)
-        simulateMatch(playerB, playerC, 1f, 0f, 2)
-        simulateMatch(playerH, playerF, 1f, 0f, 2)
-        simulateMatch(playerI, null, 1f, 1f, 2)
+        simulateMatch(playerE, playerA, 0f, 1f, 1)
+        simulateMatch(playerF, playerB, 1f, 0f, 1)
+        simulateMatch(playerC, playerG, .5f, .5f, 1)
+        simulateMatch(playerH, playerD, 0f, 1f, 1)
+        simulateMatch(playerI, null, 1f, 0f, 1)
         playerI.receivedPairingBye = true
+
+        simulateMatch(playerA, playerF, 0f, 1f, 2)
+        simulateMatch(playerD, playerI, 1f, 0f, 2)
+        simulateMatch(playerB, playerC, 1f, 0f, 2)
+        simulateMatch(playerG, playerE, 1f, 0f, 2)
+        simulateMatch(playerH, null, 1f, 1f, 2)
+        playerH.receivedPairingBye = true
 
         colorPreferenceMap = players.associateBy(
             {it.id},
@@ -91,12 +90,11 @@ class NextBracketTest {
                 .thenBy { min(it.first.tpn, (it.second?.tpn ?: 0)) }
         )
 
-        pairings.forEachIndexed { i, it ->
-            println("Pair ${i + 1}:")
-            println(it.first)
-            println(it.second)
-            println("-----")
-        }
+        assertThat(pairings[0].toList()).containsExactlyElementsIn(listOf(playerD, playerF))
+        assertThat(pairings[1].toList()).containsExactlyElementsIn(listOf(playerA, playerG))
+        assertThat(pairings[2].toList()).containsExactlyElementsIn(listOf(playerB, playerI))
+        assertThat(pairings[3].toList()).containsExactlyElementsIn(listOf(playerC, playerH))
+        assertThat(pairings[4].toList()).containsExactlyElementsIn(listOf(playerE, null))
 
         println("Success: $success")
     }
