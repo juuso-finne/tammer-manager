@@ -2,6 +2,7 @@ package com.example.tammer_manager.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
@@ -73,10 +74,12 @@ class TournamentViewModel(
 
     fun addPlayer(player: ImportedPlayer){
         val newList = registeredPlayers.value.toMutableList()
+        val tpn = (newList.maxOfOrNull { it.tpn } ?: 0) + 1
         newList.add(RegisteredPlayer(
             fullName = player.fullName,
             rating = player.rating,
-            id = getNextPlayerId()
+            id = getNextPlayerId(),
+            tpn = tpn
         ))
         savedStateHandle["registeredPlayers"] = newList.toList()
     }
@@ -109,6 +112,14 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
+    fun assignTpns(){
+        val newList = registeredPlayers.value.sortedByDescending { it.rating }.toMutableList()
+        for(i in 0..<newList.size){
+            newList[i] = newList[i].copy(tpn = i + 1)
+        }
+        savedStateHandle["registeredPlayers"] = newList.toList()
+    }
+
     private fun addToMatchHistory(id: Int, item: MatchHistoryItem){
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == id }
@@ -125,6 +136,9 @@ class TournamentViewModel(
     }
 
     fun generatePairs(){
+        if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF){
+            assignTpns()
+        }
         savedStateHandle["currentRoundPairings"] = generateSwissPairs(registeredPlayers.value.filter { it.isActive })
     }
 
