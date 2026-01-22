@@ -139,7 +139,17 @@ class TournamentViewModel(
         if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF){
             assignTpns()
         }
-        savedStateHandle["currentRoundPairings"] = generateSwissPairs(registeredPlayers.value.filter { it.isActive })
+
+        val newPairs = mutableListOf<Pairing>()
+
+        if (generateSwissPairs(
+            players = registeredPlayers.value.filter{ it.isActive },
+            roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+            maxRounds = activeTournament.value?.maxRounds ?: 0,
+            output = newPairs
+        )){
+            savedStateHandle["currentRoundPairings"] = newPairs
+        }
     }
 
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){

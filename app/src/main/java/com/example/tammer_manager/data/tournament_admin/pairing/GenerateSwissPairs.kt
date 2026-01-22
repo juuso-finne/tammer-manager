@@ -9,26 +9,31 @@ import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStr
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlin.math.abs
 
-fun pairingsPlaceholder(players: List<RegisteredPlayer>):PairingList{
-    val output = mutableListOf<Pairing>()
-    val sortedPlayerList = players.sortedByDescending { it.score }
+fun generateSwissPairs(
+    output: MutableList<Pairing>,
+    players: List<RegisteredPlayer>,
+    roundsCompleted: Int,
+    maxRounds: Int,
+): Boolean{
+    val playerPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>> = mutableListOf()
 
-    for(i in 0..< sortedPlayerList.size - 1 step 2){
-        val playerA = sortedPlayerList[i]
-        val playerB = sortedPlayerList[i+1]
+    val colorPreferenceMap = players.associateBy(
+        {it.id},
+        {it.getColorPreference()}
+    )
 
-        val pairing = mapOf<PlayerColor, HalfPairing>(
-    Pair(PlayerColor.WHITE, HalfPairing(playerID = playerA.id)),
-            Pair(PlayerColor.BLACK, HalfPairing(playerID = playerB.id))
-        )
-
-        output.add(pairing)
+    if (nextBracket(
+        output = playerPairs,
+        remainingPlayers = players.sorted().toMutableList(),
+        colorPreferenceMap = colorPreferenceMap,
+        roundsCompleted = roundsCompleted,
+        maxRounds = maxRounds
+    )){
+        playerPairs.mapTo(output){assignColors(it, colorPreferenceMap)}
+        return true
     }
-    return output
-}
 
-fun generateSwissPairs(players: List<RegisteredPlayer>): PairingList{
-    return pairingsPlaceholder(players)
+    return false
 }
 
 fun assignColors(players: Pair<RegisteredPlayer, RegisteredPlayer?>, colorPreferenceMap: Map<Int, ColorPreference>):Pairing{
