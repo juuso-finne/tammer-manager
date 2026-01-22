@@ -40,16 +40,12 @@ class NextBracketTest {
         playerD = d
         playerE = e
 
-
         val (f,g,h,i) = players.subList(5, 9)
 
         playerF = f
         playerG = g
         playerH = h
         playerI = i
-        //playerJ = j
-
-        //players.removeAt(4)
 
         simulateMatch(playerE, playerA, 0f, 1f, 1)
         simulateMatch(playerF, playerB, 1f, 0f, 1)

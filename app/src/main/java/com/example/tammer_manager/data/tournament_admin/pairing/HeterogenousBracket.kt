@@ -38,6 +38,8 @@ fun pairHeterogenousBracket(
     val remainderPairingScore = CandidateAssessmentScore()
     val combinedScore = CandidateAssessmentScore()
 
+    val bestBracketScore = bestPossibleScore(s1.plus(s2), colorPreferenceMap)
+
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
         mdpPairingScore.resetCurrentScore()
@@ -59,14 +61,15 @@ fun pairHeterogenousBracket(
             mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
-            remainderPairingScore = remainderPairingScore
+            remainderPairingScore = remainderPairingScore,
+            bestBracketScore = bestBracketScore
         )
 
         if(combinedScore.isValidCandidate && !lookForBestScore){
             return true
         }
 
-        if(combinedScore.isValidCandidate && combinedScore.bestTotal == PairingAssessmentCriteria()){
+        if(combinedScore.isValidCandidate && combinedScore.bestTotal <= bestBracketScore){
             break
         }
 
@@ -107,6 +110,7 @@ fun iterateMdpOpponents(
     remainderPairingScore: CandidateAssessmentScore,
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
+    bestBracketScore: PairingAssessmentCriteria
 ){
     val changedIndices = mutableListOf<Int>()
 
@@ -148,7 +152,8 @@ fun iterateMdpOpponents(
             mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
-            downfloats = s2Downfloats
+            downfloats = s2Downfloats,
+            bestBracketScore = bestBracketScore
         )
 
         if(!combinedScore.isValidCandidate){
@@ -159,8 +164,7 @@ fun iterateMdpOpponents(
             return
         }
 
-
-        if (combinedScore.bestTotal == PairingAssessmentCriteria()){
+        if (combinedScore.bestTotal <= bestBracketScore){
             return
         }
 
