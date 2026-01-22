@@ -99,8 +99,6 @@ fun iterateS2Permutations(
             continue
         }
 
-        downfloats.clear()
-        downfloats.addAll(s2.subList(maxPairs, s2.size))
         val compatibleWithLowerBrackets = (
             isLastBracket ||
             nextBracket(
@@ -110,7 +108,7 @@ fun iterateS2Permutations(
                 roundsCompleted = roundsCompleted,
                 maxRounds = maxRounds,
                 lookForBestScore = false,
-                incomingDownfloaters = downfloats.plus(limbo).sorted()
+                incomingDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
             )
         )
 
@@ -123,9 +121,13 @@ fun iterateS2Permutations(
         combinedScore.currentTotal += mdpPairingScore.currentTotal
         combinedScore.isValidCandidate = true
 
-        combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))
+        if (combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))){
+            downfloats.clear()
+            downfloats.addAll(limbo)
+            downfloats.addAll(s2.subList(maxPairs, s2.size))
+        }
 
-        if(!lookForBestScore || combinedScore.bestTotal == PairingAssessmentCriteria()){
+        if(!lookForBestScore || remainderPairingScore.currentTotal == PairingAssessmentCriteria()){
             return
         }
 

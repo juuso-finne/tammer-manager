@@ -57,7 +57,6 @@ fun pairHeterogenousBracket(
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds,
-            maxPairs = maxPairs,
             mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
@@ -105,7 +104,6 @@ fun iterateMdps(
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
     maxRounds: Int,
-    maxPairs: Int,
     mdpPairingScore: CandidateAssessmentScore,
     remainderPairingScore: CandidateAssessmentScore,
     combinedScore: CandidateAssessmentScore,
@@ -131,9 +129,6 @@ fun iterateMdps(
         if(lookForBestScore && mdpPairingScore.currentTotal >= combinedScore.bestTotal){
             continue
         }
-
-        combinedScore.currentTotal.reset()
-        combinedScore.currentTotal += mdpPairingScore.currentTotal.copy()
 
         val remainder = s2.subList(s1.size, s2.size)
         val remainderPairs = (remainder.size/2)
@@ -164,8 +159,6 @@ fun iterateMdps(
         if(!lookForBestScore){
             return
         }
-
-        combinedScore.updateHiScore(mutableListOf())
 
 
         if (combinedScore.bestTotal == PairingAssessmentCriteria()){

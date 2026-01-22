@@ -19,14 +19,15 @@ data class CandidateAssessmentScore(
 
     var isValidCandidate: Boolean = false
 ){
-    fun updateHiScore(newBest: List<Pair<RegisteredPlayer, RegisteredPlayer?>>){
+    fun updateHiScore(newBest: List<Pair<RegisteredPlayer, RegisteredPlayer?>>):Boolean{
         if (this.currentTotal >= bestTotal){
-            return
+            return false
         }
 
         this.bestTotal = this.currentTotal.copy()
         this.bestCandidate.clear()
         this.bestCandidate.addAll(newBest)
+        return true
     }
 
     fun resetCurrentScore(){
