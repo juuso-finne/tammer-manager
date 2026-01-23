@@ -3,11 +3,12 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
-import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 fun generateSwissPairs(
     output: MutableList<Pairing>,
@@ -29,6 +30,11 @@ fun generateSwissPairs(
         roundsCompleted = roundsCompleted,
         maxRounds = maxRounds
     )){
+        playerPairs.sortWith(
+            compareByDescending<Pair<RegisteredPlayer, RegisteredPlayer?>> { max(it.first.score, (it.second?.score ?: 0f)) }
+                .thenByDescending { it.first.score + (it.second?.score ?: 0f)}
+                .thenBy { min(it.first.tpn, (it.second?.tpn ?: 0)) }
+        )
         playerPairs.mapTo(output){assignColors(it, colorPreferenceMap)}
         return true
     }
