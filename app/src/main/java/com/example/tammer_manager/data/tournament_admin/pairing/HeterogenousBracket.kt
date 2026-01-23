@@ -64,7 +64,8 @@ fun pairHeterogenousBracket(
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
             remainderPairingScore = remainderPairingScore,
-            bestBracketScore = bestBracketScore
+            bestBracketScore = bestBracketScore,
+            maxPairs = maxPairs
         )
 
         if(combinedScore.isValidCandidate && !lookForBestScore){
@@ -112,7 +113,8 @@ fun iterateMdpOpponents(
     remainderPairingScore: CandidateAssessmentScore,
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
-    bestBracketScore: PairingAssessmentCriteria
+    bestBracketScore: PairingAssessmentCriteria,
+    maxPairs: Int
 ){
     val changedIndices = mutableListOf<Int>()
 
@@ -136,7 +138,7 @@ fun iterateMdpOpponents(
         }
 
         val remainder = s2.subList(s1.size, s2.size)
-        val remainderPairs = (remainder.size/2)
+        val remainderPairs = min(remainder.size/2, maxPairs)
 
         val s1R = remainder.subList(0, remainderPairs)
         val s2R = remainder.subList(remainderPairs, remainder.size)
