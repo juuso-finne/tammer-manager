@@ -29,9 +29,13 @@ fun Home(
                     ImportedPlayer("Hannu Hanhi", 2000),
                     ImportedPlayer("Aku Ankka", 1900),
                     ImportedPlayer("Sari Shakinpelaaja", 1800),
+                    ImportedPlayer("Rymy-Eetu", 1750),
                     ImportedPlayer("Sakke Shakinpelaaja", 1700),
+                    ImportedPlayer("Matti Mainio", 1650),
                     ImportedPlayer("Paavo Puuntuuppaaja", 1600),
+                    ImportedPlayer("Jussi Juonio", 1550),
                     ImportedPlayer("Kaino Vieno", 1500),
+                    ImportedPlayer("Esko Unohtumaton", 1450),
                     ImportedPlayer("Antti Antinpoika", 1400),
                 ).forEach { vmTournament.addPlayer(it) }
             }

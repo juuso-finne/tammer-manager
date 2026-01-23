@@ -58,6 +58,9 @@ class TournamentViewModel(
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
+                    if(newItem.opponentId == null){
+                        setPlayerReceivedBye(it)
+                    }
                     addToPlayerScore(id = it, amount = item.value.points ?: 0f)
                     addToMatchHistory(id = it, item = newItem)
                 }
@@ -109,6 +112,13 @@ class TournamentViewModel(
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == id }
         playerList[index] = playerList[index].let { it.copy(score = it.score + amount) }
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
+    fun setPlayerReceivedBye(id: Int, value:Boolean = true){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == id }
+        playerList[index] = playerList[index].copy(receivedPairingBye = value)
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 

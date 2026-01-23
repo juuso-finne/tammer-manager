@@ -49,8 +49,8 @@ fun assignColors(players: Pair<RegisteredPlayer, RegisteredPlayer?>, colorPrefer
 
     if(preferenceB == null){
         return mapOf(
-            Pair(PlayerColor.WHITE, HalfPairing(playerID = playerA.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing())
+            Pair(PlayerColor.WHITE, HalfPairing(playerID = playerA.id, points = 1f)),
+                    Pair(PlayerColor.BLACK, HalfPairing(points = 0f))
         )
     }
 
@@ -64,9 +64,12 @@ fun assignColors(players: Pair<RegisteredPlayer, RegisteredPlayer?>, colorPrefer
     }
 
     if(preferenceA?.preferredColor != preferenceB.preferredColor){
+        val playerAColor = preferenceA?.preferredColor ?: preferenceB.preferredColor!!.reverse()
+        val playerBColor = preferenceB.preferredColor ?: preferenceA?.preferredColor!!.reverse()
+
         return mapOf(
-            Pair(preferenceA!!.preferredColor!!, HalfPairing(playerID = playerA.id)),
-            Pair(preferenceB.preferredColor!!, HalfPairing(playerID = playerB?.id))
+            Pair(playerAColor, HalfPairing(playerID = playerA.id)),
+            Pair(playerBColor, HalfPairing(playerID = playerB?.id))
         )
     }
 

@@ -71,11 +71,18 @@ fun EnterResults(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(pairingList.size) { i ->
-                        PairingItem(
-                            vmTournament = vmTournament,
-                            pairing = pairingList[i],
-                            index = i
-                        )
+                        val pairing = pairingList[i]
+
+                        val idWhite = pairing[PlayerColor.WHITE]?.playerID
+                        val idBlack = pairing[PlayerColor.BLACK]?.playerID
+
+                        if(idWhite != null && idBlack != null){
+                            PairingItem(
+                                vmTournament = vmTournament,
+                                pairing = pairing,
+                                index = i
+                            )
+                        }
                     }
                 }
             }
