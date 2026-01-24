@@ -145,7 +145,7 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
     }
 
-    fun generatePairs(){
+    fun generatePairs(onError: () -> Unit){
         if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF){
             assignTpns()
         }
@@ -159,7 +159,10 @@ class TournamentViewModel(
             output = newPairs
         )){
             savedStateHandle["currentRoundPairings"] = newPairs
+            return
         }
+
+        onError()
     }
 
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){

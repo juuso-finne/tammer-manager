@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
@@ -57,6 +58,15 @@ fun EnterResults(
             val activeTournament = vmTournament.activeTournament.collectAsState().value
             val completedRounds = activeTournament?.roundsCompleted ?: 0
             val maxRounds = activeTournament?.maxRounds ?: 0
+
+            val (pairingError, setPairingError) = remember { mutableStateOf(false) }
+
+            when{ pairingError ->
+                ErrorDialog(
+                    onDismissRequest = { setPairingError(false) },
+                    errorText = "Unable to complete automatic pairing."
+                )
+            }
 
             Text(
                 text = "Round ${completedRounds + 1} / $maxRounds",
@@ -92,7 +102,9 @@ fun EnterResults(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { vmTournament.generatePairs() },
+                    onClick = { vmTournament.generatePairs(
+                        onError = {setPairingError(true)}
+                    ) },
                     enabled = pairingList.isEmpty()
                 ) { Text("Generate pairs") }
 
