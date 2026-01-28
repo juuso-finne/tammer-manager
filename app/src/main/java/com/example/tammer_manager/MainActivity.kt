@@ -18,6 +18,7 @@ import com.example.tammer_manager.ui.screens.EnterResults
 import com.example.tammer_manager.ui.screens.enter_players.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.PlayerImport
+import com.example.tammer_manager.ui.screens.Standings
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -67,6 +68,12 @@ fun App( context: Context) {
 
             composable (route = "enterResults") {
                 EnterResults(
+                    vmTournament = vmTournament
+                )
+            }
+
+            composable (route = "standings") {
+                Standings(
                     vmTournament = vmTournament
                 )
             }
