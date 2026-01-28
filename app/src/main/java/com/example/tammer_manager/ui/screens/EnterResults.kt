@@ -60,6 +60,7 @@ fun EnterResults(
             val maxRounds = activeTournament?.maxRounds ?: 0
 
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
+            val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
 
             when{ pairingError ->
                 ErrorDialog(
@@ -72,6 +73,13 @@ fun EnterResults(
                 text = "Round ${completedRounds + 1} / $maxRounds",
                 style = Typography.headlineMedium
             )
+
+            if(loadingPairs){
+                Text(
+                    text = "Generating pairs...",
+                    style = Typography.headlineSmall
+                )
+            }
 
             if (!pairingList.isEmpty()) {
                 LazyColumn(
@@ -102,10 +110,16 @@ fun EnterResults(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = { vmTournament.generatePairs(
-                        onError = {setPairingError(true)}
+                    onClick = {
+                        setLoadingPairs(true)
+                        vmTournament.generatePairs(
+                        onError = {
+                            setLoadingPairs(false)
+                            setPairingError(true)
+                        },
+                        onSuccess = {setLoadingPairs(false)}
                     ) },
-                    enabled = pairingList.isEmpty()
+                    enabled = pairingList.isEmpty() && !loadingPairs
                 ) { Text("Generate pairs") }
 
                 Button(
