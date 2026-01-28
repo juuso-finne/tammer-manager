@@ -2,6 +2,7 @@ package com.example.tammer_manager.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
@@ -12,7 +13,10 @@ import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.pairing.generateSwissPairs
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TournamentViewModel(
     private val savedStateHandle: SavedStateHandle
@@ -58,6 +62,9 @@ class TournamentViewModel(
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
+                    if(newItem.opponentId == null){
+                        setPlayerReceivedBye(it)
+                    }
                     addToPlayerScore(id = it, amount = item.value.points ?: 0f)
                     addToMatchHistory(id = it, item = newItem)
                 }
@@ -112,6 +119,13 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
+    fun setPlayerReceivedBye(id: Int, value:Boolean = true){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == id }
+        playerList[index] = playerList[index].copy(receivedPairingBye = value)
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
     fun assignTpns(){
         val newList = registeredPlayers.value.sortedByDescending { it.rating }.toMutableList()
         for(i in 0..<newList.size){
@@ -135,11 +149,32 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
     }
 
-    fun generatePairs(){
-        if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF){
-            assignTpns()
+    fun generatePairs(
+        onError: () -> Unit,
+        onSuccess: () -> Unit
+    ){
+        viewModelScope.launch {
+            val success = withContext(Dispatchers.Default){
+                if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
+                    assignTpns()
+                }
+
+                val newPairs = mutableListOf<Pairing>()
+
+                generateSwissPairs(
+                    players = registeredPlayers.value.filter { it.isActive },
+                    roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+                    maxRounds = activeTournament.value?.maxRounds ?: 0,
+                    output = newPairs
+                ).also{ ok ->
+                    if(ok){
+                        savedStateHandle["currentRoundPairings"] = newPairs
+                    }
+                }
+            }
+
+            if (success) onSuccess() else onError()
         }
-        savedStateHandle["currentRoundPairings"] = generateSwissPairs(registeredPlayers.value.filter { it.isActive })
     }
 
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){

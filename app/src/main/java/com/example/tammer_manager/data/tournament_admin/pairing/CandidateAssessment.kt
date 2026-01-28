@@ -111,7 +111,8 @@ fun bestPossibleScore(players: List<RegisteredPlayer>, colorPreferenceMap: Map<I
         }
     }
 
-    val colorConflicts = (abs(white - black) - neutral) / 2
+    val potentialColorConflicts = (abs(white - black) - neutral) / 2
+    val colorConflicts = max(potentialColorConflicts, 0)
 
     val potentialStrongConflictWhite = strongWhite - black - neutral
     val potentialStrongConflictBlack = strongBlack - white - neutral
