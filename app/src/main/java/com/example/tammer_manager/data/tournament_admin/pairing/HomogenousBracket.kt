@@ -130,7 +130,6 @@ fun iterateS2Permutations(
 
         if (combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))){
             downfloats.clear()
-            downfloats.addAll(limbo)
             downfloats.addAll(s2.subList(maxPairs, s2.size))
 
             if(byeInBracket){
