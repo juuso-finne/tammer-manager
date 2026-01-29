@@ -26,7 +26,8 @@ import kotlinx.coroutines.launch
 val items = listOf(
     MenuItem("home", "Main menu"),
     MenuItem("enterPlayers", "Enter players"),
-    MenuItem("enterResults", "Enter results")
+    MenuItem("enterResults", "Enter results"),
+    MenuItem("standings", "Standings")
 )
 
 

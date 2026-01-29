@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
@@ -45,6 +46,7 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 @Composable
 fun EnterResults(
     vmTournament: TournamentViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     vmTournament.activeTournament.collectAsState().value?.let {
@@ -70,7 +72,10 @@ fun EnterResults(
             }
 
             Text(
-                text = "Round ${completedRounds + 1} / $maxRounds",
+                text =
+                    if (completedRounds < maxRounds) "Round ${completedRounds + 1} / $maxRounds"
+                    else "Tournament finished"
+                ,
                 style = Typography.headlineMedium
             )
 
@@ -105,40 +110,48 @@ fun EnterResults(
                 }
             }
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            if(completedRounds >= maxRounds){
                 Button(
-                    onClick = {
-                        setLoadingPairs(true)
-                        vmTournament.generatePairs(
-                        onError = {
-                            setLoadingPairs(false)
-                            setPairingError(true)
-                        },
-                        onSuccess = {setLoadingPairs(false)}
-                    ) },
-                    enabled = pairingList.isEmpty() && !loadingPairs
-                ) { Text("Generate pairs") }
+                    onClick = { navController.navigate("standings") }
+                ){
+                    Text("View results")
+                }
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            setLoadingPairs(true)
+                            vmTournament.generatePairs(
+                                onError = {
+                                    setLoadingPairs(false)
+                                    setPairingError(true)
+                                },
+                                onSuccess = {setLoadingPairs(false)}
+                            ) },
+                        enabled = pairingList.isEmpty() && !loadingPairs
+                    ) { Text("Generate pairs") }
 
-                Button(
-                    enabled =
-                        pairingList.all { pairing ->
-                            pairing.all {
-                                it.value.points != null
+                    Button(
+                        enabled =
+                            pairingList.all { pairing ->
+                                pairing.all {
+                                    it.value.points != null
+                                }
                             }
-                        }
-                                && !pairingList.isEmpty(),
-                    onClick = { vmTournament.finishRound() }
-                ) { Text("Finish round") }
-            }
+                                    && !pairingList.isEmpty(),
+                        onClick = { vmTournament.finishRound() }
+                    ) { Text("Finish round") }
+                }
 
-            Button(
-                onClick = {vmTournament.clearPairings()},
-                enabled = !pairingList.isEmpty()
-            ){
-                Text("Clear pairs")
+                Button(
+                    onClick = {vmTournament.clearPairings()},
+                    enabled = !pairingList.isEmpty()
+                ){
+                    Text("Clear pairs")
+                }
             }
         }
     }?: NoActiveTournament()
