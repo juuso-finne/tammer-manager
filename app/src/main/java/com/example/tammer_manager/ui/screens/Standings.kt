@@ -1,7 +1,5 @@
 package com.example.tammer_manager.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -59,7 +56,10 @@ fun Standings(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ){
               items(players.size){ i->
-                  StandingsItem(players[i])
+                  StandingsItem(
+                      player = players[i],
+                      placement = i + 1
+                  )
               }
             }
         }
@@ -68,7 +68,8 @@ fun Standings(
 
 @Composable
 fun StandingsItem(
-    player: RegisteredPlayer
+    player: RegisteredPlayer,
+    placement: Int
 ){
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier
@@ -76,7 +77,7 @@ fun StandingsItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = player.fullName,
+                text = "$placement. ${player.fullName}",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
