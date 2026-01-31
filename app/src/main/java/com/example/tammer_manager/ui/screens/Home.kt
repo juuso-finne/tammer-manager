@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
@@ -16,12 +17,18 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 @Composable
 fun Home(
     vmTournament: TournamentViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Button (
+            onClick = { navController.navigate("newTournament") }
+        ){
+            Text("New tournament")
+        }
         Button(
             onClick = {
                 vmTournament.initateTournament(name = "Placeholder", maxRounds = 5)

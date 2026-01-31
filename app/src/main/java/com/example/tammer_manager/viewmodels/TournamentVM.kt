@@ -42,6 +42,7 @@ class TournamentViewModel(
 
     fun initateTournament(name: String, maxRounds: Int){
         savedStateHandle["tournament"] = Tournament(name, maxRounds)
+        savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
     }
 
     private fun advanceRound(){

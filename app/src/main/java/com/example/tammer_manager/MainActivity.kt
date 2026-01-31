@@ -17,6 +17,7 @@ import com.example.tammer_manager.ui.screens.AppFrame
 import com.example.tammer_manager.ui.screens.EnterResults
 import com.example.tammer_manager.ui.screens.enter_players.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
+import com.example.tammer_manager.ui.screens.NewTorunament
 import com.example.tammer_manager.ui.screens.PlayerImport
 import com.example.tammer_manager.ui.screens.Standings
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
@@ -50,7 +51,10 @@ fun App( context: Context) {
             modifier = Modifier.padding(innerPadding),
             startDestination = "home"
         ) {
-            composable ("home") { Home(vmTournament = vmTournament) }
+            composable ("home") { Home(
+                vmTournament = vmTournament,
+                navController = navController
+            ) }
 
             composable("playerImport") { PlayerImport(
                 context = context,
@@ -76,6 +80,13 @@ fun App( context: Context) {
             composable (route = "standings") {
                 Standings(
                     vmTournament = vmTournament
+                )
+            }
+
+            composable (route = "newTournament") {
+                NewTorunament(
+                    vmTournament = vmTournament,
+                    navController = navController
                 )
             }
         }
