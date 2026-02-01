@@ -18,7 +18,9 @@ fun pairHeterogenousBracket(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    incomingDownfloaters:List<RegisteredPlayer>
+    incomingDownfloaters:List<RegisteredPlayer>,
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ):Boolean{
     val isLastBracket = remainingPlayers.isEmpty()
 
@@ -74,7 +76,9 @@ fun pairHeterogenousBracket(
             lookForBestScore = lookForBestScore,
             remainderPairingScore = remainderPairingScore,
             bestBracketScore = bestBracketScore,
-            maxPairs = maxPairs
+            maxPairs = maxPairs,
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
         )
 
         if(combinedScore.isValidCandidate && !lookForBestScore){
@@ -105,7 +109,9 @@ fun pairHeterogenousBracket(
         roundsCompleted = roundsCompleted,
         maxRounds = maxRounds,
         lookForBestScore = true,
-        incomingDownfloaters = limbo.plus(s2Downfloats)
+        incomingDownfloaters = limbo.plus(s2Downfloats),
+        approvedDownfloaters = approvedDownfloaters,
+        disapprovedDownfloaters = disapprovedDownfloaters
     )
 }
 
@@ -123,7 +129,9 @@ fun iterateMdpOpponents(
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     bestBracketScore: PairingAssessmentCriteria,
-    maxPairs: Int
+    maxPairs: Int,
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     val changedIndices = mutableListOf<Int>()
 
@@ -181,7 +189,9 @@ fun iterateMdpOpponents(
             lookForBestScore = lookForBestScore,
             downfloats = s2Downfloats,
             bestBracketScore = bestBracketScore,
-            bestRemainderScore = bestRemainderScore
+            bestRemainderScore = bestRemainderScore,
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
         )
 
         if(!combinedScore.isValidCandidate){

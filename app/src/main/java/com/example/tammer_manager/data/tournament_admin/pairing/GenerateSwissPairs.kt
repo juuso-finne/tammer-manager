@@ -28,7 +28,15 @@ fun generateSwissPairs(
         remainingPlayers = players.sorted().toMutableList(),
         colorPreferenceMap = colorPreferenceMap,
         roundsCompleted = roundsCompleted,
-        maxRounds = maxRounds
+        maxRounds = maxRounds,
+        approvedDownfloaters = players.distinctBy { it.score }.associateBy(
+            keySelector = {it.score},
+            valueTransform = {mutableSetOf()}
+        ),
+        disapprovedDownfloaters = players.distinctBy { it.score }.associateBy(
+            {it.score},
+            {mutableSetOf()}
+        ),
     )){
         playerPairs.sortWith(
             compareByDescending<Pair<RegisteredPlayer, RegisteredPlayer?>> { max(it.first.score, (it.second?.score ?: 0f)) }
