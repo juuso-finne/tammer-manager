@@ -39,7 +39,14 @@ fun pairHeterogenousBracket(
     val combinedScore = CandidateAssessmentScore()
 
     val bestBracketScore =
-        if (lookForBestScore) bestPossibleScore(s1.plus(s2), colorPreferenceMap)
+        if (lookForBestScore) bestPossibleScore(
+            players = s1.plus(s2),
+            colorPreferenceMap = colorPreferenceMap,
+            maxPairs = maxPairs
+            ).copy(
+            topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE,
+            topScorersOrOpponentsColorstreakCount = Int.MAX_VALUE
+        )
         else PairingAssessmentCriteria()
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
