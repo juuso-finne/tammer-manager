@@ -73,7 +73,19 @@ fun Home(
                 ).forEach { vmTournament.addPlayer(it) }
             }
         ) {
-            Text("Create placeholder tournament [DEBUG/DEV]")
+            Text("Create placeholder tournament of 11 [DEBUG/DEV]")
+        }
+
+        Button(
+            onClick = {
+                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5)
+                val players = mutableListOf<ImportedPlayer>()
+                for(i in 0 until 50){
+                    vmTournament.addPlayer(ImportedPlayer("Player $i", 1000 + i*20))
+                }
+            }
+        ) {
+            Text("Create placeholder tournament of 50 [DEBUG/DEV]")
         }
     }
 }
