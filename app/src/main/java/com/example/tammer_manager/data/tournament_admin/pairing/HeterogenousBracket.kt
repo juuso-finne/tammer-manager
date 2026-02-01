@@ -39,15 +39,17 @@ fun pairHeterogenousBracket(
     val combinedScore = CandidateAssessmentScore()
 
     val bestBracketScore =
-        if (lookForBestScore) bestPossibleScore(
-            players = s1.plus(s2),
-            colorPreferenceMap = colorPreferenceMap,
-            maxPairs = maxPairs
+        if (lookForBestScore)
+            bestPossibleScore(
+                players = s1.plus(s2),
+                colorPreferenceMap = colorPreferenceMap,
+                maxPairs = maxPairs
             ).copy(
-            topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE,
-            topScorersOrOpponentsColorstreakCount = Int.MAX_VALUE
-        )
-        else PairingAssessmentCriteria()
+                topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE,
+                topScorersOrOpponentsColorstreakCount = Int.MAX_VALUE
+            )
+        else
+            PairingAssessmentCriteria()
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
@@ -147,6 +149,20 @@ fun iterateMdpOpponents(
         val remainder = s2.subList(s1.size, s2.size)
         val remainderPairs = min(remainder.size/2, maxPairs)
 
+        val bestRemainderScore =
+            if (lookForBestScore)
+                bestPossibleScore(
+                    players = remainder,
+                    colorPreferenceMap = colorPreferenceMap,
+                    maxPairs = remainderPairs
+                )
+            else
+                PairingAssessmentCriteria()
+
+        if(lookForBestScore && mdpPairingScore.currentTotal + bestRemainderScore >= combinedScore.bestTotal){
+            continue
+        }
+
         val s1R = remainder.subList(0, remainderPairs)
         val s2R = remainder.subList(remainderPairs, remainder.size)
 
@@ -164,7 +180,8 @@ fun iterateMdpOpponents(
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
             downfloats = s2Downfloats,
-            bestBracketScore = bestBracketScore
+            bestBracketScore = bestBracketScore,
+            bestRemainderScore = bestRemainderScore
         )
 
         if(!combinedScore.isValidCandidate){
