@@ -78,7 +78,13 @@ fun assessCandidate(
     return
 }
 
-fun bestPossibleScore(players: List<RegisteredPlayer>, colorPreferenceMap: Map<Int, ColorPreference>): PairingAssessmentCriteria{
+fun bestPossibleScore(
+    players: List<RegisteredPlayer>,
+    colorPreferenceMap: Map<Int, ColorPreference>,
+    maxPairs: Int = players.size/2
+): PairingAssessmentCriteria{
+
+    val omittedPairs = players.size / 2 - maxPairs
 
     var white = 0
     var black = 0
@@ -111,13 +117,13 @@ fun bestPossibleScore(players: List<RegisteredPlayer>, colorPreferenceMap: Map<I
         }
     }
 
-    val potentialColorConflicts = (abs(white - black) - neutral) / 2
+    val potentialColorConflicts = ((abs(white - black) - neutral) / 2) - omittedPairs
     val colorConflicts = max(potentialColorConflicts, 0)
 
     val potentialStrongConflictWhite = strongWhite - black - neutral
     val potentialStrongConflictBlack = strongBlack - white - neutral
 
-    val potentialStrongConflicts = max(potentialStrongConflictBlack, potentialStrongConflictWhite)/2
+    val potentialStrongConflicts = (max(potentialStrongConflictBlack, potentialStrongConflictWhite)/2) - omittedPairs
 
     val strongConflicts = max(potentialStrongConflicts, 0)
 

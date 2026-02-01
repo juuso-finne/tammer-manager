@@ -57,6 +57,15 @@ class BestPossibleScoreTest {
                 strongColorpreferenceConflicts = 1
             )
         )
+
+        assertThat(bestPossibleScore(
+            players,
+            colorPreferenceMap,
+            maxPairs = 1
+        )).isEqualTo(PairingAssessmentCriteria(
+            colorpreferenceConflicts = 1,
+            strongColorpreferenceConflicts = 0
+        ))
     }
 
 }
