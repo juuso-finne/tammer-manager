@@ -84,7 +84,7 @@ fun bestPossibleScore(
     maxPairs: Int = players.size/2
 ): PairingAssessmentCriteria{
 
-    val omittedPairs = players.size / 2 - maxPairs
+    val omittedPairs = (players.size / 2) - maxPairs
 
     var white = 0
     var black = 0
@@ -120,11 +120,7 @@ fun bestPossibleScore(
     val potentialColorConflicts = ((abs(white - black) - neutral) / 2) - omittedPairs
     val colorConflicts = max(potentialColorConflicts, 0)
 
-    val potentialStrongConflictWhite = strongWhite - black - neutral
-    val potentialStrongConflictBlack = strongBlack - white - neutral
-
-    val potentialStrongConflicts = (max(potentialStrongConflictBlack, potentialStrongConflictWhite)/2) - omittedPairs
-
+    val potentialStrongConflicts = max(strongWhite, strongBlack) - (players.size / 2) -  omittedPairs - (players.size % 2)
     val strongConflicts = max(potentialStrongConflicts, 0)
 
     return PairingAssessmentCriteria(
