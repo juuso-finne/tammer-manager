@@ -3,7 +3,7 @@ package com.example.tammer_manager.data.tournament_admin.classes
 data class PairingAssessmentCriteria(
 
     /**Minimise the score of the assignee of the pairing-allocated-bye.*/
-    var pabAssigneeScore: Int = 0,
+    var pabAssigneeScore: Float = 0f,
 
     /**Minimise the number of unplayed games of the assignee of the pairing-allocated-bye.*/
     var pabAssigneeUnplayedGames:Int = 0,
@@ -69,7 +69,7 @@ data class PairingAssessmentCriteria(
         ).compare(this, other)
 
     fun reset(){
-        this.pabAssigneeScore = 0
+        this.pabAssigneeScore = 0f
         this.pabAssigneeUnplayedGames = 0
         this.topScorerOrOpponentColorImbalanceCount = 0
         this.topScorersOrOpponentsColorstreakCount= 0
@@ -78,7 +78,7 @@ data class PairingAssessmentCriteria(
     }
 
     fun setToMax(){
-        this.pabAssigneeScore = Int.MAX_VALUE
+        this.pabAssigneeScore = Float.MAX_VALUE
         this.pabAssigneeUnplayedGames = Int.MAX_VALUE
         this.topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE
         this.topScorersOrOpponentsColorstreakCount= Int.MAX_VALUE
