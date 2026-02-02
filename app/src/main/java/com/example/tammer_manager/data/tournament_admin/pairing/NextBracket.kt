@@ -11,8 +11,23 @@ fun nextBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     lookForBestScore: Boolean = true,
-    incomingDownfloaters:List<RegisteredPlayer> = listOf()
+    incomingDownfloaters:List<RegisteredPlayer> = listOf(),
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+
 ): Boolean{
+    val bracketScore = remainingPlayers.first().score
+
+    val onDisapproveList = disapprovedDownfloaters[bracketScore]?.contains(incomingDownfloaters.toSet())
+    if (onDisapproveList ?: false){
+        return false
+    }
+
+    val onApproveList = approvedDownfloaters[bracketScore]?.contains(incomingDownfloaters.toSet())
+    if(!lookForBestScore && onApproveList ?: false){
+        return true
+    }
+
     val residentPlayers = mutableListOf<RegisteredPlayer>()
     fetchNextBracket(remainingPlayers = remainingPlayers, residentPlayers = residentPlayers)
 
@@ -26,7 +41,9 @@ fun nextBracket(
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds,
             lookForBestScore = lookForBestScore,
-            incomingDownfloaters = listOf(residentPlayers.first())
+            incomingDownfloaters = listOf(residentPlayers.first()),
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
         )
     }
 
@@ -40,7 +57,9 @@ fun nextBracket(
                 maxRounds = maxRounds,
                 maxPairs = maxPairs,
                 lookForBestScore = lookForBestScore,
-                incomingDownfloaters = incomingDownfloaters
+                incomingDownfloaters = incomingDownfloaters,
+                approvedDownfloaters = approvedDownfloaters,
+                disapprovedDownfloaters = disapprovedDownfloaters
         )){
             return true
         }

@@ -40,9 +40,16 @@ class TournamentViewModel(
         initialValue = listOf()
     )
 
-    fun initateTournament(name: String, maxRounds: Int){
-        savedStateHandle["tournament"] = Tournament(name, maxRounds)
+    fun clearTournament(){
+        savedStateHandle["tournament"] = null
         savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
+        savedStateHandle["nextPlayerId"] = 0
+        savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
+    }
+
+    fun initateTournament(name: String, maxRounds: Int){
+        clearTournament()
+        savedStateHandle["tournament"] = Tournament(name, maxRounds)
     }
 
     private fun advanceRound(){

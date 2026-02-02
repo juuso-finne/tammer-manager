@@ -2,6 +2,7 @@ package com.example.tammer_manager.data.tournament_admin.classes
 
 data class CandidateAssessmentScore(
     var bestTotal: PairingAssessmentCriteria = PairingAssessmentCriteria(
+        pabAssigneeScore = Float.MAX_VALUE,
         pabAssigneeUnplayedGames = Int.MAX_VALUE,
         topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE,
         topScorersOrOpponentsColorstreakCount = Int.MAX_VALUE,

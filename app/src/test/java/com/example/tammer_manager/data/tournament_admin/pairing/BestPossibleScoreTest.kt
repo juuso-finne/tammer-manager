@@ -19,18 +19,18 @@ class BestPossibleScoreTest {
             playerE
         ) = players
 
-        val playerF = RegisteredPlayer("PlayerF", 0, 0 ,0)
+        val playerX = RegisteredPlayer("PlayerF", 0, 0 ,0)
 
-        simulateMatch(playerA, playerF, 0f, 0f, 1)
-        simulateMatch(playerA, playerF, 0f, 0f, 1)
+        simulateMatch(playerA, playerX, 0f, 0f, 1)
+        simulateMatch(playerA, playerX, 0f, 0f, 1)
 
-        simulateMatch(playerB, playerF, 0f, 0f, 1)
+        simulateMatch(playerB, playerX, 0f, 0f, 1)
 
-        simulateMatch(playerF, playerC, 0f, 0f, 1)
-        simulateMatch(playerC, playerF, 0f, 0f, 2)
+        simulateMatch(playerX, playerC, 0f, 0f, 1)
+        simulateMatch(playerC, playerX, 0f, 0f, 2)
 
-        simulateMatch(playerF, playerD, 0f, 0f, 1)
-        simulateMatch(playerD, playerF, 0f, 0f, 2)
+        simulateMatch(playerX, playerD, 0f, 0f, 1)
+        simulateMatch(playerD, playerX, 0f, 0f, 2)
 
         var colorPreferenceMap = players.associateBy(
             {it.id},
@@ -44,7 +44,7 @@ class BestPossibleScoreTest {
             )
         )
 
-        simulateMatch(playerE, playerF, 0f, 0f, 1)
+        simulateMatch(playerE, playerX, 0f, 0f, 1)
 
         colorPreferenceMap = players.associateBy(
             {it.id},
@@ -54,9 +54,18 @@ class BestPossibleScoreTest {
         assertThat(bestPossibleScore(players, colorPreferenceMap)).isEqualTo(
             PairingAssessmentCriteria(
                 colorpreferenceConflicts = 2,
-                strongColorpreferenceConflicts = 1
+                strongColorpreferenceConflicts = 0
             )
         )
+
+        assertThat(bestPossibleScore(
+            players,
+            colorPreferenceMap,
+            maxPairs = 1
+        )).isEqualTo(PairingAssessmentCriteria(
+            colorpreferenceConflicts = 1,
+            strongColorpreferenceConflicts = 0
+        ))
     }
 
 }

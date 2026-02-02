@@ -22,12 +22,11 @@ fun iterateHomogenousBracket(
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestBracketScore: PairingAssessmentCriteria
+    bestBracketScore: PairingAssessmentCriteria,
+    bestRemainderScore: PairingAssessmentCriteria,
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
-    val bestRemainderScore =
-        if (lookForBestScore) bestPossibleScore(s1.plus(s2), colorPreferenceMap)
-        else PairingAssessmentCriteria()
-
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
@@ -48,7 +47,9 @@ fun iterateHomogenousBracket(
             lookForBestScore = lookForBestScore,
             downfloats = downfloats,
             mdpPairingScore = mdpPairingScore,
-            bestRemainderScore = bestRemainderScore
+            bestRemainderScore = bestRemainderScore,
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
         )
         if (!combinedScore.isValidCandidate) {
             continue
@@ -76,7 +77,9 @@ fun iterateS2Permutations(
     mdpPairingScore: CandidateAssessmentScore,
     combinedScore: CandidateAssessmentScore,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestRemainderScore: PairingAssessmentCriteria
+    bestRemainderScore: PairingAssessmentCriteria,
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
@@ -100,27 +103,39 @@ fun iterateS2Permutations(
 
         if(byeInBracket){
             remainderPairingScore.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            remainderPairingScore.currentTotal.pabAssigneeScore = s2.last().score
         }
 
         if(!remainderPairingScore.isValidCandidate){
             continue
         }
 
-        val compatibleWithLowerBrackets = (
-            isLastBracket ||
-            nextBracket(
-                output = mutableListOf(),
-                remainingPlayers = remainingPlayers.toMutableList(),
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                lookForBestScore = false,
-                incomingDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
-            )
-        )
+        val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
+
+        val compatibleWithLowerBrackets =
+            if(isLastBracket)
+                true
+            else
+                nextBracket(
+                    output = mutableListOf(),
+                    remainingPlayers = remainingPlayers.toMutableList(),
+                    colorPreferenceMap = colorPreferenceMap,
+                    roundsCompleted = roundsCompleted,
+                    maxRounds = maxRounds,
+                    lookForBestScore = false,
+                    incomingDownfloaters = candidateDownfloaters,
+                    approvedDownfloaters = approvedDownfloaters,
+                    disapprovedDownfloaters = disapprovedDownfloaters
+                )
+
 
         if(!compatibleWithLowerBrackets){
+            disapprovedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
             continue
+        }
+
+        if(!isLastBracket){
+            approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
         combinedScore.resetCurrentScore()
