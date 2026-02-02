@@ -2,6 +2,9 @@ package com.example.tammer_manager.data.tournament_admin.classes
 
 data class PairingAssessmentCriteria(
 
+    /**Minimise the score of the assignee of the pairing-allocated-bye.*/
+    var pabAssigneeScore: Int = 0,
+
     /**Minimise the number of unplayed games of the assignee of the pairing-allocated-bye.*/
     var pabAssigneeUnplayedGames:Int = 0,
 
@@ -20,6 +23,7 @@ data class PairingAssessmentCriteria(
 
     operator fun plusAssign(other: PairingAssessmentCriteria){
 
+        this.pabAssigneeScore += other.pabAssigneeScore
         this.pabAssigneeUnplayedGames += other.pabAssigneeUnplayedGames
         this.topScorerOrOpponentColorImbalanceCount += other.topScorerOrOpponentColorImbalanceCount
         this.topScorersOrOpponentsColorstreakCount += other.topScorersOrOpponentsColorstreakCount
@@ -29,6 +33,7 @@ data class PairingAssessmentCriteria(
     }
 
     operator fun minusAssign(other: PairingAssessmentCriteria){
+        this.pabAssigneeScore -= other.pabAssigneeScore
         this.pabAssigneeUnplayedGames -= other.pabAssigneeUnplayedGames
         this.topScorerOrOpponentColorImbalanceCount -= other.topScorerOrOpponentColorImbalanceCount
         this.topScorersOrOpponentsColorstreakCount -= other.topScorersOrOpponentsColorstreakCount
@@ -38,6 +43,8 @@ data class PairingAssessmentCriteria(
 
     operator fun plus(other: PairingAssessmentCriteria): PairingAssessmentCriteria {
         return PairingAssessmentCriteria(
+            pabAssigneeScore =
+                this.pabAssigneeScore + other.pabAssigneeScore,
             pabAssigneeUnplayedGames =
                 this.pabAssigneeUnplayedGames + other.pabAssigneeUnplayedGames,
             topScorerOrOpponentColorImbalanceCount =
@@ -53,6 +60,7 @@ data class PairingAssessmentCriteria(
 
     override fun compareTo(other: PairingAssessmentCriteria): Int =
         compareBy<PairingAssessmentCriteria>(
+            {it.pabAssigneeScore},
             { it.pabAssigneeUnplayedGames },
             { it.topScorerOrOpponentColorImbalanceCount },
             { it.topScorersOrOpponentsColorstreakCount },
@@ -61,6 +69,7 @@ data class PairingAssessmentCriteria(
         ).compare(this, other)
 
     fun reset(){
+        this.pabAssigneeScore = 0
         this.pabAssigneeUnplayedGames = 0
         this.topScorerOrOpponentColorImbalanceCount = 0
         this.topScorersOrOpponentsColorstreakCount= 0
@@ -69,6 +78,7 @@ data class PairingAssessmentCriteria(
     }
 
     fun setToMax(){
+        this.pabAssigneeScore = Int.MAX_VALUE
         this.pabAssigneeUnplayedGames = Int.MAX_VALUE
         this.topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE
         this.topScorersOrOpponentsColorstreakCount= Int.MAX_VALUE
