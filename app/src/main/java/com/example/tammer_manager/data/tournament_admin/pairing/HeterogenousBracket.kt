@@ -53,6 +53,10 @@ fun pairHeterogenousBracket(
         else
             PairingAssessmentCriteria()
 
+    if(isLastBracket && incomingDownfloaters.size + residentPlayers.size % 2 == 1) {
+        bestBracketScore.pabAssigneeScore = s2.last().score
+    }
+
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
         mdpPairingScore.resetCurrentScore()
@@ -166,6 +170,10 @@ fun iterateMdpOpponents(
                 )
             else
                 PairingAssessmentCriteria()
+
+        if(remainingPlayers.isEmpty() && remainder.size % 2 == 1){
+            bestRemainderScore.pabAssigneeScore = remainder.minOf { it.score }
+        }
 
         if(lookForBestScore && mdpPairingScore.currentTotal + bestRemainderScore >= combinedScore.bestTotal){
             continue
