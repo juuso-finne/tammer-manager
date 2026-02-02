@@ -103,6 +103,7 @@ fun iterateS2Permutations(
 
         if(byeInBracket){
             remainderPairingScore.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            remainderPairingScore.currentTotal.pabAssigneeScore = s2.last().score
         }
 
         if(!remainderPairingScore.isValidCandidate){
