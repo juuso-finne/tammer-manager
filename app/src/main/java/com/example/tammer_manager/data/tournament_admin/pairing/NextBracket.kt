@@ -12,8 +12,14 @@ fun nextBracket(
     maxRounds: Int,
     lookForBestScore: Boolean = true,
     incomingDownfloaters:List<RegisteredPlayer> = listOf(),
-    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
-    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>> = remainingPlayers.distinctBy { it.score }.associateBy(
+        {it.score},
+        {mutableSetOf()}
+    ),
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>> = remainingPlayers.distinctBy { it.score }.associateBy(
+        {it.score},
+        {mutableSetOf()}
+    ),
 
 ): Boolean{
     val bracketScore = remainingPlayers.first().score
