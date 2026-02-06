@@ -103,7 +103,11 @@ fun EnterResults(
                             PairingItem(
                                 vmTournament = vmTournament,
                                 pairing = pairing,
-                                index = i
+                                index = i,
+                                setScore = { whitePlayerScore, blackPlayerScore ->
+                                    vmTournament.setPairingScore(index = i, playerColor = PlayerColor.WHITE, points = whitePlayerScore)
+                                    vmTournament.setPairingScore(index = i, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
+                                }
                             )
                         }
                     }
@@ -164,14 +168,10 @@ fun PairingItem(
     vmTournament: TournamentViewModel,
     pairing: Pairing,
     modifier: Modifier = Modifier.Companion,
-    borderThickness: Dp = 1.dp
+    borderThickness: Dp = 1.dp,
+    setScore: (Float, Float) -> Unit
 ) {
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
-
-    val setScore: (Float, Float) -> Unit = { whitePlayerScore, blackPlayerScore ->
-        vmTournament.setPairingScore(index = index, playerColor = PlayerColor.WHITE, points = whitePlayerScore)
-        vmTournament.setPairingScore(index = index, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
-    }
 
     Row(
         modifier = Modifier.Companion.height(IntrinsicSize.Max),
