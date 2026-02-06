@@ -232,36 +232,43 @@ fun HeaderRow(
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ){
-        if(showLeftArrow){
-            IconButton(
-                onClick = onLeftArrowClick
-            ) {
-                Icon(
-                    tint = Color.Blue,
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = "Previous round"
-                )
+        Row(modifier = Modifier.weight(0.5f), horizontalArrangement = Arrangement.End){
+            if(showLeftArrow){
+                IconButton(
+                    onClick = onLeftArrowClick
+                ) {
+                    Icon(
+                        tint = Color.Blue,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = "Previous round"
+                    )
+                }
             }
         }
 
+
         Text(
+            modifier = Modifier.padding(vertical = 5.dp),
             text = "Round $current / $max",
             style = Typography.headlineMedium
         )
 
-        if(showRightArrow){
-            IconButton(
-                onClick = onRightArrowClick
-            ) {
-                Icon(
-                    tint = Color.Blue,
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "Next round"
-                )
+        Row(modifier = Modifier.weight(0.5f)){
+            if(showRightArrow){
+                IconButton(
+                    onClick = onRightArrowClick
+                ) {
+                    Icon(
+                        tint = Color.Blue,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "Next round"
+                    )
+                }
             }
         }
+
     }
 }
