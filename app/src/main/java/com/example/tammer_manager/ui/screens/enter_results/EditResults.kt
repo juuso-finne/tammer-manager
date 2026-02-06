@@ -2,9 +2,13 @@ package com.example.tammer_manager.ui.screens.enter_results
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,11 +39,21 @@ fun EditResults(
         val completedRounds = activeTournament?.roundsCompleted ?: 0
         val maxRounds = activeTournament?.maxRounds ?: 0
 
-        val (currentlyEditingRound, setCurrentlyEditingRound) = remember { mutableIntStateOf(completedRounds) }
+        val (currentlyEditingRound, setCurrentlyEditingRound) = remember {
+            mutableIntStateOf(completedRounds)
+        }
 
-        val (localResults, setLocalResults) = remember (players, currentlyEditingRound) { mutableStateOf(
+        val reconstructedPairings = remember(players, currentlyEditingRound) {
             reconstructPairings(players = players, round = currentlyEditingRound)
-        ) }
+        }
+
+        val (localResults, setLocalResults) = remember (players, currentlyEditingRound) {
+            mutableStateOf(reconstructedPairings)
+        }
+
+        val unsavedChanges = remember(localResults, reconstructedPairings) {
+            localResults != reconstructedPairings
+        }
 
         HeaderRow(
             current = currentlyEditingRound,
@@ -84,6 +98,25 @@ fun EditResults(
                         )
                     }
                 }
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Button(
+                onClick = {},
+                enabled = unsavedChanges
+            ){
+                Text("Save changes")
+            }
+
+            Button(
+                onClick = {},
+                enabled = unsavedChanges
+            ){
+                Text("Reset changes")
             }
         }
 
