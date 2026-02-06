@@ -30,7 +30,7 @@ fun EditResults(
 ){
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier.Companion.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.Companion.CenterHorizontally
     ){
         val activeTournament = vmTournament.activeTournament.collectAsState().value
@@ -103,17 +103,20 @@ fun EditResults(
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp)
         ){
             Button(
-                onClick = {},
+                onClick = {vmTournament.editRound(
+                    round = currentlyEditingRound,
+                    newResults = localResults
+                )},
                 enabled = unsavedChanges
             ){
                 Text("Save changes")
             }
 
             Button(
-                onClick = {},
+                onClick = {setLocalResults(reconstructedPairings)},
                 enabled = unsavedChanges
             ){
                 Text("Reset changes")

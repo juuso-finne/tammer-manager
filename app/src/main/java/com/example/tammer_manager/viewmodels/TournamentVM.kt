@@ -82,6 +82,26 @@ class TournamentViewModel(
         clearPairings()
     }
 
+    fun editRound(round: Int, newResults: PairingList){
+        val players = registeredPlayers.value
+        newResults.forEach { pairing ->
+            pairing.forEach { item ->
+                val ownColor = item.key
+                item.value.playerID?.let{
+                    val newItem = MatchHistoryItem(
+                        opponentId = pairing[ownColor.reverse()]?.playerID,
+                        round = round,
+                        result = item.value.points ?: 0f,
+                        color = ownColor,
+                    )
+                    removeFromMatcHistory(playerId = it, round = round)
+                    addToMatchHistory(id = it, item = newItem)
+                    addToPlayerScore(id = it, amount = item.value.points ?: 0f)
+                }
+            }
+        }
+    }
+
     private fun getNextPlayerId(): Int{
         savedStateHandle["nextPlayerId"] = nextPlayerId.value + 1
         return nextPlayerId.value
@@ -147,6 +167,17 @@ class TournamentViewModel(
         val index = playerList.indexOfFirst { it.id == id }
         playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
         savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
+    private fun removeFromMatcHistory(playerId: Int, round: Int){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == playerId }
+        val oldScore = playerList[index].matchHistory.find { it.round == round }?.result ?: 0f
+        playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.filterNot { match ->
+            match.round == round
+        }) }
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+        addToPlayerScore(id = playerId, amount = -oldScore)
     }
 
     fun isPaired(): Boolean{
