@@ -108,6 +108,12 @@ fun EnterResults(
                 ) {
                     Text("View results")
                 }
+
+                Button(
+                    onClick = { navController.navigate("editResults") }
+                ) {
+                    Text("Edit results")
+                }
             } else {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
