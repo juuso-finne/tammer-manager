@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -217,4 +219,49 @@ fun ScoringMenuItem(
             setIsOpen(false)
         }
     )
+}
+
+@Composable
+fun HeaderRow(
+    current: Int,
+    max: Int,
+    showLeftArrow: Boolean,
+    showRightArrow: Boolean,
+    onLeftArrowClick: () -> Unit,
+    onRightArrowClick: () -> Unit,
+){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        if(showLeftArrow){
+            IconButton(
+                onClick = onLeftArrowClick
+            ) {
+                Icon(
+                    tint = Color.Blue,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Previous round"
+                )
+            }
+        }
+
+        Text(
+            text = "Round $current / $max",
+            style = Typography.headlineMedium
+        )
+
+        if(showRightArrow){
+            IconButton(
+                onClick = onRightArrowClick
+            ) {
+                Icon(
+                    tint = Color.Blue,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Next round"
+                )
+            }
+        }
+    }
 }

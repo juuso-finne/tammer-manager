@@ -52,12 +52,21 @@ fun EnterResults(
                     )
             }
 
-            Text(
-                text =
-                    if (completedRounds < maxRounds) "Round ${completedRounds + 1} / $maxRounds"
-                    else "Tournament finished",
-                style = Typography.headlineMedium
-            )
+            if (completedRounds < maxRounds){
+                HeaderRow(
+                    current = completedRounds + 1,
+                    max = maxRounds,
+                    showLeftArrow = completedRounds > 0,
+                    showRightArrow = false,
+                    onLeftArrowClick = {},
+                    onRightArrowClick = {}
+                )
+            } else{
+                Text(
+                    text ="Tournament finished",
+                    style = Typography.headlineMedium
+                )
+            }
 
             if (loadingPairs) {
                 Text(
