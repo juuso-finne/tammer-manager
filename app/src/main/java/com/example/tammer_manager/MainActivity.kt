@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tammer_manager.ui.screens.AppFrame
-import com.example.tammer_manager.ui.screens.EnterResults
+import com.example.tammer_manager.ui.screens.enter_results.EnterResults
 import com.example.tammer_manager.ui.screens.enter_players.EnterPlayers
 import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.NewTorunament

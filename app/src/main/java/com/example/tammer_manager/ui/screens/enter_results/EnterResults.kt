@@ -1,4 +1,4 @@
-package com.example.tammer_manager.ui.screens
+package com.example.tammer_manager.ui.screens.enter_results
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,13 +47,13 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 fun EnterResults(
     vmTournament: TournamentViewModel,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
     vmTournament.activeTournament.collectAsState().value?.let {
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.Companion.fillMaxSize(),
+            horizontalAlignment = Alignment.Companion.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
 
@@ -64,22 +64,22 @@ fun EnterResults(
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
             val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
 
-            when{ pairingError ->
-                ErrorDialog(
-                    onDismissRequest = { setPairingError(false) },
-                    errorText = "Unable to complete automatic pairing."
-                )
+            when {
+                pairingError ->
+                    ErrorDialog(
+                        onDismissRequest = { setPairingError(false) },
+                        errorText = "Unable to complete automatic pairing."
+                    )
             }
 
             Text(
                 text =
                     if (completedRounds < maxRounds) "Round ${completedRounds + 1} / $maxRounds"
-                    else "Tournament finished"
-                ,
+                    else "Tournament finished",
                 style = Typography.headlineMedium
             )
 
-            if(loadingPairs){
+            if (loadingPairs) {
                 Text(
                     text = "Generating pairs...",
                     style = Typography.headlineSmall
@@ -88,7 +88,7 @@ fun EnterResults(
 
             if (!pairingList.isEmpty()) {
                 LazyColumn(
-                    modifier = Modifier
+                    modifier = Modifier.Companion
                         .padding(horizontal = 5.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -99,7 +99,7 @@ fun EnterResults(
                         val idWhite = pairing[PlayerColor.WHITE]?.playerID
                         val idBlack = pairing[PlayerColor.BLACK]?.playerID
 
-                        if(idWhite != null && idBlack != null){
+                        if (idWhite != null && idBlack != null) {
                             PairingItem(
                                 vmTournament = vmTournament,
                                 pairing = pairing,
@@ -110,16 +110,16 @@ fun EnterResults(
                 }
             }
 
-            if(completedRounds >= maxRounds){
+            if (completedRounds >= maxRounds) {
                 Button(
                     onClick = { navController.navigate("standings") }
-                ){
+                ) {
                     Text("View results")
                 }
             } else {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.Companion.fillMaxWidth()
                 ) {
                     Button(
                         onClick = {
@@ -129,8 +129,9 @@ fun EnterResults(
                                     setLoadingPairs(false)
                                     setPairingError(true)
                                 },
-                                onSuccess = {setLoadingPairs(false)}
-                            ) },
+                                onSuccess = { setLoadingPairs(false) }
+                            )
+                        },
                         enabled = pairingList.isEmpty() && !loadingPairs
                     ) { Text("Generate pairs") }
 
@@ -147,9 +148,9 @@ fun EnterResults(
                 }
 
                 Button(
-                    onClick = {vmTournament.clearPairings()},
+                    onClick = { vmTournament.clearPairings() },
                     enabled = !pairingList.isEmpty()
-                ){
+                ) {
                     Text("Clear pairs")
                 }
             }
@@ -162,7 +163,7 @@ fun PairingItem(
     index: Int,
     vmTournament: TournamentViewModel,
     pairing: Pairing,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     borderThickness: Dp = 1.dp
 ) {
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
@@ -171,46 +172,53 @@ fun PairingItem(
         vmTournament.setPairingScore(index = index, playerColor = PlayerColor.WHITE, points = whitePlayerScore)
         vmTournament.setPairingScore(index = index, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
     }
-    
+
     Row(
-        modifier = Modifier.height(IntrinsicSize.Max),
-        horizontalArrangement = Arrangement.spacedBy(borderThickness * -1))
+        modifier = Modifier.Companion.height(IntrinsicSize.Max),
+        horizontalArrangement = Arrangement.spacedBy(borderThickness * -1)
+    )
     {
         Column(
             verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .fillMaxHeight()
                 .weight(1f)
         ) {
             PlayerColor.entries.sortedBy { it.ordinal }.forEach {
-                PlayerScoreRow (
-                    modifier = Modifier
+                PlayerScoreRow(
+                    modifier = Modifier.Companion
                         .fillMaxHeight()
                         .weight(1f),
                     color = it,
                     pairingData = pairing[it],
-                    vmTournament = vmTournament)
+                    vmTournament = vmTournament
+                )
             }
         }
 
         Column() {
             IconButton(
                 onClick = { setIsMenuOpen(!isMenuOpen) },
-                modifier = Modifier
-                    .background(Color.Blue)
+                modifier = Modifier.Companion
+                    .background(Color.Companion.Blue)
                     .fillMaxHeight()
                     .border(
                         width = borderThickness,
-                        color = Color.Black
+                        color = Color.Companion.Black
                     )
             ) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "Enter result for pair ${index + 1}",
-                    tint=Color.White
+                    tint = Color.Companion.White
                 )
             }
-            ScoringMenu(isOpen = isMenuOpen, setIsOpen = setIsMenuOpen, modifier = Modifier, setScore = setScore)
+            ScoringMenu(
+                isOpen = isMenuOpen,
+                setIsOpen = setIsMenuOpen,
+                modifier = Modifier.Companion,
+                setScore = setScore
+            )
         }
     }
 }
@@ -220,7 +228,7 @@ fun PlayerScoreRow(
     vmTournament: TournamentViewModel,
     color: PlayerColor,
     pairingData: HalfPairing?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.Companion,
     borderThickness: Dp = 1.dp,
 ) {
 
@@ -231,48 +239,50 @@ fun PlayerScoreRow(
         if (score % 1.0 == 0.0) "%,.0f".format(score)
         else "%,.1f".format(score)
 
-    Row(modifier = modifier
-        .border(
-            width = borderThickness,
-            color = Color.Black
-        )
-        .background(color = Color.White)
-        .fillMaxWidth(),
+    Row(
+        modifier = modifier
+            .border(
+                width = borderThickness,
+                color = Color.Companion.Black
+            )
+            .background(color = Color.Companion.White)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(borderThickness * -1),
-        verticalAlignment = Alignment.CenterVertically
-    ){
+        verticalAlignment = Alignment.Companion.CenterVertically
+    ) {
 
-        Box(modifier = Modifier
-            .background(color = color.colorValue)
-            .border(width = borderThickness, color = Color.Black)
-            .fillMaxHeight()
-            .layout() { measurable, constraints ->
-                val placeable = measurable.measure(constraints)
-                val currentHeight = placeable.height
+        Box(
+            modifier = Modifier.Companion
+                .background(color = color.colorValue)
+                .border(width = borderThickness, color = Color.Companion.Black)
+                .fillMaxHeight()
+                .layout() { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    val currentHeight = placeable.height
 
-                layout(currentHeight, currentHeight) {
-                    placeable.placeRelative(0, 0)
-                }
-            }) {}
+                    layout(currentHeight, currentHeight) {
+                        placeable.placeRelative(0, 0)
+                    }
+                }) {}
 
         Text(
-            text = "${ player?.fullName ?: '-' } ($scoreAsText)",
+            text = "${player?.fullName ?: '-'} ($scoreAsText)",
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
+            overflow = TextOverflow.Companion.Ellipsis,
+            modifier = Modifier.Companion
                 .padding(horizontal = 2.dp)
                 .weight(1f),
             style = Typography.bodyLarge
         )
 
         Text(
-            text = when(pairingData?.points){
+            text = when (pairingData?.points) {
                 null -> "-"
                 0.5f -> "½"
                 else -> "%,.0f".format(locale = null, pairingData.points)
             },
             maxLines = 1,
-            modifier = Modifier.padding(horizontal = 2.dp),
+            modifier = Modifier.Companion.padding(horizontal = 2.dp),
             style = Typography.headlineSmall
         )
     }
@@ -283,28 +293,28 @@ fun ScoringMenu(
     setScore: (Float, Float) -> Unit,
     isOpen: Boolean,
     setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
     DropdownMenu(
         expanded = isOpen,
-        onDismissRequest = {setIsOpen(false)},
+        onDismissRequest = { setIsOpen(false) },
     ) {
         listOf(
             Pair(1f, 0f),
             Pair(.5f, .5f),
             Pair(0f, 1f),
         ).forEach {
-            ScoringMenuItem(it.first,it.second, setScore = setScore, setIsOpen = setIsOpen)
+            ScoringMenuItem(it.first, it.second, setScore = setScore, setIsOpen = setIsOpen)
             HorizontalDivider()
         }
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.Companion.height(20.dp))
         HorizontalDivider()
         listOf(
             Pair(0f, 0f),
             Pair(.5f, 0f),
             Pair(0f, .5f),
         ).forEach {
-            ScoringMenuItem(it.first,it.second, setScore = setScore, setIsOpen = setIsOpen)
+            ScoringMenuItem(it.first, it.second, setScore = setScore, setIsOpen = setIsOpen)
             HorizontalDivider()
         }
     }
@@ -316,14 +326,15 @@ fun ScoringMenuItem(
     pointsBlack: Float,
     setScore: (Float, Float) -> Unit,
     setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.Companion
 ) {
     val whitePointsString = if (pointsWhite == 0.5f) "½" else "%,.0f".format(locale = null, pointsWhite)
     val blackPointsString = if (pointsBlack == 0.5f) "½" else "%,.0f".format(locale = null, pointsBlack)
 
     DropdownMenuItem(
         text = {
-            Text(text = "$whitePointsString - $blackPointsString",
+            Text(
+                text = "$whitePointsString - $blackPointsString",
                 style = Typography.bodyLarge
             )
         },
