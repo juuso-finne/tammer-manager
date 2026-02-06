@@ -225,8 +225,8 @@ fun ScoringMenuItem(
 fun HeaderRow(
     current: Int,
     max: Int,
-    showLeftArrow: Boolean,
-    showRightArrow: Boolean,
+    showLeftArrow: Boolean = current > 1,
+    showRightArrow: Boolean = current < max,
     onLeftArrowClick: () -> Unit,
     onRightArrowClick: () -> Unit,
 ){
