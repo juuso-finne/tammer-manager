@@ -29,7 +29,7 @@ fun EnterResults(
     navController: NavController,
     modifier: Modifier = Modifier.Companion
 ) {
-    vmTournament.activeTournament.collectAsState().value?.let {
+    vmTournament.activeTournament.collectAsState().value?.let { activeTournament ->
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.Companion.fillMaxSize(),
@@ -37,9 +37,8 @@ fun EnterResults(
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
 
-            val activeTournament = vmTournament.activeTournament.collectAsState().value
-            val completedRounds = activeTournament?.roundsCompleted ?: 0
-            val maxRounds = activeTournament?.maxRounds ?: 0
+            val completedRounds = activeTournament.roundsCompleted
+            val maxRounds = activeTournament.maxRounds
 
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
             val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
@@ -58,7 +57,7 @@ fun EnterResults(
                     max = maxRounds,
                     showLeftArrow = completedRounds > 0,
                     showRightArrow = false,
-                    onLeftArrowClick = {},
+                    onLeftArrowClick = { navController.navigate("editResults") },
                     onRightArrowClick = {}
                 )
             } else{
