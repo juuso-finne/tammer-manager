@@ -16,7 +16,7 @@ class GenerateRoundRobinPairsTest {
 
         val pairings = mutableListOf<Pairing>()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 0)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 0)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -33,7 +33,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 1)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 1)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -42,15 +42,15 @@ class GenerateRoundRobinPairsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerA.id))
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
+                    Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerC.id))
                 )
             )
         )
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 2)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 2)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -59,8 +59,8 @@ class GenerateRoundRobinPairsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerC.id))
+                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerD.id))
                 )
             )
         )
@@ -74,7 +74,7 @@ class GenerateRoundRobinPairsTest {
 
         val pairings = mutableListOf<Pairing>()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 0)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 0)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -95,7 +95,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 1)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 1)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -116,7 +116,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 2)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 2)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -137,7 +137,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 3)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 3)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -158,7 +158,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, completedRounds = 4)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 4)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
