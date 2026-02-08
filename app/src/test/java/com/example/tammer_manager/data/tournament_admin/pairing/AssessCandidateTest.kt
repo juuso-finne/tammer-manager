@@ -5,6 +5,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessm
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.assessCandidate
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
@@ -145,7 +146,7 @@ class AssessCandidateTest {
         s2[1] = playerD
         s2[2] = playerC
 
-        assessCandidate(s1, s2, mutableListOf(0,1,2), score, colorPreferenceMap, 2, 3)
+        assessCandidate(s1, s2, mutableListOf(0, 1, 2), score, colorPreferenceMap, 2, 3)
 
         assertThat(score.currentTotal).isEqualTo(PairingAssessmentCriteria())
         assertThat(score.isValidCandidate).isTrue()
@@ -153,7 +154,7 @@ class AssessCandidateTest {
         s2[0] = playerD
         s2[1] = playerF
 
-        assessCandidate(s1, s2, mutableListOf(0,1), score, colorPreferenceMap, 2, 3)
+        assessCandidate(s1, s2, mutableListOf(0, 1), score, colorPreferenceMap, 2, 3)
 
         assertThat(score.currentTotal).isEqualTo(PairingAssessmentCriteria())
         assertThat(score.isValidCandidate).isFalse()

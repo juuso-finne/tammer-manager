@@ -12,7 +12,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
-import com.example.tammer_manager.data.tournament_admin.pairing.generateSwissPairs
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

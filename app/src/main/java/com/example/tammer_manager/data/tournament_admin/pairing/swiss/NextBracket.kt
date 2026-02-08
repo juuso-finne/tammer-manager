@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.tournament_admin.pairing
+package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer

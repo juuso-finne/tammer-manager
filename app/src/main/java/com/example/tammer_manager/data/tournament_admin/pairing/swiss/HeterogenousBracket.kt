@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.tournament_admin.pairing
+package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
@@ -7,6 +7,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessm
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import kotlin.collections.iterator
 import kotlin.math.min
 
 fun pairHeterogenousBracket(
