@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 import org.apache.commons.lang3.math.NumberUtils
 
@@ -27,6 +28,7 @@ fun NewTorunament(
 ){
     val (tournamentName, setTournamentName) = remember { mutableStateOf("") }
     val (rounds, setRounds) = remember { mutableIntStateOf(0) }
+    val (type, setType) = remember {mutableStateOf(TournamentType.SWISS)}
 
     Column(
         modifier = Modifier
@@ -50,7 +52,7 @@ fun NewTorunament(
 
         Button(
             onClick = {
-                vmTournament.initateTournament(tournamentName, rounds)
+                vmTournament.initateTournament(tournamentName, rounds, type)
                 navController.navigate("Home")
             },
             enabled =
