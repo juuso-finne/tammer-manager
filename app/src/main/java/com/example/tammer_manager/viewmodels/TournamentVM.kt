@@ -233,7 +233,7 @@ class TournamentViewModel(
             } else{
                 withContext(Dispatchers.Default){
                     generateRoundRobinPairs(
-                        players = registeredPlayers.value,
+                        players = registeredPlayers.value.sortedByDescending { it.rating },
                         output = newPairs,
                         roundsCompleted = activeTournament.value?.roundsCompleted ?: 0
                     )
