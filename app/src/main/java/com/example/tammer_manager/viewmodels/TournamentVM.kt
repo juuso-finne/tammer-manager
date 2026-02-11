@@ -59,6 +59,18 @@ class TournamentViewModel(
         savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
     }
 
+    private fun updateMaxRounds(){
+        if(activeTournament.value?.type == TournamentType.SWISS){
+            return
+        }
+
+        val playerCount = registeredPlayers.value.size
+
+        savedStateHandle["tournament"] = activeTournament.value?.copy(
+            maxRounds = playerCount - 1 + playerCount % 2
+        )
+    }
+
     fun finishRound(){
         advanceRound()
 
@@ -119,6 +131,7 @@ class TournamentViewModel(
             tpn = tpn
         ))
         savedStateHandle["registeredPlayers"] = newList.toList()
+        updateMaxRounds()
     }
 
     fun findPlayerById(id: Int): RegisteredPlayer?{
@@ -134,6 +147,7 @@ class TournamentViewModel(
             newList.removeAt(index)
         }
         savedStateHandle["registeredPlayers"] = newList.toList()
+        updateMaxRounds()
     }
 
     fun activatePlayer(index: Int){
