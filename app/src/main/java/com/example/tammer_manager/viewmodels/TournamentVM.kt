@@ -13,6 +13,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
+import com.example.tammer_manager.data.tournament_admin.pairing.generateRoundRobinPairs
 import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -194,26 +195,39 @@ class TournamentViewModel(
         onSuccess: () -> Unit
     ){
         viewModelScope.launch {
-            val success = withContext(Dispatchers.Default){
-                if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
-                    assignTpns()
-                }
+            val newPairs = mutableListOf<Pairing>()
 
-                val newPairs = mutableListOf<Pairing>()
+            if(activeTournament.value?.type == TournamentType.SWISS){
+                val success = withContext(Dispatchers.Default){
+                    if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
+                        assignTpns()
+                    }
 
-                generateSwissPairs(
-                    players = registeredPlayers.value.filter { it.isActive },
-                    roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
-                    maxRounds = activeTournament.value?.maxRounds ?: 0,
-                    output = newPairs
-                ).also{ ok ->
-                    if(ok){
-                        savedStateHandle["currentRoundPairings"] = newPairs
+                    generateSwissPairs(
+                        players = registeredPlayers.value.filter { it.isActive },
+                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+                        maxRounds = activeTournament.value?.maxRounds ?: 0,
+                        output = newPairs
+                    ).also{ ok ->
+                        if(ok){
+                            savedStateHandle["currentRoundPairings"] = newPairs
+                        }
                     }
                 }
+
+                if (success) onSuccess() else onError()
+            } else{
+                withContext(Dispatchers.Default){
+                    generateRoundRobinPairs(
+                        players = registeredPlayers.value,
+                        output = newPairs,
+                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0
+                    )
+                }
+                savedStateHandle["currentRoundPairings"] = newPairs
+                onSuccess()
             }
 
-            if (success) onSuccess() else onError()
         }
     }
 
