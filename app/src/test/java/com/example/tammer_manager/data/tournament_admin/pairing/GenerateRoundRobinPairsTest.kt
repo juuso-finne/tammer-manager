@@ -80,7 +80,7 @@ class GenerateRoundRobinPairsTest {
             listOf(
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null))
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
                 ),
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerA.id)),
@@ -101,7 +101,7 @@ class GenerateRoundRobinPairsTest {
             listOf(
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null))
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
                 ),
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
@@ -122,7 +122,7 @@ class GenerateRoundRobinPairsTest {
             listOf(
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null))
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
                 ),
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
@@ -143,7 +143,7 @@ class GenerateRoundRobinPairsTest {
             listOf(
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null))
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
                 ),
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
@@ -164,7 +164,7 @@ class GenerateRoundRobinPairsTest {
             listOf(
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerA.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null))
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
                 ),
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
