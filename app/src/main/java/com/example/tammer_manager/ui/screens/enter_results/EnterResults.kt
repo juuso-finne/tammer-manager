@@ -36,6 +36,7 @@ fun EnterResults(
             horizontalAlignment = Alignment.Companion.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
+            val playerCount = vmTournament.registeredPlayers.collectAsState().value.size
 
             val completedRounds = activeTournament.roundsCompleted
             val maxRounds = activeTournament.maxRounds
@@ -51,7 +52,12 @@ fun EnterResults(
                     )
             }
 
-            if (completedRounds < maxRounds){
+            if(playerCount <= 1){
+                Text(
+                    text ="Need more players to start tournament",
+                    style = Typography.headlineMedium
+                )
+            } else if (completedRounds < maxRounds){
                 HeaderRow(
                     current = completedRounds + 1,
                     max = maxRounds,
@@ -130,7 +136,10 @@ fun EnterResults(
                                 onSuccess = { setLoadingPairs(false) }
                             )
                         },
-                        enabled = pairingList.isEmpty() && !loadingPairs
+                        enabled =
+                            pairingList.isEmpty() &&
+                            !loadingPairs &&
+                            playerCount > 1
                     ) { Text("Generate pairs") }
 
                     Button(
@@ -140,7 +149,7 @@ fun EnterResults(
                                     it.value.points != null
                                 }
                             }
-                                    && !pairingList.isEmpty(),
+                            && !pairingList.isEmpty(),
                         onClick = { vmTournament.finishRound() }
                     ) { Text("Finish round") }
                 }
