@@ -67,7 +67,7 @@ fun generateRoundRobinPairs(
 }
 
 fun rotate(a: MutableList<RegisteredPlayer?>, b: MutableList<RegisteredPlayer?>){
-    if(a.isNotEmpty()){
+    if(a.size > 1){
         a.removeAt(a.indices.last).also { b.add(it) }
         b.removeAt(0).also { a.add(1, it) }
     }
