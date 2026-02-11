@@ -26,7 +26,7 @@ fun generateRoundRobinPairs(
     for (i in a.indices){
         if(a[i] == null){
             output.add(mapOf(
-                Pair(PlayerColor.WHITE, HalfPairing(b[0]!!.id)),
+                Pair(PlayerColor.WHITE, HalfPairing(b[0]!!.id, 1f)),
                 Pair(PlayerColor.BLACK, HalfPairing(null, 0f))
             ))
             continue
