@@ -43,7 +43,7 @@ fun Home(
             text =
                 if (tournament != null && tournament.roundsCompleted < tournament.maxRounds)
                     "${tournament.roundsCompleted}/${tournament.maxRounds} rounds played"
-                else if(tournament != null) "Tournament complete"
+                else if(tournament != null && tournament.maxRounds != 0) "Tournament complete"
                 else ""
             ,
             style = Typography.bodyLarge
