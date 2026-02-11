@@ -20,7 +20,7 @@ fun generateRoundRobinPairs(
     }
 
     repeat(roundsCompleted){
-        rotate(a.subList(1, a.size),b)
+        rotate(a,b)
     }
 
     for (i in a.indices){
@@ -69,6 +69,6 @@ fun generateRoundRobinPairs(
 fun rotate(a: MutableList<RegisteredPlayer?>, b: MutableList<RegisteredPlayer?>){
     if(a.isNotEmpty()){
         a.removeAt(a.indices.last).also { b.add(it) }
-        b.removeAt(0).also { a.add(0, it) }
+        b.removeAt(0).also { a.add(1, it) }
     }
 }
