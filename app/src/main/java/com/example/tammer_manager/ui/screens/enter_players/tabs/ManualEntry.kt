@@ -76,6 +76,7 @@ fun ManualEntry(
                 setFamilyName("")
             },
             enabled =
+                vmTournament.alteringPlayerCountAllowed() &&
                 !givenName.isEmpty() &&
                 !familyName.isEmpty() &&
                 rating > 0 && rating < 5000

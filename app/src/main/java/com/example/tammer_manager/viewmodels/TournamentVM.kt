@@ -121,6 +121,16 @@ class TournamentViewModel(
         return nextPlayerId.value
     }
 
+    fun alteringPlayerCountAllowed(): Boolean{
+        return(
+            activeTournament.value?.type == TournamentType.SWISS ||
+            (
+                activeTournament.value?.roundsCompleted == 0 &&
+                currentRoundPairings.value.isEmpty()
+            )
+        )
+    }
+
     fun addPlayer(player: ImportedPlayer){
         val newList = registeredPlayers.value.toMutableList()
         val tpn = (newList.maxOfOrNull { it.tpn } ?: 0) + 1

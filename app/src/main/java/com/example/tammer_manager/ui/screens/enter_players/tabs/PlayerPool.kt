@@ -124,13 +124,14 @@ fun PlayerPoolItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val enabled = !playerRegistered && vmTournament.alteringPlayerCountAllowed()
             IconButton(
                 onClick = { vmTournament.addPlayer(player) },
-                enabled = !playerRegistered
+                enabled = enabled
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    tint = if (playerRegistered) Color.DarkGray else Color.Blue,
+                    tint = if (enabled) Color.Blue else Color.DarkGray,
                     contentDescription = "Add player to tournament"
                 )
             }
