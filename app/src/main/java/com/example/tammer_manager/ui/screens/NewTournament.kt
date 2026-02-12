@@ -35,6 +35,7 @@ fun NewTorunament(
     val (tournamentName, setTournamentName) = remember { mutableStateOf("") }
     val (rounds, setRounds) = remember { mutableIntStateOf(0) }
     val (type, setType) = remember {mutableStateOf(TournamentType.SWISS)}
+    val (doubleRoundRobin, setDoubleRoundRobin) = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -55,16 +56,30 @@ fun NewTorunament(
             setType = setType
         )
 
-        TextField(
-            label = { Text("Rounds") },
-            value = if (rounds == 0) "" else rounds.toString(),
-            onValueChange = { setRounds(NumberUtils.toInt(it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
+        if(type == TournamentType.SWISS){
+            TextField(
+                label = { Text("Rounds") },
+                value = if (rounds == 0) "" else rounds.toString(),
+                onValueChange = { setRounds(NumberUtils.toInt(it)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        } else {
+            RadioGroupDouble(
+                modifier = Modifier.padding(horizontal = 10.dp),
+                doubleroundRobin = doubleRoundRobin,
+                setdoubleRoundRobin = setDoubleRoundRobin
+            )
+        }
+
 
         Button(
             onClick = {
-                vmTournament.initateTournament(tournamentName, rounds, type)
+                vmTournament.initateTournament(
+                    name =  tournamentName,
+                    maxRounds = rounds,
+                    type = type,
+                    doubleRoundRobin = doubleRoundRobin
+                )
                 navController.navigate("Home")
             },
             enabled =
@@ -113,6 +128,59 @@ fun RadioGroupType(
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun RadioGroupDouble(
+    modifier: Modifier = Modifier,
+    doubleroundRobin: Boolean,
+    setdoubleRoundRobin: (Boolean) -> Unit
+){
+    Row (modifier = modifier.fillMaxWidth().selectableGroup(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ){
+            Row(
+                Modifier
+                    .selectable(
+                        selected = (!doubleroundRobin),
+                        onClick = { setdoubleRoundRobin(false) },
+                        role = Role.RadioButton
+                    )
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = (!doubleroundRobin),
+                    onClick = null
+                )
+                Text(
+                    text = "Single",
+                    style = Typography.bodyLarge,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+
+        Row(
+            Modifier
+                .selectable(
+                    selected = (doubleroundRobin),
+                    onClick = { setdoubleRoundRobin(true) },
+                    role = Role.RadioButton
+                )
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = (doubleroundRobin),
+                onClick = null
+            )
+            Text(
+                text = "Double",
+                style = Typography.bodyLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
         }
     }
 }

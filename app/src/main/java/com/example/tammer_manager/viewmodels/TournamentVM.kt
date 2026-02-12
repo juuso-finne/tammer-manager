@@ -49,9 +49,14 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
     }
 
-    fun initateTournament(name: String, maxRounds: Int, type: TournamentType){
+    fun initateTournament(
+        name: String,
+        maxRounds: Int,
+        type: TournamentType,
+        doubleRoundRobin: Boolean = false
+    ){
         clearTournament()
-        savedStateHandle["tournament"] = Tournament(name, maxRounds, type)
+        savedStateHandle["tournament"] = Tournament(name, maxRounds, type, doubleRoundRobin)
     }
 
     private fun advanceRound(){
@@ -64,10 +69,16 @@ class TournamentViewModel(
             return
         }
 
+        val doubleRoundRobin = activeTournament.value?.doubleRoundRobin ?: false
         val playerCount = registeredPlayers.value.size
+        var newMax = playerCount - 1 + playerCount % 2
+
+        if (doubleRoundRobin){
+            newMax *= 2
+        }
 
         savedStateHandle["tournament"] = activeTournament.value?.copy(
-            maxRounds = playerCount - 1 + playerCount % 2
+            maxRounds = newMax
         )
     }
 
