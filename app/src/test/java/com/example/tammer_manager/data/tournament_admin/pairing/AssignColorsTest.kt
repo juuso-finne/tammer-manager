@@ -98,8 +98,8 @@ class AssignColorsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerH.id)),
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing()),
+                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id, 1f)),
+                    Pair(PlayerColor.BLACK, HalfPairing(null, 0f)),
                 ),
             )
         )
