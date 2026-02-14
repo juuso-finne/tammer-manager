@@ -114,7 +114,7 @@ class TournamentViewModel(
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
-                    removeFromMatcHistory(playerId = it, round = round, color = ownColor)
+                    removeFromMatchHistory(playerId = it, round = round, color = ownColor)
                     addToMatchHistory(id = it, item = newItem)
                     addToPlayerScore(id = it, amount = item.value.points ?: 0f)
                 }
@@ -201,7 +201,7 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
-    private fun removeFromMatcHistory(playerId: Int, round: Int, color: PlayerColor){
+    private fun removeFromMatchHistory(playerId: Int, round: Int, color: PlayerColor){
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == playerId }
         val oldScore = playerList[index].matchHistory.find { it.round == round && it.color == color}?.result ?: 0f
