@@ -69,13 +69,8 @@ class TournamentViewModel(
             return
         }
 
-        val doubleRoundRobin = activeTournament.value?.doubleRoundRobin ?: false
         val playerCount = registeredPlayers.value.size
-        var newMax = playerCount - 1 + playerCount % 2
-
-        if (doubleRoundRobin){
-            newMax *= 2
-        }
+        val newMax = playerCount - 1 + playerCount % 2
 
         savedStateHandle["tournament"] = activeTournament.value?.copy(
             maxRounds = newMax
@@ -119,7 +114,7 @@ class TournamentViewModel(
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
-                    removeFromMatcHistory(playerId = it, round = round)
+                    removeFromMatcHistory(playerId = it, round = round, color = ownColor)
                     addToMatchHistory(id = it, item = newItem)
                     addToPlayerScore(id = it, amount = item.value.points ?: 0f)
                 }
@@ -206,12 +201,12 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
-    private fun removeFromMatcHistory(playerId: Int, round: Int){
+    private fun removeFromMatcHistory(playerId: Int, round: Int, color: PlayerColor){
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == playerId }
-        val oldScore = playerList[index].matchHistory.find { it.round == round }?.result ?: 0f
+        val oldScore = playerList[index].matchHistory.find { it.round == round && it.color == color}?.result ?: 0f
         playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.filterNot { match ->
-            match.round == round
+            match.round == round && match.color == color
         }) }
         savedStateHandle["registeredPlayers"] = playerList.toList()
         addToPlayerScore(id = playerId, amount = -oldScore)
@@ -256,7 +251,8 @@ class TournamentViewModel(
                     generateRoundRobinPairs(
                         players = registeredPlayers.value.sortedByDescending { it.rating },
                         output = newPairs,
-                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0
+                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+                        doubleRoundRobin = activeTournament.value?.doubleRoundRobin ?: false
                     )
                 }
                 savedStateHandle["currentRoundPairings"] = newPairs

@@ -8,7 +8,8 @@ import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 fun generateRoundRobinPairs(
     players: List<RegisteredPlayer>,
     output: MutableList<Pairing>,
-    roundsCompleted: Int
+    roundsCompleted: Int,
+    doubleRoundRobin: Boolean
 ){
     val a: MutableList<RegisteredPlayer?> = players.subList(0, players.size/2).toMutableList()
     val b: MutableList<RegisteredPlayer?> = players.subList(players.size/2, players.size).toMutableList()
@@ -63,6 +64,25 @@ fun generateRoundRobinPairs(
             Pair(PlayerColor.WHITE, HalfPairing(a[0]!!.id)),
             Pair(PlayerColor.BLACK, HalfPairing(b[0]!!.id))
         ))
+    }
+
+    if (doubleRoundRobin){
+        val duplicatedPairs = output.flatMap {
+            if (it[PlayerColor.BLACK]?.playerID != null){
+                listOf(
+                    it,
+                    mapOf(
+                        PlayerColor.WHITE to it[PlayerColor.BLACK]!!,
+                        PlayerColor.BLACK to it[PlayerColor.WHITE]!!
+                    )
+                )
+            } else {
+                listOf(it)
+            }
+        }
+
+        output.clear()
+        output.addAll(duplicatedPairs)
     }
 }
 

@@ -76,9 +76,9 @@ fun NewTorunament(
             onClick = {
                 vmTournament.initateTournament(
                     name =  tournamentName,
-                    maxRounds = rounds,
+                    maxRounds = if (type == TournamentType.SWISS) rounds else 0,
                     type = type,
-                    doubleRoundRobin = doubleRoundRobin
+                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN
                 )
                 navController.navigate("Home")
             },
