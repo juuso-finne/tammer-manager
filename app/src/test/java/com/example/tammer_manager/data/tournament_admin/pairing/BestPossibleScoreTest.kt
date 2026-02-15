@@ -2,6 +2,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.bestPossibleScore
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
@@ -58,11 +59,13 @@ class BestPossibleScoreTest {
             )
         )
 
-        assertThat(bestPossibleScore(
-            players,
-            colorPreferenceMap,
-            maxPairs = 1
-        )).isEqualTo(PairingAssessmentCriteria(
+        assertThat(
+            bestPossibleScore(
+                players,
+                colorPreferenceMap,
+                maxPairs = 1
+            )
+        ).isEqualTo(PairingAssessmentCriteria(
             colorpreferenceConflicts = 1,
             strongColorpreferenceConflicts = 0
         ))

@@ -45,7 +45,7 @@ fun Standings(
 
             Text(
                 text =
-                    if (completedRounds >= maxRounds) "Final standings"
+                    if (completedRounds >= maxRounds && maxRounds != 0) "Final standings"
                     else if (completedRounds != 0) "Standings after round ${completedRounds}"
                     else "Standings",
                 style = Typography.headlineMedium

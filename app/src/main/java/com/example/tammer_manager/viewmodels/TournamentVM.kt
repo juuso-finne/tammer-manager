@@ -12,7 +12,9 @@ import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
-import com.example.tammer_manager.data.tournament_admin.pairing.generateSwissPairs
+import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
+import com.example.tammer_manager.data.tournament_admin.pairing.generateRoundRobinPairs
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -47,14 +49,32 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
     }
 
-    fun initateTournament(name: String, maxRounds: Int){
+    fun initateTournament(
+        name: String,
+        maxRounds: Int,
+        type: TournamentType,
+        doubleRoundRobin: Boolean = false
+    ){
         clearTournament()
-        savedStateHandle["tournament"] = Tournament(name, maxRounds)
+        savedStateHandle["tournament"] = Tournament(name, maxRounds, type, doubleRoundRobin)
     }
 
     private fun advanceRound(){
         val oldValue = activeTournament.value?.roundsCompleted ?: 0
         savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
+    }
+
+    private fun updateMaxRounds(){
+        if(activeTournament.value?.type == TournamentType.SWISS){
+            return
+        }
+
+        val playerCount = registeredPlayers.value.size
+        val newMax = playerCount - 1 + playerCount % 2
+
+        savedStateHandle["tournament"] = activeTournament.value?.copy(
+            maxRounds = newMax
+        )
     }
 
     fun finishRound(){
@@ -94,7 +114,7 @@ class TournamentViewModel(
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
-                    removeFromMatcHistory(playerId = it, round = round)
+                    removeFromMatchHistory(playerId = it, round = round, color = ownColor)
                     addToMatchHistory(id = it, item = newItem)
                     addToPlayerScore(id = it, amount = item.value.points ?: 0f)
                 }
@@ -107,6 +127,16 @@ class TournamentViewModel(
         return nextPlayerId.value
     }
 
+    fun alteringPlayerCountAllowed(): Boolean{
+        return(
+            activeTournament.value?.type == TournamentType.SWISS ||
+            (
+                activeTournament.value?.roundsCompleted == 0 &&
+                currentRoundPairings.value.isEmpty()
+            )
+        )
+    }
+
     fun addPlayer(player: ImportedPlayer){
         val newList = registeredPlayers.value.toMutableList()
         val tpn = (newList.maxOfOrNull { it.tpn } ?: 0) + 1
@@ -117,6 +147,7 @@ class TournamentViewModel(
             tpn = tpn
         ))
         savedStateHandle["registeredPlayers"] = newList.toList()
+        updateMaxRounds()
     }
 
     fun findPlayerById(id: Int): RegisteredPlayer?{
@@ -132,6 +163,7 @@ class TournamentViewModel(
             newList.removeAt(index)
         }
         savedStateHandle["registeredPlayers"] = newList.toList()
+        updateMaxRounds()
     }
 
     fun activatePlayer(index: Int){
@@ -169,12 +201,12 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
-    private fun removeFromMatcHistory(playerId: Int, round: Int){
+    private fun removeFromMatchHistory(playerId: Int, round: Int, color: PlayerColor){
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == playerId }
-        val oldScore = playerList[index].matchHistory.find { it.round == round }?.result ?: 0f
+        val oldScore = playerList[index].matchHistory.find { it.round == round && it.color == color}?.result ?: 0f
         playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.filterNot { match ->
-            match.round == round
+            match.round == round && match.color == color
         }) }
         savedStateHandle["registeredPlayers"] = playerList.toList()
         addToPlayerScore(id = playerId, amount = -oldScore)
@@ -193,26 +225,40 @@ class TournamentViewModel(
         onSuccess: () -> Unit
     ){
         viewModelScope.launch {
-            val success = withContext(Dispatchers.Default){
-                if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
-                    assignTpns()
-                }
+            val newPairs = mutableListOf<Pairing>()
 
-                val newPairs = mutableListOf<Pairing>()
+            if(activeTournament.value?.type == TournamentType.SWISS){
+                val success = withContext(Dispatchers.Default){
+                    if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
+                        assignTpns()
+                    }
 
-                generateSwissPairs(
-                    players = registeredPlayers.value.filter { it.isActive },
-                    roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
-                    maxRounds = activeTournament.value?.maxRounds ?: 0,
-                    output = newPairs
-                ).also{ ok ->
-                    if(ok){
-                        savedStateHandle["currentRoundPairings"] = newPairs
+                    generateSwissPairs(
+                        players = registeredPlayers.value.filter { it.isActive },
+                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+                        maxRounds = activeTournament.value?.maxRounds ?: 0,
+                        output = newPairs
+                    ).also{ ok ->
+                        if(ok){
+                            savedStateHandle["currentRoundPairings"] = newPairs
+                        }
                     }
                 }
+
+                if (success) onSuccess() else onError()
+            } else{
+                withContext(Dispatchers.Default){
+                    generateRoundRobinPairs(
+                        players = registeredPlayers.value.sortedByDescending { it.rating },
+                        output = newPairs,
+                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
+                        doubleRoundRobin = activeTournament.value?.doubleRoundRobin ?: false
+                    )
+                }
+                savedStateHandle["currentRoundPairings"] = newPairs
+                onSuccess()
             }
 
-            if (success) onSuccess() else onError()
         }
     }
 

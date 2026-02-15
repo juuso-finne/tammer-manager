@@ -113,18 +113,22 @@ fun RegisteredPlayerItem(
                 )
             }
 
-            IconButton(onClick = {
-                if (player.isActive){
-                    vmTournament.removePlayer(index)
-                } else{
-                    vmTournament.activatePlayer(index)
+            val enabled = vmTournament.alteringPlayerCountAllowed()
+            IconButton(
+                enabled = enabled,
+                onClick = {
+                    if (player.isActive){
+                        vmTournament.removePlayer(index)
+                    } else{
+                        vmTournament.activatePlayer(index)
+                    }
                 }
-            }) {
+            ) {
                 if(player.isActive){
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Remove player",
-                        tint = Color.Blue
+                        tint = if (enabled) Color.Blue else Color.Gray
                     )
                 }else{
                     Icon (

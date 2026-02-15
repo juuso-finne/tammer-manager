@@ -25,14 +25,12 @@ fun reconstructPairings(players: List<RegisteredPlayer>, round: Int): PairingLis
 
         handledPlayers.add(player.id)
 
-        val matchInfo = player.matchHistory.find { it.round == round }
-        if (matchInfo == null){
+        val matches = player.matchHistory.filter { it.round == round }
+        if (matches.isEmpty()){
             continue
         }
 
-        val opponentId = matchInfo.opponentId
-
-        if(opponentId == null){
+        if (matches.first().opponentId == null){
             output.add(mapOf(
                 Pair(PlayerColor.WHITE, HalfPairing(player.id, 1f)),
                 Pair(PlayerColor.BLACK, HalfPairing())
@@ -41,15 +39,25 @@ fun reconstructPairings(players: List<RegisteredPlayer>, round: Int): PairingLis
             continue
         }
 
-        handledPlayers.add(opponentId)
-        val opponent = players.find { it.id == opponentId }
+        matches.forEach { matchInfo ->
+            val opponentId = matchInfo.opponentId!!
+            val opponentColor = matchInfo.color.reverse()
 
-        val opponentScore = opponent!!.matchHistory.find { it.round == round }!!.result
+            handledPlayers.add(opponentId)
+            val opponent = players.find { it.id == opponentId }
 
-        output.add(mapOf(
-            Pair(matchInfo.color, HalfPairing(player.id, matchInfo.result)),
-            Pair(matchInfo.color.reverse(), HalfPairing(opponentId, opponentScore))
-        ))
+            val opponentScore = opponent!!.matchHistory.find {
+                it.round == round &&
+                it.color == opponentColor
+            }!!.result
+
+            output.add(mapOf(
+                Pair(matchInfo.color, HalfPairing(player.id, matchInfo.result)),
+                Pair(matchInfo.color.reverse(), HalfPairing(opponentId, opponentScore))
+            ))
+        }
+
+
     }
 
     return output.toList()

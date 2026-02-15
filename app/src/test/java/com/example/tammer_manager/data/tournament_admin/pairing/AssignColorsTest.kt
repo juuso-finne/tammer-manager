@@ -4,6 +4,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.assignColors
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
@@ -97,8 +98,8 @@ class AssignColorsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerH.id)),
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing()),
+                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id, 1f)),
+                    Pair(PlayerColor.BLACK, HalfPairing(null, 0f)),
                 ),
             )
         )

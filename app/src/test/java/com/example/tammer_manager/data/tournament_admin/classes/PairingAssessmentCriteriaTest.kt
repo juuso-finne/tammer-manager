@@ -2,10 +2,10 @@ package com.example.tammer_manager.data.tournament_admin.classes
 
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
-import com.example.tammer_manager.data.tournament_admin.pairing.colorpreferenceConflict
-import com.example.tammer_manager.data.tournament_admin.pairing.strongColorpreferenceConflict
-import com.example.tammer_manager.data.tournament_admin.pairing.topScorerOrOpponentColorImbalance
-import com.example.tammer_manager.data.tournament_admin.pairing.topScorersOrOpponentsColorStreak
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.colorpreferenceConflict
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.strongColorpreferenceConflict
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.topScorerOrOpponentColorImbalance
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.topScorersOrOpponentsColorStreak
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat

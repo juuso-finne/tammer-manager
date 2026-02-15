@@ -3,6 +3,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.data.tournament_admin.pairing.swiss.passesAbsoluteCriteria
 import com.example.tammer_manager.utils.generatePlayers
 import com.example.tammer_manager.utils.simulateMatch
 import com.google.common.truth.Truth.assertThat
@@ -15,11 +16,13 @@ class PassesAbsoluteCriteriaTest {
         val (playerA, playerB) = generatePlayers(2)
         simulateMatch(playerA, playerB, 0f, 1f, 1)
 
-        assertThat(passesAbsoluteCriteria(
-            candidate = Pair(playerA, playerB),
-            roundsCompleted =  1,
-            colorPreferenceMap = mapOf()
-        )).isFalse()
+        assertThat(
+            passesAbsoluteCriteria(
+                candidate = Pair(playerA, playerB),
+                roundsCompleted = 1,
+                colorPreferenceMap = mapOf()
+            )
+        ).isFalse()
     }
 
     @Test
@@ -35,12 +38,14 @@ class PassesAbsoluteCriteriaTest {
             Pair(playerB.id, playerB.getColorPreference())
         )
 
-        assertThat(passesAbsoluteCriteria(
-            candidate = Pair(playerA, playerB),
-            roundsCompleted =  3,
-            colorPreferenceMap = colorPreferences,
-            isFinalRound = true
-        )).isFalse()
+        assertThat(
+            passesAbsoluteCriteria(
+                candidate = Pair(playerA, playerB),
+                roundsCompleted = 3,
+                colorPreferenceMap = colorPreferences,
+                isFinalRound = true
+            )
+        ).isFalse()
     }
 
     @Test
@@ -72,12 +77,14 @@ class PassesAbsoluteCriteriaTest {
             )
         )
 
-        assertThat(passesAbsoluteCriteria(
-            candidate =  Pair(playerA, playerB),
-            roundsCompleted =  3,
-            colorPreferenceMap = colorPreferences,
-            isFinalRound = true
-        )).isTrue()
+        assertThat(
+            passesAbsoluteCriteria(
+                candidate = Pair(playerA, playerB),
+                roundsCompleted = 3,
+                colorPreferenceMap = colorPreferences,
+                isFinalRound = true
+            )
+        ).isTrue()
     }
 
     @Test
@@ -86,10 +93,12 @@ class PassesAbsoluteCriteriaTest {
         simulateMatch(playerA, playerC, 1f, 0f, 1)
         simulateMatch(playerB, playerC, 1f, 0f, 1)
 
-        assertThat(passesAbsoluteCriteria(
-            candidate = Pair(playerA, playerB),
-            roundsCompleted =  1,
-            colorPreferenceMap = mapOf()
-        )).isTrue()
+        assertThat(
+            passesAbsoluteCriteria(
+                candidate = Pair(playerA, playerB),
+                roundsCompleted = 1,
+                colorPreferenceMap = mapOf()
+            )
+        ).isTrue()
     }
 }

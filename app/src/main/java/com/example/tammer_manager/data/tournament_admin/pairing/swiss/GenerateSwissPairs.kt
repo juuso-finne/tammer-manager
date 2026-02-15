@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.tournament_admin.pairing
+package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
@@ -6,6 +6,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import kotlin.collections.get
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
