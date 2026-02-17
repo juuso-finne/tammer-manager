@@ -282,10 +282,7 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = pairingList
     }
 
-    fun save(
-        context: Context,
-        onError: () -> Unit
-    ){
+    fun save(context: Context): Boolean{
 
         if (filename.value.isEmpty()){
             throw Exception("Filename cannot be empty string")
@@ -298,20 +295,18 @@ class TournamentViewModel(
             currentRoundPairings = currentRoundPairings.value
         )
 
-        if(saveTournament(
+        return saveTournament(
             context = context,
             data = data,
             filename = filename.value
-        )){
-            return
-        }
-        onError()
+        )
     }
 
     fun saveAs(
         newFilename: String,
         context: Context,
         onError: () -> Unit,
+        onSuccess: () -> Unit,
         overWrite: Boolean = false,
         confirmOverWrite: () -> Unit = {}
     ){
@@ -330,25 +325,25 @@ class TournamentViewModel(
             savedStateHandle["filename"] = newFilename
         }
 
-        save(
-            context = context,
-            onError = onError
-        )
+        if (save(context = context)){
+            onSuccess
+            return
+        }
+
+        onError()
     }
 
     fun load (
         context: Context,
         filename: String,
-        onError: () -> Unit,
-    ){
+    ): Boolean{
         val loadedData = loadTournament(
             context = context,
             filename = filename
         )
 
         if(loadedData == null){
-            onError()
-            return
+            return false
         }
 
         savedStateHandle["tournament"] = loadedData.tournament
@@ -356,20 +351,17 @@ class TournamentViewModel(
         savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
         savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
         savedStateHandle["fileName"] = filename
+
+        return true
     }
 
     fun delete(
         context: Context,
         filename: String,
-        onError: () -> Unit,
-    ){
-        if(deleteTournament(
+    ): Boolean{
+        return deleteTournament(
             context = context,
             filename = filename
-        )){
-            return
-        }
-
-        onError()
+        )
     }
 }
