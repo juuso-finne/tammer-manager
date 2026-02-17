@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.file_management.listTournaments
+import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveTournament
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
@@ -290,7 +291,7 @@ class TournamentViewModel(
         }
 
         val data = TournamentVMState(
-            activeTournament = activeTournament.value!!,
+            tournament = activeTournament.value!!,
             registeredPlayers = registeredPlayers.value,
             nextPlayerId = nextPlayerId.value,
             currentRoundPairings = currentRoundPairings.value
@@ -332,5 +333,31 @@ class TournamentViewModel(
             context = context,
             onError = onError
         )
+    }
+
+    fun load (
+        context: Context,
+        filename: String,
+        onError: () -> Unit,
+    ){
+        if (filename.isEmpty()){
+            throw Exception("Filename cannot be empty string")
+        }
+
+        val loadedData = loadTournament(
+            context = context,
+            filename = filename
+        )
+
+        if(loadedData == null){
+            onError()
+            return
+        }
+
+        savedStateHandle["tournament"] = loadedData.tournament
+        savedStateHandle["registeredPlayers"] = loadedData.registeredPlayers
+        savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
+        savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
+        savedStateHandle["fileName"] = filename
     }
 }
