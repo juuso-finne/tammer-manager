@@ -4,9 +4,11 @@ import android.os.Parcelable
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import kotlin.math.abs
 
 @Parcelize
+@Serializable
 data class RegisteredPlayer (
     val fullName: String,
     val rating: Int,
