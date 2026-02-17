@@ -56,6 +56,12 @@ fun Home(
         ){
             Text("New tournament")
         }
+
+        Button (
+            onClick = { navController.navigate("saveTournament") }
+        ){
+            Text("Save as...")
+        }
         Button(
             onClick = {
                 vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)
