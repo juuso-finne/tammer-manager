@@ -42,11 +42,17 @@ class TournamentViewModel(
         initialValue = listOf()
     )
 
+    val fileName: StateFlow<String> = savedStateHandle.getStateFlow(
+        key = "fileName",
+        initialValue = ""
+    )
+
     fun clearTournament(){
         savedStateHandle["tournament"] = null
         savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
         savedStateHandle["nextPlayerId"] = 0
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
+        savedStateHandle["fileName"] = ""
     }
 
     fun initateTournament(
