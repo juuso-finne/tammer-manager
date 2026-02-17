@@ -1,9 +1,12 @@
 package com.example.tammer_manager.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
+import com.example.tammer_manager.data.file_management.listTournaments
+import com.example.tammer_manager.data.file_management.saveTournament
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
@@ -42,8 +45,8 @@ class TournamentViewModel(
         initialValue = listOf()
     )
 
-    val fileName: StateFlow<String> = savedStateHandle.getStateFlow(
-        key = "fileName",
+    val filename: StateFlow<String> = savedStateHandle.getStateFlow(
+        key = "filename",
         initialValue = ""
     )
 
@@ -275,5 +278,59 @@ class TournamentViewModel(
 
         pairingList[index] = pairing
         savedStateHandle["currentRoundPairings"] = pairingList
+    }
+
+    fun save(
+        context: Context,
+        onError: () -> Unit
+    ){
+
+        if (filename.value.isEmpty()){
+            throw Exception("Filename cannot be empty string")
+        }
+
+        val data = TournamentVMState(
+            activeTournament = activeTournament.value!!,
+            registeredPlayers = registeredPlayers.value,
+            nextPlayerId = nextPlayerId.value,
+            currentRoundPairings = currentRoundPairings.value
+        )
+
+        if(saveTournament(
+            context = context,
+            data = data,
+            filename = filename.value
+        )){
+            return
+        }
+        onError()
+    }
+
+    fun saveAs(
+        newFilename: String,
+        context: Context,
+        onError: () -> Unit,
+        overWrite: Boolean = false,
+        confirmOverWrite: () -> Unit = {}
+    ){
+
+        if (newFilename.isEmpty()){
+            throw Exception("Filename cannot be empty string")
+        }
+
+        val files = listTournaments(context)
+        if(newFilename in files && !overWrite){
+            confirmOverWrite()
+            return
+        }
+
+        if (filename.value.isEmpty()){
+            savedStateHandle["filename"] = newFilename
+        }
+
+        save(
+            context = context,
+            onError = onError
+        )
     }
 }
