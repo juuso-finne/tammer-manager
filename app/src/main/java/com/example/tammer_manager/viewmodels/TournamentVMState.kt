@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TournamentVMState(
-    val activeTournament: Tournament,
+    val tournament: Tournament,
     val registeredPlayers: List<RegisteredPlayer>,
     val nextPlayerId: Int,
     val currentRoundPairings: PairingList
