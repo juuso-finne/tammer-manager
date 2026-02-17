@@ -326,7 +326,7 @@ class TournamentViewModel(
         }
 
         if (save(context = context)){
-            onSuccess
+            onSuccess()
             return
         }
 
