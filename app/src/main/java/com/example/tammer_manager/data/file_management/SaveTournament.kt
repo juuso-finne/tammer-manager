@@ -8,7 +8,7 @@ import java.io.File
 
 fun saveTournament(
     context: Context,
-    fileName: String,
+    filename: String,
     data: TournamentVMState
 ): Boolean{
 
@@ -20,7 +20,7 @@ fun saveTournament(
 
     return try {
         val json = Json.encodeToString(data)
-        File(directory, fileName).outputStream().use{
+        File(directory, filename).outputStream().use{
             it.write(json.toByteArray())
         }
         true

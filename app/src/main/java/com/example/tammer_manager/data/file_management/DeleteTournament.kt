@@ -7,12 +7,12 @@ import java.io.File
 
 fun deleteTournament(
     context: Context,
-    fileName: String,
+    filename: String,
 ): Boolean{
     val directory = File(context.filesDir, "tournaments")
 
     try {
-        deleteFile(File(directory, fileName).toPath())
+        deleteFile(File(directory, filename).toPath())
         return true
     }catch (e: Exception){
         e.printStackTrace()

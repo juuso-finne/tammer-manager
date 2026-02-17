@@ -8,11 +8,11 @@ import java.io.File
 
 fun loadTournament(
     context: Context,
-    fileName: String,
+    filename: String,
 ):TournamentVMState?{
     return try {
         val directory = File(context.filesDir, "tournaments")
-        File(directory, fileName).inputStream().use { stream ->
+        File(directory, filename).inputStream().use { stream ->
             stream.bufferedReader().use {
                 val json = it.readText()
                 Json.decodeFromString<TournamentVMState>(json)
