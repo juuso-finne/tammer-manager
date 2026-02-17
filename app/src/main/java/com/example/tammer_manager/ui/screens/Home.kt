@@ -63,6 +63,12 @@ fun Home(
         ){
             Text("Save as...")
         }
+
+        Button (
+            onClick = { navController.navigate("fileBrowser") },
+        ){
+            Text("Load/Delete")
+        }
         Button(
             onClick = {
                 vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)

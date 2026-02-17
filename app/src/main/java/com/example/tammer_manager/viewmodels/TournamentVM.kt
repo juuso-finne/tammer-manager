@@ -364,4 +364,10 @@ class TournamentViewModel(
             filename = filename
         )
     }
+
+    fun getFileList(context: Context): List<String>{
+        return listTournaments(
+            context = context
+        )
+    }
 }

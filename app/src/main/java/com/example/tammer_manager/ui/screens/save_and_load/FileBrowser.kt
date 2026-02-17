@@ -1,0 +1,127 @@
+package com.example.tammer_manager.ui.screens.save_and_load
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.tammer_manager.ui.theme.Typography
+import com.example.tammer_manager.viewmodels.TournamentViewModel
+
+@Composable
+fun FileBrowser(
+    vmTournament: TournamentViewModel,
+    navController: NavController,
+    modifier: Modifier = Modifier
+){
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val context = LocalContext.current
+
+        val (fileList, setFileList) = remember { mutableStateOf(vmTournament.getFileList(context)) }
+        val checkedIndices = remember(fileList) { listOf<Int>().toMutableStateList() }
+
+        Text(
+            text ="Saved tournaments",
+            style = Typography.headlineMedium
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        FileColumn(
+            fileList = fileList,
+            checkedIndices = checkedIndices
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ){
+            Button(onClick = {}) { Text ("Load") }
+
+            Button(onClick = {}) { Text("Delete") }
+        }
+
+        Button(onClick = { navController.navigate("home") }) { Text("Cancel") }
+    }
+}
+
+@Composable
+fun FileColumn(
+    modifier: Modifier = (Modifier
+        .padding(10.dp)
+        .background(Color.White)
+        .border(
+            width = 1.dp,
+            color = Color.Black
+        )
+    ),
+    fileList: List<String>,
+    checkedIndices: SnapshotStateList<Int>
+
+){
+    LazyColumn(modifier = modifier) {
+        items(fileList.size){ index ->
+            FileListItem(
+                index = index,
+                filename = fileList[index],
+                checkedIndices = checkedIndices,
+            )
+        }
+    }
+}
+
+@Composable
+fun FileListItem(
+    index: Int,
+    filename: String,
+    checkedIndices: SnapshotStateList<Int>,
+    modifier: Modifier = Modifier
+){
+    Row(
+        modifier = modifier.fillMaxWidth().background(Color.White),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+
+        Checkbox(
+            checked = index in checkedIndices,
+            onCheckedChange = {
+                if (it){
+                    checkedIndices.add(index)
+                } else{
+                    checkedIndices.remove(index)
+                }
+            }
+        )
+
+        Text(
+            text = filename,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 5.dp),
+            style = Typography.bodyLarge
+        )
+    }
+}
