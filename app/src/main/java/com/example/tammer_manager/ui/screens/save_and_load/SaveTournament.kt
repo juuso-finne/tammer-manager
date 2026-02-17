@@ -112,7 +112,7 @@ fun SaveTournament(
                 },
                 confirmButtonText = "Yes",
                 dismissButtonText = "No",
-                dialogText = "File $filename already exists. Do you want to replace the file?"
+                dialogText = "File '$filename' already exists. Do you want to replace the file?"
             )
         }
 

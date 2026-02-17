@@ -348,7 +348,7 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = loadedData.registeredPlayers
         savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
         savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
-        savedStateHandle["fileName"] = filename
+        savedStateHandle["filename"] = filename
 
         return true
     }

@@ -76,7 +76,7 @@ fun FileBrowser(
                         navController.navigate("home")
                     } else{
                         setError(true)
-                        setErrorText("Unable to load file ${fileList[checkedIndices.first()]}")
+                        setErrorText("Unable to load file '${fileList[checkedIndices.first()]}'")
                     }
                 }
             ) { Text ("Load") }
@@ -97,7 +97,7 @@ fun FileBrowser(
                         val it = checkedIndices[i]
                         if (!vmTournament.delete(context = context, filename = fileList[it])){
                             setError(true)
-                            setErrorText("Unable to delete file ${fileList[it]}")
+                            setErrorText("Unable to delete file '${fileList[it]}'")
                             break
                         }
                     }
@@ -108,7 +108,7 @@ fun FileBrowser(
                 confirmButtonText = "Yes",
                 dismissButtonText = "No",
                 dialogText =
-                    if (checkedIndices.size == 1) "Delete ${fileList[checkedIndices.first()]}?"
+                    if (checkedIndices.size == 1) "Delete '${fileList[checkedIndices.first()]}'?"
                     else "Delete ${checkedIndices.size} files?"
             )
         }
