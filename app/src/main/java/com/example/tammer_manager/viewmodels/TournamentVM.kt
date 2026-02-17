@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
+import com.example.tammer_manager.data.file_management.deleteTournament
 import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveTournament
@@ -340,10 +341,6 @@ class TournamentViewModel(
         filename: String,
         onError: () -> Unit,
     ){
-        if (filename.isEmpty()){
-            throw Exception("Filename cannot be empty string")
-        }
-
         val loadedData = loadTournament(
             context = context,
             filename = filename
@@ -359,5 +356,20 @@ class TournamentViewModel(
         savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
         savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
         savedStateHandle["fileName"] = filename
+    }
+
+    fun delete(
+        context: Context,
+        filename: String,
+        onError: () -> Unit,
+    ){
+        if(deleteTournament(
+            context = context,
+            filename = filename
+        )){
+            return
+        }
+
+        onError()
     }
 }
