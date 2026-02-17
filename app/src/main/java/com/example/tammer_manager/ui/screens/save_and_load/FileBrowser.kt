@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.ui.components.ConfirmDialog
+import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -42,6 +44,9 @@ fun FileBrowser(
 
         val (fileList, setFileList) = remember { mutableStateOf(vmTournament.getFileList(context)) }
         val checkedIndices = remember(fileList) { listOf<Int>().toMutableStateList() }
+        val (confirmDelete, setConfirmDelete) = remember { mutableStateOf(false) }
+        val (error, setError) = remember { mutableStateOf(false) }
+        val (errorText, setErrorText) = remember { mutableStateOf("") }
 
         Text(
             text ="Saved tournaments",
@@ -59,12 +64,61 @@ fun FileBrowser(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ){
-            Button(onClick = {}) { Text ("Load") }
+            Button(
+                enabled = checkedIndices.size == 1,
+                onClick = {
+                    val success = vmTournament.load(
+                        context = context,
+                        filename = fileList[checkedIndices.first()]
+                    )
 
-            Button(onClick = {}) { Text("Delete") }
+                    if (success){
+                        navController.navigate("home")
+                    } else{
+                        setError(true)
+                        setErrorText("Unable to load file ${fileList[checkedIndices.first()]}")
+                    }
+                }
+            ) { Text ("Load") }
+
+            Button(
+                onClick = { setConfirmDelete(true) },
+                enabled = checkedIndices.isNotEmpty()
+            ) { Text("Delete") }
         }
 
         Button(onClick = { navController.navigate("home") }) { Text("Cancel") }
+
+        when { confirmDelete ->
+            ConfirmDialog(
+                onDismissRequest = { setConfirmDelete(false) },
+                onConfirmRequest = {
+                    for(i in checkedIndices.indices) {
+                        val it = checkedIndices[i]
+                        if (!vmTournament.delete(context = context, filename = fileList[it])){
+                            setError(true)
+                            setErrorText("Unable to delete file ${fileList[it]}")
+                            break
+                        }
+                    }
+
+                    setFileList(vmTournament.getFileList(context))
+                    setConfirmDelete(false)
+                },
+                confirmButtonText = "Yes",
+                dismissButtonText = "No",
+                dialogText =
+                    if (checkedIndices.size == 1) "Delete ${fileList[checkedIndices.first()]}?"
+                    else "Delete ${checkedIndices.size} files?"
+            )
+        }
+
+        when { error ->
+            ErrorDialog(
+                onDismissRequest = { setError(false) },
+                errorText = errorText
+            )
+        }
     }
 }
 
@@ -101,7 +155,9 @@ fun FileListItem(
     modifier: Modifier = Modifier
 ){
     Row(
-        modifier = modifier.fillMaxWidth().background(Color.White),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.White),
         verticalAlignment = Alignment.CenterVertically
     ){
 

@@ -33,7 +33,7 @@ fun ConfirmDialog(
     onConfirmRequest: () -> Unit,
     confirmButtonText: String = "OK",
     dismissButtonText : String = "Cancel",
-    confirmationText: String
+    dialogText: String
 ){
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -50,7 +50,7 @@ fun ConfirmDialog(
          Text(dismissButtonText)
         }},
 
-        text = { Text(confirmationText) },
+        text = { Text(dialogText) },
         icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Confirmation") }
     )
 }
