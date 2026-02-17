@@ -321,9 +321,7 @@ class TournamentViewModel(
             return
         }
 
-        if (filename.value.isEmpty()){
-            savedStateHandle["filename"] = newFilename
-        }
+        savedStateHandle["filename"] = newFilename
 
         if (save(context = context)){
             onSuccess()
