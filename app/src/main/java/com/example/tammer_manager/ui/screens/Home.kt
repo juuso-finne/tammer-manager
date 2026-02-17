@@ -58,7 +58,8 @@ fun Home(
         }
 
         Button (
-            onClick = { navController.navigate("saveTournament") }
+            onClick = { navController.navigate("saveTournament") },
+            enabled = tournament != null
         ){
             Text("Save as...")
         }
