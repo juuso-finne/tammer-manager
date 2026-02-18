@@ -55,10 +55,17 @@ fun FileBrowser(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        FileColumn(
-            fileList = fileList,
-            checkedIndices = checkedIndices
-        )
+        if (fileList.isNotEmpty()){
+            FileColumn(
+                fileList = fileList,
+                checkedIndices = checkedIndices
+            )
+        } else {
+            Text(
+                text = "No files to show",
+                style = Typography.headlineMedium,
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -124,19 +131,38 @@ fun FileBrowser(
 
 @Composable
 fun FileColumn(
-    modifier: Modifier = (Modifier
-        .padding(10.dp)
+    modifier: Modifier = Modifier,
+    fileList: List<String>,
+    checkedIndices: SnapshotStateList<Int>
+
+){
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Checkbox(checked = checkedIndices.size == fileList.size, onCheckedChange = {
+            if (it){
+                checkedIndices.addAll(fileList.indices.minus(checkedIndices))
+            } else {
+                checkedIndices.clear()
+            }
+        })
+        Text(
+            text = "Select all",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 5.dp),
+            style = Typography.bodyLarge
+        )
+    }
+
+    LazyColumn(modifier = modifier.padding(10.dp)
         .background(Color.White)
         .border(
             width = 1.dp,
             color = Color.Black
         )
-    ),
-    fileList: List<String>,
-    checkedIndices: SnapshotStateList<Int>
-
-){
-    LazyColumn(modifier = modifier) {
+    ) {
         items(fileList.size){ index ->
             FileListItem(
                 index = index,
