@@ -88,7 +88,7 @@ fun <T: Comparable<T>> nextPermutation (
 fun <T: Comparable<T>> setupPermutationSkip(
     list: MutableList<T>,
     i: Int,
-    length: Int
+    length: Int = list.size
 ){
     if (length == i + 1){
         return

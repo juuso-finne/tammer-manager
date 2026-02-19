@@ -3,6 +3,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
 import com.example.tammer_manager.data.combinatorics.nextPermutation
+import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
 import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
@@ -74,11 +75,11 @@ fun iterateS2Permutations(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    remainderPairingScore: CandidateAssessmentScore,
-    mdpPairingScore: CandidateAssessmentScore,
+    remainderPairingScore: PairingAssessmentCriteria,
+    mdpPairs:  List<Pair<RegisteredPlayer, RegisteredPlayer>>,
+    mdpPairingScore: PairingAssessmentCriteria,
     combinedScore: CandidateAssessmentScore,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestRemainderScore: PairingAssessmentCriteria,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
@@ -88,27 +89,33 @@ fun iterateS2Permutations(
 
     do{
         if (byeInBracket && s2.last().receivedPairingBye){
-            remainderPairingScore.resetCurrentScore()
             continue
         }
 
-        assessCandidate(
-            s1 = s1,
-            s2 = s2,
-            changedIndices = changedIndices,
-            score = remainderPairingScore,
+        val candidate = s1.mapIndexed { index, it ->
+            Pair(it, s2[index])
+        }
+
+        val firstIneligiblePair = firstIneligiblePair(
+            pairs = candidate,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        if(byeInBracket){
-            remainderPairingScore.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
-            remainderPairingScore.currentTotal.pabAssigneeScore = s2.last().score
+        // Skip to next iteration if candidate isn't viable
+        firstIneligiblePair?.let{
+            setupPermutationSkip(
+                list = s2,
+                i = it,
+                length = maxPairs
+            )
+            continue
         }
 
-        if(!remainderPairingScore.isValidCandidate){
-            continue
+        if(byeInBracket){
+            remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            remainderPairingScore.pabAssigneeScore = s2.last().score
         }
 
         val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
@@ -139,12 +146,26 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
+        var lastImperfectPair:Int? = null
+
+        if(lookForBestScore){
+            lastImperfectPair = lastImperfectPair(
+                pairs = candidate,
+                bestScore = combinedScore.bestTotal,
+                baseScore = mdpPairingScore,
+                cumulativeScore = remainderPairingScore,
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds
+            )
+        }
+
         combinedScore.resetCurrentScore()
-        combinedScore.currentTotal += remainderPairingScore.currentTotal
-        combinedScore.currentTotal += mdpPairingScore.currentTotal
+        combinedScore.currentTotal += remainderPairingScore
+        combinedScore.currentTotal += mdpPairingScore
         combinedScore.isValidCandidate = true
 
-        if (combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))){
+        if (combinedScore.updateHiScore(candidate.plus(mdpPairs))){
             downfloats.clear()
             downfloats.addAll(s2.subList(maxPairs, s2.size))
 
@@ -153,9 +174,15 @@ fun iterateS2Permutations(
             }
         }
 
-        if(!lookForBestScore || remainderPairingScore.currentTotal <= bestRemainderScore){
+        if(!lookForBestScore || lastImperfectPair == null){
             return
         }
+
+        setupPermutationSkip(
+            list = s2,
+            i = lastImperfectPair,
+            length = maxPairs
+        )
 
     }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
 }
