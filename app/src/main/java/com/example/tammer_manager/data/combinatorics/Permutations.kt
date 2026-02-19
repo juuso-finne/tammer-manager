@@ -52,7 +52,11 @@ fun <T: Comparable<T>> swapWithFirstLarger(list: MutableList<T>, startIndex: Int
  * @return `true` if a new permutation was generated, or `false` if the
  *         final permutation has been reached
  */
-fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: MutableList<Int>, length: Int = list.size): Boolean {
+fun <T: Comparable<T>> nextPermutation (
+    list: MutableList<T>,
+    changedIndices: MutableList<Int>,
+    length: Int = list.size
+): Boolean {
     if (length <= 0){
         return false
     }
@@ -71,4 +75,24 @@ fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: Mu
         popAndShift(list, i)
     }
     return false
+}
+
+/**
+ * Mutates [list] in a way that calling [nextPermutation] will replace the element
+ * at index [i] with the next biggest element and leave the rest in ascending order.
+ *
+ * @param list the list to be mutated
+ * @param i the index of the element to be replaced
+ * @param length the size of the permutation prefix
+ */
+fun <T: Comparable<T>> setupPermutationSkip(
+    list: MutableList<T>,
+    i: Int,
+    length: Int
+){
+    if (length == i + 1){
+        return
+    }
+    list.subList(i + 1, list.size).sortDescending()
+    list.subList(length, list.size).sort()
 }
