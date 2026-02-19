@@ -1,6 +1,5 @@
 package com.example.tammer_manager.data.combinatorics
 
-import com.example.tammer_manager.utils.generatePlayers
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -36,5 +35,21 @@ class NextPermutationTest {
     fun `Returns false after last possible permutation`(){
         val a = mutableListOf("G", "F", "E", "D", "C", "B", "A")
         assertThat(nextPermutation(a, mutableListOf())).isFalse()
+    }
+
+    @Test
+    fun `Permutation skip puts the list in correct order` (){
+        val a = mutableListOf("A", "B", "D", "F", "E", "G", "C")
+        setupPermutationSkip(a, 2, 5)
+
+        assertThat(a).isEqualTo(
+            mutableListOf("A", "B", "D", "G", "F", "C", "E")
+        )
+
+        nextPermutation(a, mutableListOf(), 5)
+
+        assertThat(a).isEqualTo(
+            mutableListOf("A", "B", "E", "C", "D", "F", "G")
+        )
     }
 }
