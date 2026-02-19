@@ -19,20 +19,20 @@ fun iterateHomogenousBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    remainderPairingScore: CandidateAssessmentScore,
-    mdpPairingScore: CandidateAssessmentScore,
+    remainderPairingScore: PairingAssessmentCriteria,
+    mdpPairingScore: PairingAssessmentCriteria,
+    mdpPairs:  List<Pair<RegisteredPlayer, RegisteredPlayer>>,
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     bestBracketScore: PairingAssessmentCriteria,
-    bestRemainderScore: PairingAssessmentCriteria,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
-        remainderPairingScore.resetCurrentScore()
+        remainderPairingScore.reset()
 
         applyIndexSwap(s1, s2, swappingIndices)
         iterateS2Permutations(
@@ -49,7 +49,7 @@ fun iterateHomogenousBracket(
             lookForBestScore = lookForBestScore,
             downfloats = downfloats,
             mdpPairingScore = mdpPairingScore,
-            bestRemainderScore = bestRemainderScore,
+            mdpPairs = mdpPairs,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
@@ -113,6 +113,8 @@ fun iterateS2Permutations(
             continue
         }
 
+        combinedScore.isValidCandidate = true
+
         if(byeInBracket){
             remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
             remainderPairingScore.pabAssigneeScore = s2.last().score
@@ -158,12 +160,13 @@ fun iterateS2Permutations(
                 roundsCompleted = roundsCompleted,
                 maxRounds = maxRounds
             )
+        } else{
+            return
         }
 
         combinedScore.resetCurrentScore()
         combinedScore.currentTotal += remainderPairingScore
         combinedScore.currentTotal += mdpPairingScore
-        combinedScore.isValidCandidate = true
 
         if (combinedScore.updateHiScore(candidate.plus(mdpPairs))){
             downfloats.clear()
@@ -174,7 +177,7 @@ fun iterateS2Permutations(
             }
         }
 
-        if(!lookForBestScore || lastImperfectPair == null){
+        if(lastImperfectPair == null){
             return
         }
 
