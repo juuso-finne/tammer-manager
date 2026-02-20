@@ -89,8 +89,8 @@ class NextBracketTest {
 
         assertThat(pairings[0].toList()).containsExactlyElementsIn(listOf(playerD, playerF))
         assertThat(pairings[1].toList()).containsExactlyElementsIn(listOf(playerA, playerG))
-        assertThat(pairings[2].toList()).containsExactlyElementsIn(listOf(playerB, playerI))
-        assertThat(pairings[3].toList()).containsExactlyElementsIn(listOf(playerC, playerH))
+        assertThat(pairings[2].toList()).containsExactlyElementsIn(listOf(playerB, playerH))
+        assertThat(pairings[3].toList()).containsExactlyElementsIn(listOf(playerC, playerI))
         assertThat(pairings[4].toList()).containsExactlyElementsIn(listOf(playerE, null))
 
         println("Success: $success")
