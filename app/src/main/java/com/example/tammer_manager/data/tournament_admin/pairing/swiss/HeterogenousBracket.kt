@@ -136,7 +136,6 @@ fun iterateMdpOpponents(
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
-    val changedIndices = mutableListOf<Int>()
     val remainderPairingScore = PairingAssessmentCriteria()
 
     do{
@@ -232,6 +231,6 @@ fun iterateMdpOpponents(
             length = maxPairs
         )
 
-    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = s1.size))
+    }while(nextPermutation(list = s2, length = s1.size))
     return
 }

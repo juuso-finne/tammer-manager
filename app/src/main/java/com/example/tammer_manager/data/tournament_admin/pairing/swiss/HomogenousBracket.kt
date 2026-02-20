@@ -83,7 +83,6 @@ fun iterateS2Permutations(
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
-    val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
     val byeInBracket = isLastBracket && (s2.size + s1.size) % 2 == 1
 
@@ -186,5 +185,5 @@ fun iterateS2Permutations(
             length = maxPairs
         )
 
-    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
+    }while(nextPermutation(list = s2, length = maxPairs))
 }
