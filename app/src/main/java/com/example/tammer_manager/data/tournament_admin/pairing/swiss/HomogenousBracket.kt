@@ -25,7 +25,6 @@ fun iterateHomogenousBracket(
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestBracketScore: PairingAssessmentCriteria,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
@@ -53,14 +52,9 @@ fun iterateHomogenousBracket(
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
-        if (!combinedScore.isValidCandidate) {
-            continue
-        }
-
-        if (!lookForBestScore || combinedScore.bestTotal <= bestBracketScore) {
+        if (combinedScore.isValidCandidate) {
             return
         }
-
         applyIndexSwap(s1, s2, swappingIndices)
     }
 }
