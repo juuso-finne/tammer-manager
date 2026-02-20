@@ -113,8 +113,6 @@ fun iterateS2Permutations(
             continue
         }
 
-        combinedScore.isValidCandidate = true
-
         if(byeInBracket){
             remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
             remainderPairingScore.pabAssigneeScore = s2.last().score
@@ -148,23 +146,24 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
-        var lastImperfectPair:Int? = null
+        combinedScore.resetCurrentScore()
+        combinedScore.isValidCandidate = true
 
-        if(lookForBestScore){
-            lastImperfectPair = lastImperfectPair(
-                pairs = candidate,
-                bestScore = combinedScore.bestTotal,
-                baseScore = mdpPairingScore,
-                cumulativeScore = remainderPairingScore,
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds
-            )
-        } else{
+        if(!lookForBestScore){
             return
         }
 
-        combinedScore.resetCurrentScore()
+
+        val lastImperfectPair  = lastImperfectPair(
+            pairs = candidate,
+            bestScore = combinedScore.bestTotal,
+            baseScore = mdpPairingScore,
+            cumulativeScore = remainderPairingScore,
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds
+        )
+
         combinedScore.currentTotal += remainderPairingScore
         combinedScore.currentTotal += mdpPairingScore
 
