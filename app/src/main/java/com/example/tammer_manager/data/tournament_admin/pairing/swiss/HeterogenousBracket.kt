@@ -3,6 +3,7 @@ package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
 import com.example.tammer_manager.data.combinatorics.nextPermutation
+import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
 import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
@@ -37,8 +38,7 @@ fun pairHeterogenousBracket(
     val limbo = incomingDownfloaters.takeLast(incomingDownfloaters.size - mdpsToPair).toMutableList()
     val s2Downfloats = mutableListOf<RegisteredPlayer>()
 
-    val mdpPairingScore = CandidateAssessmentScore()
-    val remainderPairingScore = CandidateAssessmentScore()
+    val mdpPairingScore = PairingAssessmentCriteria()
     val combinedScore = CandidateAssessmentScore()
 
     val bestBracketScore =
@@ -60,7 +60,7 @@ fun pairHeterogenousBracket(
 
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
-        mdpPairingScore.resetCurrentScore()
+        mdpPairingScore.reset()
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
 
@@ -79,7 +79,6 @@ fun pairHeterogenousBracket(
             mdpPairingScore = mdpPairingScore,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
-            remainderPairingScore = remainderPairingScore,
             bestBracketScore = bestBracketScore,
             maxPairs = maxPairs,
             approvedDownfloaters = approvedDownfloaters,
@@ -129,8 +128,7 @@ fun iterateMdpOpponents(
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
     maxRounds: Int,
-    mdpPairingScore: CandidateAssessmentScore,
-    remainderPairingScore: CandidateAssessmentScore,
+    mdpPairingScore: PairingAssessmentCriteria,
     combinedScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     bestBracketScore: PairingAssessmentCriteria,
@@ -139,24 +137,41 @@ fun iterateMdpOpponents(
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     val changedIndices = mutableListOf<Int>()
+    val remainderPairingScore = PairingAssessmentCriteria()
 
     do{
-        assessCandidate(
-            s1 = s1,
-            s2 = s2,
-            changedIndices = changedIndices,
-            score = mdpPairingScore,
+        val candidate = s1.mapIndexed { index, it ->
+            Pair(it, s2[index])
+        }
+
+        val firstIneligiblePair = firstIneligiblePair(
+            pairs = candidate,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        if(!mdpPairingScore.isValidCandidate){
+        // Skip to next iteration if candidate isn't viable
+        firstIneligiblePair?.let{
+            setupPermutationSkip(
+                list = s2,
+                i = it,
+                length = maxPairs
+            )
             continue
         }
 
-        if(lookForBestScore && mdpPairingScore.currentTotal >= combinedScore.bestTotal){
-            continue
+        var lastImperfectPair:Int? = null
+
+        if(lookForBestScore){
+            lastImperfectPair = lastImperfectPair(
+                pairs = candidate,
+                bestScore = combinedScore.bestTotal,
+                cumulativeScore = remainderPairingScore,
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds
+            )
         }
 
         val remainder = s2.subList(s1.size, s2.size)
@@ -176,10 +191,6 @@ fun iterateMdpOpponents(
             bestRemainderScore.pabAssigneeScore = remainder.minOf { it.score }
         }
 
-        if(lookForBestScore && mdpPairingScore.currentTotal + bestRemainderScore >= combinedScore.bestTotal){
-            continue
-        }
-
         val s1R = remainder.subList(0, remainderPairs)
         val s2R = remainder.subList(remainderPairs, remainder.size)
 
@@ -194,11 +205,11 @@ fun iterateMdpOpponents(
             maxPairs = remainderPairs,
             remainderPairingScore = remainderPairingScore,
             mdpPairingScore = mdpPairingScore,
+            mdpPairs = candidate,
             combinedScore = combinedScore,
             lookForBestScore = lookForBestScore,
             downfloats = s2Downfloats,
             bestBracketScore = bestBracketScore,
-            bestRemainderScore = bestRemainderScore,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
@@ -207,13 +218,19 @@ fun iterateMdpOpponents(
             continue
         }
 
-        if(!lookForBestScore){
+        if(!lookForBestScore || lastImperfectPair == null){
             return
         }
 
         if (combinedScore.bestTotal <= bestBracketScore){
             return
         }
+
+        setupPermutationSkip(
+            list = s2,
+            i = lastImperfectPair,
+            length = maxPairs
+        )
 
     }while(nextPermutation(list = s2, changedIndices = changedIndices, length = s1.size))
     return
