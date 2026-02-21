@@ -4,9 +4,8 @@ import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
 import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
-import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
+import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
-import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.collections.iterator
 
@@ -19,7 +18,7 @@ fun iterateHomogenousBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    candidateScore: CandidateAssessmentScore,
+    bracketData: BracketScoringData,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
@@ -39,13 +38,13 @@ fun iterateHomogenousBracket(
             maxRounds = maxRounds,
             maxPairs = maxPairs,
             limbo = limbo,
-            candidateScore = candidateScore,
+            bracketData = bracketData,
             lookForBestScore = lookForBestScore,
             downfloats = downfloats,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
-        if (candidateScore.isValidCandidate) {
+        if (bracketData.isValidCandidate) {
             return
         }
         applyIndexSwap(s1, s2, swappingIndices)
@@ -62,7 +61,7 @@ fun iterateS2Permutations(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    candidateScore: CandidateAssessmentScore,
+    bracketData: BracketScoringData,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
@@ -75,14 +74,14 @@ fun iterateS2Permutations(
             continue
         }
 
-        candidateScore.remainderPairs = s1.mapIndexed { index, it ->
+        bracketData.remainderPairs = s1.mapIndexed { index, it ->
             Pair(it, s2[index])
         }
 
-        candidateScore.remainderPairingScore.reset()
+        bracketData.remainderPairingScore.reset()
 
         val firstIneligiblePair = firstIneligiblePair(
-            pairs = candidateScore.mdpPairs,
+            pairs = bracketData.mdpPairs,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
@@ -99,8 +98,8 @@ fun iterateS2Permutations(
         }
 
         if(byeInBracket){
-            candidateScore.remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
-            candidateScore.remainderPairingScore.pabAssigneeScore = s2.last().score
+            bracketData.remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            bracketData.remainderPairingScore.pabAssigneeScore = s2.last().score
         }
 
         val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
@@ -131,28 +130,28 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
-        candidateScore.isValidCandidate = true
+        bracketData.isValidCandidate = true
 
         if(!lookForBestScore){
             return
         }
 
         val lastImperfectPair  = lastImperfectPair(
-            pairs = candidateScore.mdpPairs,
-            bestScore = candidateScore.bestTotal,
-            baseScore = candidateScore.mdpPairingScore,
-            cumulativeScore = candidateScore.remainderPairingScore,
+            pairs = bracketData.mdpPairs,
+            bestScore = bracketData.bestTotal,
+            baseScore = bracketData.mdpPairingScore,
+            cumulativeScore = bracketData.remainderPairingScore,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        if (candidateScore.updateHiScore()){
+        if (bracketData.updateHiScore()){
             downfloats.clear()
             downfloats.addAll(s2.subList(maxPairs, s2.size))
 
             if(byeInBracket){
-                candidateScore.bestCandidate.add(Pair(s2.last(), null))
+                bracketData.bestCandidate.add(Pair(s2.last(), null))
             }
         }
 
