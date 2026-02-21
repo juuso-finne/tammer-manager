@@ -12,29 +12,22 @@ data class CandidateAssessmentScore(
 
     val bestCandidate : MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>> = mutableListOf(),
 
-    val currentTotal: PairingAssessmentCriteria = PairingAssessmentCriteria(),
+    val mdpPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
+    var mdpPairs: List<Pair<RegisteredPlayer, RegisteredPlayer>> = listOf(),
 
-    val currentIndividualAssessments: MutableList<PairingAssessmentCriteria> = mutableListOf(),
-
-    val currentCandidate: MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>> = mutableListOf(),
+    val remainderPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
+    var remainderPairs: List<Pair<RegisteredPlayer, RegisteredPlayer>> = listOf(),
 
     var isValidCandidate: Boolean = false
 ){
-    fun updateHiScore(newBest: List<Pair<RegisteredPlayer, RegisteredPlayer?>>):Boolean{
-        if (this.currentTotal >= bestTotal){
+    fun updateHiScore():Boolean{
+        if (this.mdpPairingScore + this.remainderPairingScore >= this.bestTotal){
             return false
         }
 
-        this.bestTotal = this.currentTotal.copy()
+        this.bestTotal = this.mdpPairingScore + this.remainderPairingScore
         this.bestCandidate.clear()
-        this.bestCandidate.addAll(newBest)
+        this.bestCandidate.addAll(this.mdpPairs.plus(this.remainderPairs))
         return true
-    }
-
-    fun resetCurrentScore(){
-        this.currentTotal.reset()
-        this.currentIndividualAssessments.clear()
-        this.isValidCandidate = false
-        this.currentCandidate.clear()
     }
 }

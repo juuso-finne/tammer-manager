@@ -19,10 +19,7 @@ fun iterateHomogenousBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    remainderPairingScore: PairingAssessmentCriteria,
-    mdpPairingScore: PairingAssessmentCriteria,
-    mdpPairs:  List<Pair<RegisteredPlayer, RegisteredPlayer>>,
-    combinedScore: CandidateAssessmentScore,
+    candidateScore: CandidateAssessmentScore,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
@@ -31,7 +28,6 @@ fun iterateHomogenousBracket(
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
-        remainderPairingScore.reset()
 
         applyIndexSwap(s1, s2, swappingIndices)
         iterateS2Permutations(
@@ -43,16 +39,13 @@ fun iterateHomogenousBracket(
             maxRounds = maxRounds,
             maxPairs = maxPairs,
             limbo = limbo,
-            remainderPairingScore = remainderPairingScore,
-            combinedScore = combinedScore,
+            candidateScore = candidateScore,
             lookForBestScore = lookForBestScore,
             downfloats = downfloats,
-            mdpPairingScore = mdpPairingScore,
-            mdpPairs = mdpPairs,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
-        if (combinedScore.isValidCandidate) {
+        if (candidateScore.isValidCandidate) {
             return
         }
         applyIndexSwap(s1, s2, swappingIndices)
@@ -69,10 +62,7 @@ fun iterateS2Permutations(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    remainderPairingScore: PairingAssessmentCriteria,
-    mdpPairs:  List<Pair<RegisteredPlayer, RegisteredPlayer>>,
-    mdpPairingScore: PairingAssessmentCriteria,
-    combinedScore: CandidateAssessmentScore,
+    candidateScore: CandidateAssessmentScore,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
@@ -85,12 +75,14 @@ fun iterateS2Permutations(
             continue
         }
 
-        val candidate = s1.mapIndexed { index, it ->
+        candidateScore.remainderPairs = s1.mapIndexed { index, it ->
             Pair(it, s2[index])
         }
 
+        candidateScore.remainderPairingScore.reset()
+
         val firstIneligiblePair = firstIneligiblePair(
-            pairs = candidate,
+            pairs = candidateScore.mdpPairs,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
@@ -107,8 +99,8 @@ fun iterateS2Permutations(
         }
 
         if(byeInBracket){
-            remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
-            remainderPairingScore.pabAssigneeScore = s2.last().score
+            candidateScore.remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            candidateScore.remainderPairingScore.pabAssigneeScore = s2.last().score
         }
 
         val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
@@ -139,33 +131,28 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
-        combinedScore.resetCurrentScore()
-        combinedScore.isValidCandidate = true
+        candidateScore.isValidCandidate = true
 
         if(!lookForBestScore){
             return
         }
 
-
         val lastImperfectPair  = lastImperfectPair(
-            pairs = candidate,
-            bestScore = combinedScore.bestTotal,
-            baseScore = mdpPairingScore,
-            cumulativeScore = remainderPairingScore,
+            pairs = candidateScore.mdpPairs,
+            bestScore = candidateScore.bestTotal,
+            baseScore = candidateScore.mdpPairingScore,
+            cumulativeScore = candidateScore.remainderPairingScore,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        combinedScore.currentTotal += remainderPairingScore
-        combinedScore.currentTotal += mdpPairingScore
-
-        if (combinedScore.updateHiScore(candidate.plus(mdpPairs))){
+        if (candidateScore.updateHiScore()){
             downfloats.clear()
             downfloats.addAll(s2.subList(maxPairs, s2.size))
 
             if(byeInBracket){
-                combinedScore.bestCandidate.add(Pair(s2.last(), null))
+                candidateScore.bestCandidate.add(Pair(s2.last(), null))
             }
         }
 
