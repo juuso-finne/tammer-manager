@@ -26,16 +26,18 @@ fun pairHeterogenousBracket(
 ):Boolean{
     val isLastBracket = remainingPlayers.isEmpty()
 
-    if(isLastBracket && maxPairs < (incomingDownfloaters.size + residentPlayers.size) / 2){
-        return false
-    }
-
     val mdpsToPair = min(incomingDownfloaters.size, maxPairs)
 
     val s1 = incomingDownfloaters.take(mdpsToPair).toMutableList()
     val s2 = residentPlayers.toMutableList()
 
     val limbo = incomingDownfloaters.takeLast(incomingDownfloaters.size - mdpsToPair).toMutableList()
+
+    if(isLastBracket && maxPairs < (incomingDownfloaters.size + residentPlayers.size) / 2){
+        s2.addAll(0, limbo)
+        limbo.clear()
+    }
+
     val s2Downfloats = mutableListOf<RegisteredPlayer>()
     val bracketData = BracketScoringData()
 
@@ -56,7 +58,9 @@ fun pairHeterogenousBracket(
             maxRounds = maxRounds,
             bracketData = bracketData,
             lookForBestScore = lookForBestScore,
-            maxPairs = maxPairs,
+            maxPairs =
+                if (isLastBracket) (s1.size + s2.size) / 2
+                else maxPairs,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )

@@ -69,6 +69,9 @@ fun nextBracket(
         )){
             return true
         }
+        if(remainingPlayers.isEmpty()){
+            return false
+        }
     }
     return false
 }
