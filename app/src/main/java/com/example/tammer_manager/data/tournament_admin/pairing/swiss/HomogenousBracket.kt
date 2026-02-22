@@ -81,7 +81,7 @@ fun iterateS2Permutations(
         bracketData.remainderPairingScore.reset()
 
         val firstIneligiblePair = firstIneligiblePair(
-            pairs = bracketData.mdpPairs,
+            pairs = bracketData.remainderPairs,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
@@ -137,7 +137,7 @@ fun iterateS2Permutations(
         }
 
         val lastImperfectPair  = lastImperfectPair(
-            pairs = bracketData.mdpPairs,
+            pairs = bracketData.remainderPairs,
             bestScore = bracketData.bestTotal,
             baseScore = bracketData.mdpPairingScore,
             cumulativeScore = bracketData.remainderPairingScore,
