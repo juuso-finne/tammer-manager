@@ -33,7 +33,7 @@ fun lastImperfectPair(
     maxRounds: Int
 ):Int?{
     var output: Int? = null
-    for(i in pairs.indices.reversed()){
+    for(i in pairs.indices){
         val score  = assessPairing(
             candidate = pairs[i],
             roundsCompleted = roundsCompleted,
@@ -41,14 +41,14 @@ fun lastImperfectPair(
             colorPreferenceMap = colorPreferenceMap
         )
 
-        if (output == null && score > PairingAssessmentCriteria()){
+        if (score > PairingAssessmentCriteria()){
             output = i
         }
 
         cumulativeScore += score
 
         if(cumulativeScore + baseScore >= bestScore){
-            return output
+            return i
         }
     }
     return output
