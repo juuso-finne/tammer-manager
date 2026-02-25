@@ -30,6 +30,9 @@ fun iterateHomogenousBracket(
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
 
         applyIndexSwap(s1, s2, swappingIndices)
+
+        bracketData.remainderSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
+
         iterateS2Permutations(
             remainingPlayers = remainingPlayers,
             s1 = s1,
@@ -156,7 +159,10 @@ fun iterateS2Permutations(
         }
 
         if(
-            bracketData.bestPossibleScore
+            bracketData.bestPossibleScore ||
+            PairingAssessmentCriteria.colorConflictComparator.compare(
+                bracketData.remainderPairingScore, bracketData.remainderSplitTheoreticalBest
+            ) <= 0
         ){
             return
         }

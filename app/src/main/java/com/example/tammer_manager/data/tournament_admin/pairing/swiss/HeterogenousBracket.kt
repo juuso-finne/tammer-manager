@@ -147,6 +147,12 @@ fun iterateMdpOpponents(
 
         var lastImperfectPair:Int? = null
 
+        val remainder = s2.subList(s1.size, s2.size)
+        val remainderPairs = min(remainder.size/2, maxPairs)
+
+        val s1R = remainder.subList(0, remainderPairs)
+        val s2R = remainder.subList(remainderPairs, remainder.size)
+
         if(lookForBestScore){
             lastImperfectPair = lastImperfectPair(
                 pairs = bracketData.mdpPairs,
@@ -157,7 +163,13 @@ fun iterateMdpOpponents(
                 maxRounds = maxRounds
             )
 
-            if(bracketData.mdpPairingScore >= bracketData.bestTotal){
+            val bestPossibleRemainderScore = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
+
+            if(
+                PairingAssessmentCriteria.colorConflictComparator.compare(
+                    bracketData.mdpPairingScore + bestPossibleRemainderScore, bracketData.bestTotal
+                ) >= 0
+            ){
                 setupPermutationSkip(
                     list = s2,
                     i = lastImperfectPair ?: s2.indices.last,
@@ -167,11 +179,6 @@ fun iterateMdpOpponents(
             }
         }
 
-        val remainder = s2.subList(s1.size, s2.size)
-        val remainderPairs = min(remainder.size/2, maxPairs)
-
-        val s1R = remainder.subList(0, remainderPairs)
-        val s2R = remainder.subList(remainderPairs, remainder.size)
 
         iterateHomogenousBracket(
             remainingPlayers = remainingPlayers,

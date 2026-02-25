@@ -15,9 +15,11 @@ data class BracketScoringData(
 
     val mdpPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     val mdpPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
+    var mdpSplitTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
     val remainderPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     val remainderPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
+    var remainderSplitTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
     var isValidCandidate: Boolean = false,
     var bestPossibleScore: Boolean = false
