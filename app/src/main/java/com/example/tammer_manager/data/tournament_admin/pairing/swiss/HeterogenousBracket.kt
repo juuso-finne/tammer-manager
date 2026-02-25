@@ -65,8 +65,14 @@ fun pairHeterogenousBracket(
             disapprovedDownfloaters = disapprovedDownfloaters
         )
 
-        if(bracketData.isValidCandidate && !lookForBestScore){
-            return true
+        if(bracketData.isValidCandidate){
+            if(!lookForBestScore){
+                return true
+            }
+
+            if (bracketData.bestTotal == PairingAssessmentCriteria()){
+                break
+            }
         }
 
         applyIndexSwap(s1, s2, swappingIndices)
@@ -111,11 +117,8 @@ fun iterateMdpOpponents(
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     do{
-        bracketData.mdpPairs = s1.mapIndexed { index, it ->
-            Pair(it, s2[index])
-        }
+        bracketData.setMdpPairs(s1, s2)
         bracketData.mdpPairingScore.reset()
-        bracketData.isValidCandidate = false
 
         val firstIneligiblePair = firstIneligiblePair(
             pairs = bracketData.mdpPairs,
@@ -145,6 +148,15 @@ fun iterateMdpOpponents(
                 roundsCompleted = roundsCompleted,
                 maxRounds = maxRounds
             )
+
+            if(bracketData.mdpPairingScore >= bracketData.bestTotal){
+                setupPermutationSkip(
+                    list = s2,
+                    i = lastImperfectPair ?: s2.indices.last,
+                    length = maxPairs
+                )
+                continue
+            }
         }
 
         val remainder = s2.subList(s1.size, s2.size)
