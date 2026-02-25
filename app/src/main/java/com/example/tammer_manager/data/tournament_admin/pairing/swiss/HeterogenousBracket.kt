@@ -41,6 +41,14 @@ fun pairHeterogenousBracket(
     val s2Downfloats = mutableListOf<RegisteredPlayer>()
     val bracketData = BracketScoringData()
 
+    bracketData.bracketTheoreticalBest += bestPossibleScore(
+        players = s1.plus(s2),
+        colorPreferenceMap = colorPreferenceMap,
+        maxPairs =
+            if (isLastBracket) (s1.size + s2.size) / 2
+            else maxPairs,
+    )
+
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()){
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
@@ -70,7 +78,7 @@ fun pairHeterogenousBracket(
                 return true
             }
 
-            if (bracketData.bestTotal == PairingAssessmentCriteria()){
+            if (bracketData.bestPossibleScore){
                 break
             }
         }
@@ -192,8 +200,7 @@ fun iterateMdpOpponents(
 
         if(
             !lookForBestScore ||
-            bracketData.bestTotal == PairingAssessmentCriteria()
-        ){
+            bracketData.bestPossibleScore){
             return
         }
 

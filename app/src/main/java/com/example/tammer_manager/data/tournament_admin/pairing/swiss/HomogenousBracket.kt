@@ -6,6 +6,7 @@ import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
 import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
+import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.collections.iterator
 
@@ -45,7 +46,9 @@ fun iterateHomogenousBracket(
             disapprovedDownfloaters = disapprovedDownfloaters
         )
         if (bracketData.isValidCandidate) {
-            return
+            if(!lookForBestScore || bracketData.bestPossibleScore){
+                return
+            }
         }
         applyIndexSwap(s1, s2, swappingIndices)
     }
@@ -152,13 +155,15 @@ fun iterateS2Permutations(
             }
         }
 
-        if(lastImperfectPair == null){
+        if(
+            bracketData.bestPossibleScore
+        ){
             return
         }
 
         setupPermutationSkip(
             list = s2,
-            i = lastImperfectPair,
+            i = lastImperfectPair ?: s2.indices.last,
             length = maxPairs
         )
 
