@@ -13,10 +13,10 @@ data class BracketScoringData(
     val bestCandidate : MutableList<Pair<RegisteredPlayer, RegisteredPlayer?>> = mutableListOf(),
 
     val mdpPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
-    var mdpPairs: List<Pair<RegisteredPlayer, RegisteredPlayer>> = listOf(),
+    val mdpPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
 
     val remainderPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
-    var remainderPairs: List<Pair<RegisteredPlayer, RegisteredPlayer>> = listOf(),
+    val remainderPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
 
     var isValidCandidate: Boolean = false
 ){
@@ -29,5 +29,19 @@ data class BracketScoringData(
         this.bestCandidate.clear()
         this.bestCandidate.addAll(this.mdpPairs.plus(this.remainderPairs))
         return true
+    }
+
+    fun setRemainderPairs(s1: List<RegisteredPlayer>, s2: List<RegisteredPlayer>){
+        remainderPairs.clear()
+        s1.indices.forEach {
+            remainderPairs.add(Pair(s1[it], s2[it]))
+        }
+    }
+
+    fun setMdpPairs(s1: List<RegisteredPlayer>, s2: List<RegisteredPlayer>){
+        mdpPairs.clear()
+        s1.indices.forEach {
+            mdpPairs.add(Pair(s1[it], s2[it]))
+        }
     }
 }

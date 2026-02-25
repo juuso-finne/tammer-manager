@@ -74,10 +74,7 @@ fun iterateS2Permutations(
             continue
         }
 
-        bracketData.remainderPairs = s1.mapIndexed { index, it ->
-            Pair(it, s2[index])
-        }
-
+        bracketData.setRemainderPairs(s1, s2)
         bracketData.remainderPairingScore.reset()
 
         val firstIneligiblePair = firstIneligiblePair(
