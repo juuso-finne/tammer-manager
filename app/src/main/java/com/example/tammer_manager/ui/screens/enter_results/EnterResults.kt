@@ -143,6 +143,10 @@ fun EnterResults(
                     ) { Text("Generate pairs") }
 
                     Button(
+                        onClick = { navController.navigate("manualPairing") }
+                    ){ Text("Manual pairing") }
+
+                    Button(
                         enabled =
                             pairingList.all { pairing ->
                                 pairing.all {

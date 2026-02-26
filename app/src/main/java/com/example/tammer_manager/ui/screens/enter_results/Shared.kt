@@ -43,26 +43,26 @@ fun PairingItem(
     index: Int,
     vmTournament: TournamentViewModel,
     pairing: Pairing,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
     setScore: (Float, Float) -> Unit
 ) {
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier.Companion.height(IntrinsicSize.Max),
+        modifier = Modifier.height(IntrinsicSize.Max),
         horizontalArrangement = Arrangement.spacedBy(borderThickness * -1)
     )
     {
         Column(
             verticalArrangement = Arrangement.spacedBy(borderThickness * -1),
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f)
         ) {
             PlayerColor.entries.sortedBy { it.ordinal }.forEach {
                 PlayerScoreRow(
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .fillMaxHeight()
                         .weight(1f),
                     color = it,
