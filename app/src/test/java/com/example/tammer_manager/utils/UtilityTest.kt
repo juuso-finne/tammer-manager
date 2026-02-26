@@ -14,9 +14,9 @@ class UtilityTest {
         assertThat(playerList.size).isEqualTo(5)
         assertThat(playerList[0]).isEqualTo(RegisteredPlayer(
             fullName = "Player 1",
-            rating = 1100,
+            rating = 1500,
             id = 1,
-            tpn = 5,
+            tpn = 1,
         ))
 
         assertThat(playerList[2]).isEqualTo(RegisteredPlayer(
@@ -28,9 +28,9 @@ class UtilityTest {
 
         assertThat(playerList.last()).isEqualTo(RegisteredPlayer(
             fullName = "Player 5",
-            rating = 1500,
+            rating = 1100,
             id = 5,
-            tpn = 1,
+            tpn = 5,
         ))
     }
 

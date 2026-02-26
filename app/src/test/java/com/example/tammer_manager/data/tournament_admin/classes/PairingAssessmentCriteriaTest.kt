@@ -301,4 +301,28 @@ class PairingAssessmentCriteriaTest {
 
         assertThat(a).isEqualTo(PairingAssessmentCriteria())
     }
+
+    @Test
+    fun `Color conflict compararison only compares based on color conflicts`(){
+        val zeroAssessment = PairingAssessmentCriteria()
+        zeroAssessment.colorpreferenceConflicts = 1
+        zeroAssessment.strongColorpreferenceConflicts = 1
+
+        val maxAssessment = PairingAssessmentCriteria()
+        maxAssessment.setToMax()
+        maxAssessment.colorpreferenceConflicts = 1
+        maxAssessment.strongColorpreferenceConflicts = 1
+
+        assertThat(PairingAssessmentCriteria.colorConflictComparator.compare(
+            maxAssessment, zeroAssessment
+        )).isEqualTo(0)
+
+        maxAssessment.colorpreferenceConflicts = 0
+        maxAssessment.strongColorpreferenceConflicts = 0
+
+        assertThat(PairingAssessmentCriteria.colorConflictComparator.compare(
+            maxAssessment, zeroAssessment
+        )).isLessThan(0)
+
+    }
 }

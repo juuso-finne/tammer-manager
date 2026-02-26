@@ -7,9 +7,9 @@ fun generatePlayers(amount: Int):List<RegisteredPlayer>{
     for (i in 1 ..amount){
         output.add(RegisteredPlayer(
             fullName = "Player $i",
-            rating = 1000 + 100 * i,
+            rating = 1000 + 100 * (amount - i + 1),
             id = i,
-            tpn = amount - i + 1
+            tpn = i
         ))
     }
     return output

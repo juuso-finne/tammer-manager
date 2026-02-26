@@ -85,4 +85,14 @@ data class PairingAssessmentCriteria(
         this.colorpreferenceConflicts = Int.MAX_VALUE
         this.strongColorpreferenceConflicts = Int.MAX_VALUE
     }
+
+    companion object{
+        val colorConflictComparator = Comparator<PairingAssessmentCriteria>{a, b ->
+            var difference = a.strongColorpreferenceConflicts - b.strongColorpreferenceConflicts
+            if(difference == 0){
+                difference = a.colorpreferenceConflicts - b.colorpreferenceConflicts
+            }
+            difference
+        }
+    }
 }

@@ -33,8 +33,6 @@ fun <T: Comparable<T>> swapWithFirstLarger(list: MutableList<T>, startIndex: Int
  * ### Preconditions
  * - The first [length] elements of [list] **must be sorted in strictly
  *   ascending order** before the first invocation.
- * - The contents of [list] **must not be modified externally** between
- *   successive calls.
  * - Only indices in the range `0 until length` may be accessed or
  *   interpreted by the caller.
  *
@@ -46,24 +44,22 @@ fun <T: Comparable<T>> swapWithFirstLarger(list: MutableList<T>, startIndex: Int
  * - Indices outside the permutation prefix are accessed or relied upon
  *
  * @param list the mutable list whose permutation is advanced in-place
- * @param changedIndices cleared and populated with indices affected
- *        during this permutation step
  * @param length the size of the permutation prefix
  * @return `true` if a new permutation was generated, or `false` if the
  *         final permutation has been reached
  */
-fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: MutableList<Int>, length: Int = list.size): Boolean {
+fun <T: Comparable<T>> nextPermutation (
+    list: MutableList<T>,
+    length: Int = list.size
+): Boolean {
     if (length <= 0){
         return false
     }
-    changedIndices.clear()
     val cutOff = length - 1
-    changedIndices.add(cutOff)
     if (popAndShift(list, cutOff)){
         return true
     }
     for (i in cutOff - 1 downTo 0){
-        changedIndices.add(i)
         if (swapWithFirstLarger(list, i)){
             return true
         }
@@ -71,4 +67,24 @@ fun <T: Comparable<T>> nextPermutation (list: MutableList<T>, changedIndices: Mu
         popAndShift(list, i)
     }
     return false
+}
+
+/**
+ * Mutates [list] in a way that calling [nextPermutation] will replace the element
+ * at index [i] with the next biggest element and leave the rest in ascending order.
+ *
+ * @param list the list to be mutated
+ * @param i the index of the element to be replaced
+ * @param length the size of the permutation prefix
+ */
+fun <T: Comparable<T>> setupPermutationSkip(
+    list: MutableList<T>,
+    i: Int,
+    length: Int = list.size
+){
+    if (length == i + 1){
+        return
+    }
+    list.subList(i + 1, list.size).sortDescending()
+    list.subList(length, list.size).sort()
 }

@@ -3,7 +3,8 @@ package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 import com.example.tammer_manager.data.combinatorics.IndexSwaps
 import com.example.tammer_manager.data.combinatorics.applyIndexSwap
 import com.example.tammer_manager.data.combinatorics.nextPermutation
-import com.example.tammer_manager.data.tournament_admin.classes.CandidateAssessmentScore
+import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
+import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -18,22 +19,20 @@ fun iterateHomogenousBracket(
     roundsCompleted: Int,
     maxRounds: Int,
     maxPairs: Int,
-    remainderPairingScore: CandidateAssessmentScore,
-    mdpPairingScore: CandidateAssessmentScore,
-    combinedScore: CandidateAssessmentScore,
+    bracketData: BracketScoringData,
     lookForBestScore: Boolean,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestBracketScore: PairingAssessmentCriteria,
-    bestRemainderScore: PairingAssessmentCriteria,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
     for(next in IndexSwaps(sizeS1 = s1.size, sizeS2 = s2.size).iterator()) {
 
         val swappingIndices = Pair(next.first.copyOf(), next.second.copyOf())
-        remainderPairingScore.resetCurrentScore()
 
         applyIndexSwap(s1, s2, swappingIndices)
+
+        bracketData.remainderSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
+
         iterateS2Permutations(
             remainingPlayers = remainingPlayers,
             s1 = s1,
@@ -43,23 +42,17 @@ fun iterateHomogenousBracket(
             maxRounds = maxRounds,
             maxPairs = maxPairs,
             limbo = limbo,
-            remainderPairingScore = remainderPairingScore,
-            combinedScore = combinedScore,
+            bracketData = bracketData,
             lookForBestScore = lookForBestScore,
             downfloats = downfloats,
-            mdpPairingScore = mdpPairingScore,
-            bestRemainderScore = bestRemainderScore,
             approvedDownfloaters = approvedDownfloaters,
             disapprovedDownfloaters = disapprovedDownfloaters
         )
-        if (!combinedScore.isValidCandidate) {
-            continue
+        if (bracketData.isValidCandidate) {
+            if(!lookForBestScore || bracketData.bestPossibleScore){
+                return
+            }
         }
-
-        if (!lookForBestScore || combinedScore.bestTotal <= bestBracketScore) {
-            return
-        }
-
         applyIndexSwap(s1, s2, swappingIndices)
     }
 }
@@ -74,41 +67,42 @@ fun iterateS2Permutations(
     maxRounds: Int,
     maxPairs: Int,
     lookForBestScore: Boolean,
-    remainderPairingScore: CandidateAssessmentScore,
-    mdpPairingScore: CandidateAssessmentScore,
-    combinedScore: CandidateAssessmentScore,
+    bracketData: BracketScoringData,
     downfloats : MutableList<RegisteredPlayer> = mutableListOf(),
-    bestRemainderScore: PairingAssessmentCriteria,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
     disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
 ){
-    val changedIndices = mutableListOf<Int>()
     val isLastBracket = remainingPlayers.isEmpty()
     val byeInBracket = isLastBracket && (s2.size + s1.size) % 2 == 1
 
     do{
         if (byeInBracket && s2.last().receivedPairingBye){
-            remainderPairingScore.resetCurrentScore()
             continue
         }
 
-        assessCandidate(
-            s1 = s1,
-            s2 = s2,
-            changedIndices = changedIndices,
-            score = remainderPairingScore,
+        bracketData.setRemainderPairs(s1, s2)
+        bracketData.remainderPairingScore.reset()
+
+        val firstIneligiblePair = firstIneligiblePair(
+            pairs = bracketData.remainderPairs,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds
         )
 
-        if(byeInBracket){
-            remainderPairingScore.currentTotal.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
-            remainderPairingScore.currentTotal.pabAssigneeScore = s2.last().score
+        // Skip to next iteration if candidate isn't viable
+        firstIneligiblePair?.let{
+            setupPermutationSkip(
+                list = s2,
+                i = it,
+                length = maxPairs
+            )
+            continue
         }
 
-        if(!remainderPairingScore.isValidCandidate){
-            continue
+        if(byeInBracket){
+            bracketData.remainderPairingScore.pabAssigneeUnplayedGames = roundsCompleted - s2.last().matchHistory.size
+            bracketData.remainderPairingScore.pabAssigneeScore = s2.last().score
         }
 
         val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
@@ -139,23 +133,45 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
-        combinedScore.resetCurrentScore()
-        combinedScore.currentTotal += remainderPairingScore.currentTotal
-        combinedScore.currentTotal += mdpPairingScore.currentTotal
-        combinedScore.isValidCandidate = true
+        bracketData.isValidCandidate = true
 
-        if (combinedScore.updateHiScore(remainderPairingScore.currentCandidate.plus(mdpPairingScore.currentCandidate))){
+        if(!lookForBestScore){
+            return
+        }
+
+        val lastImperfectPair  = lastImperfectPair(
+            pairs = bracketData.remainderPairs,
+            bestScore = bracketData.bestTotal,
+            baseScore = bracketData.mdpPairingScore,
+            cumulativeScore = bracketData.remainderPairingScore,
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds
+        )
+
+        if (bracketData.updateHiScore()){
             downfloats.clear()
             downfloats.addAll(s2.subList(maxPairs, s2.size))
 
             if(byeInBracket){
-                combinedScore.bestCandidate.add(Pair(s2.last(), null))
+                bracketData.bestCandidate.add(Pair(s2.last(), null))
             }
         }
 
-        if(!lookForBestScore || remainderPairingScore.currentTotal <= bestRemainderScore){
+        if(
+            bracketData.bestPossibleScore ||
+            PairingAssessmentCriteria.colorConflictComparator.compare(
+                bracketData.remainderPairingScore, bracketData.remainderSplitTheoreticalBest
+            ) <= 0
+        ){
             return
         }
 
-    }while(nextPermutation(list = s2, changedIndices = changedIndices, length = maxPairs))
+        setupPermutationSkip(
+            list = s2,
+            i = lastImperfectPair ?: s2.indices.last,
+            length = maxPairs
+        )
+
+    }while(nextPermutation(list = s2, length = maxPairs))
 }
