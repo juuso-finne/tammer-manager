@@ -1,5 +1,6 @@
 package com.example.tammer_manager.ui.screens
 
+import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,12 +52,20 @@ fun ManualPairing(
     navController: NavController,
     modifier: Modifier = Modifier
 ){
+    val currentRoundPairings by vmTournament.currentRoundPairings.collectAsState()
     val players = vmTournament.registeredPlayers.collectAsState().value.filter{it.isActive}
-    val globalPairs = vmTournament.currentRoundPairings.collectAsState().value.filter { it[PlayerColor.BLACK]?.playerID != null }
-    val localPairs = remember { mutableStateListOf<Pairing>().apply { addAll(globalPairs) } }
-    val unsavedChanges = remember { derivedStateOf { globalPairs != localPairs } }
+    val globalPairs = remember(currentRoundPairings) {
+        currentRoundPairings
+            .filter { it[PlayerColor.BLACK]?.playerID != null }
+    }
+    val localPairs = remember(globalPairs) {
+        mutableStateListOf<Pairing>().apply {
+            addAll(globalPairs)
+        }
+    }
+    val unsavedChanges by remember (globalPairs, localPairs) { derivedStateOf{ globalPairs != localPairs }  }
 
-    val unpairedPlayers = remember { derivedStateOf {
+    val unpairedPlayers = remember (localPairs) { derivedStateOf {
         players.minus(localPairs
             .flatMap { pair -> pair.values.filter { it.playerID != null }
             .map { vmTournament.findPlayerById(it.playerID!!)!! } }
@@ -131,7 +141,7 @@ fun ManualPairing(
             Button(
                 enabled =
                     unpairedPlayers.value.size < 2 &&
-                    unsavedChanges.value
+                    unsavedChanges
                 ,
                 onClick = {
                     val localPairsCopy = localPairs.toMutableList()
@@ -149,7 +159,7 @@ fun ManualPairing(
             }
 
             Button(
-                enabled = unsavedChanges.value,
+                enabled = unsavedChanges,
                 onClick = {
                     localPairs.clear()
                     localPairs.addAll(globalPairs)
