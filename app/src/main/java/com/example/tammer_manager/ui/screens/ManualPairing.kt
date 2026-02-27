@@ -51,6 +51,22 @@ fun ManualPairing(
     val localPairs = remember { mutableStateListOf<Pairing>().apply { addAll(globalPairs) } }
     val unsavedChanges = remember { derivedStateOf { globalPairs != localPairs } }
 
+    fun addPair(){
+        localPairs.add(
+            mapOf()
+        )
+    }
+
+    fun setPlayer(
+        pairIndex: Int,
+        color: PlayerColor,
+        playerID: Int
+    ){
+        val copy = localPairs[pairIndex].toMutableMap()
+        copy[color] = HalfPairing(playerID = playerID)
+        localPairs[pairIndex] = copy
+    }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.fillMaxSize(),
@@ -73,7 +89,9 @@ fun ManualPairing(
                     ManualPairingItem(
                         vmTournament = vmTournament,
                         pairing = pairing,
-                        index = i
+                        index = i,
+                        setPlayer = { color, playerId ->  setPlayer(i, color, playerId) },
+                        deletePair = { localPairs.removeAt(i) }
                     )
                 }
             }
@@ -155,6 +173,11 @@ fun ManualPairingItem(
     pairing: Pairing,
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
+    setPlayer: (
+        color: PlayerColor,
+        playerID: Int
+    ) -> Unit,
+    deletePair: () -> Unit
 ){
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
 
@@ -183,7 +206,7 @@ fun ManualPairingItem(
 
         Column() {
             IconButton(
-                onClick = {  },
+                onClick = { deletePair() },
                 modifier = Modifier
                     .background(Color.White)
                     .fillMaxHeight()

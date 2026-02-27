@@ -123,7 +123,7 @@ fun EnterResults(
             } else {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.Companion.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Button(
                         onClick = {
