@@ -31,7 +31,7 @@ fun EditResults(
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.Companion.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         val activeTournament = vmTournament.activeTournament.collectAsState().value
         val players = vmTournament.registeredPlayers.collectAsState().value

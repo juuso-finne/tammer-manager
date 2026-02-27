@@ -75,24 +75,24 @@ fun PairingItem(
         Column() {
             IconButton(
                 onClick = { setIsMenuOpen(!isMenuOpen) },
-                modifier = Modifier.Companion
-                    .background(Color.Companion.Blue)
+                modifier = Modifier
+                    .background(Color.Blue)
                     .fillMaxHeight()
                     .border(
                         width = borderThickness,
-                        color = Color.Companion.Black
+                        color = Color.Black
                     )
             ) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "Enter result for pair ${index + 1}",
-                    tint = Color.Companion.White
+                    tint = Color.White
                 )
             }
             ScoringMenu(
                 isOpen = isMenuOpen,
                 setIsOpen = setIsMenuOpen,
-                modifier = Modifier.Companion,
+                modifier = Modifier,
                 setScore = setScore
             )
         }
@@ -104,7 +104,7 @@ fun PlayerScoreRow(
     vmTournament: TournamentViewModel,
     color: PlayerColor,
     pairingData: HalfPairing?,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
 ) {
 
@@ -119,18 +119,18 @@ fun PlayerScoreRow(
         modifier = modifier
             .border(
                 width = borderThickness,
-                color = Color.Companion.Black
+                color = Color.Black
             )
-            .background(color = Color.Companion.White)
+            .background(color = Color.White)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(borderThickness * -1),
-        verticalAlignment = Alignment.Companion.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .background(color = color.colorValue)
-                .border(width = borderThickness, color = Color.Companion.Black)
+                .border(width = borderThickness, color = Color.Black)
                 .fillMaxHeight()
                 .layout() { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
@@ -144,8 +144,8 @@ fun PlayerScoreRow(
         Text(
             text = "${player?.fullName ?: '-'} ($scoreAsText)",
             maxLines = 1,
-            overflow = TextOverflow.Companion.Ellipsis,
-            modifier = Modifier.Companion
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
                 .padding(horizontal = 2.dp)
                 .weight(1f),
             style = Typography.bodyLarge
@@ -158,7 +158,7 @@ fun PlayerScoreRow(
                 else -> "%,.0f".format(locale = null, pairingData.points)
             },
             maxLines = 1,
-            modifier = Modifier.Companion.padding(horizontal = 2.dp),
+            modifier = Modifier.padding(horizontal = 2.dp),
             style = Typography.headlineSmall
         )
     }
@@ -169,7 +169,7 @@ fun ScoringMenu(
     setScore: (Float, Float) -> Unit,
     isOpen: Boolean,
     setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier
 ) {
     DropdownMenu(
         expanded = isOpen,
@@ -183,7 +183,7 @@ fun ScoringMenu(
             ScoringMenuItem(it.first, it.second, setScore = setScore, setIsOpen = setIsOpen)
             HorizontalDivider()
         }
-        Spacer(Modifier.Companion.height(20.dp))
+        Spacer(Modifier.height(20.dp))
         HorizontalDivider()
         listOf(
             Pair(0f, 0f),
@@ -202,7 +202,7 @@ fun ScoringMenuItem(
     pointsBlack: Float,
     setScore: (Float, Float) -> Unit,
     setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier.Companion
+    modifier: Modifier = Modifier
 ) {
     val whitePointsString = if (pointsWhite == 0.5f) "½" else "%,.0f".format(locale = null, pointsWhite)
     val blackPointsString = if (pointsBlack == 0.5f) "½" else "%,.0f".format(locale = null, pointsBlack)
