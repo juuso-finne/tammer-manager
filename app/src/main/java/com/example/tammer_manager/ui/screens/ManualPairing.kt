@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
@@ -50,10 +51,8 @@ fun ManualPairing(
     modifier: Modifier = Modifier
 ){
     val players = vmTournament.registeredPlayers.collectAsState().value.filter{it.isActive}
-    val globalPairs = vmTournament.currentRoundPairings.collectAsState().value
-    val localPairs = remember { mutableStateListOf<Pairing>().apply {
-        addAll(globalPairs.filter { it[PlayerColor.BLACK]?.playerID != null })
-    } }
+    val globalPairs = vmTournament.currentRoundPairings.collectAsState().value.filter { it[PlayerColor.BLACK]?.playerID != null }
+    val localPairs = remember { mutableStateListOf<Pairing>().apply { addAll(globalPairs) } }
     val unsavedChanges = remember { derivedStateOf { globalPairs != localPairs } }
 
     val unpairedPlayers = remember { derivedStateOf {
@@ -102,25 +101,67 @@ fun ManualPairing(
         }
 
         if (!localPairs.isEmpty()) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(horizontal = 5.dp)
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(localPairs.size) { i ->
-            val pairing = localPairs[i]
-                ManualPairingItem(
-                    vmTournament = vmTournament,
-                    pairing = pairing,
-                    selectPlayer = { color, playerId ->  setPlayer(i, color, playerId) },
-                    deletePair = { localPairs.removeAt(i) },
-                    players = unpairedPlayers.value
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(localPairs.size) { i ->
+                val pairing = localPairs[i]
+                    ManualPairingItem(
+                        vmTournament = vmTournament,
+                        pairing = pairing,
+                        selectPlayer = { color, playerId ->  setPlayer(i, color, playerId) },
+                        deletePair = { localPairs.removeAt(i) },
+                        players = unpairedPlayers.value
+                    )
+                }
             }
         }
-    }
 
+        Button(onClick = {localPairs.clear()}){
+            Text("Clear all")
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                enabled =
+                    unpairedPlayers.value.size < 2 &&
+                    unsavedChanges.value
+                ,
+                onClick = {
+                    val localPairsCopy = localPairs.toMutableList()
+                    if (unpairedPlayers.value.size == 1){
+                        val playerReceivingBye = unpairedPlayers.value[0]
+                        localPairsCopy.add(mapOf(
+                            PlayerColor.WHITE to HalfPairing(playerReceivingBye.id, 1f),
+                            PlayerColor.BLACK to HalfPairing(null, 0f)
+                        ))
+                    }
+                    vmTournament.setPairs(localPairsCopy)
+                }
+            ) {
+                Text("Save changes")
+            }
+
+            Button(
+                enabled = unsavedChanges.value,
+                onClick = {
+                    localPairs.clear()
+                    localPairs.addAll(globalPairs)
+                }
+            ){
+                Text("Reset changes")
+            }
+        }
+
+        Button(onClick = { navController.navigate("enterResults") }){
+            Text ("Cancel")
+        }
     }
 }
 

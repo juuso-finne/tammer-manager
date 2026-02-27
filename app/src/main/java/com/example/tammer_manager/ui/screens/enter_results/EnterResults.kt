@@ -143,10 +143,6 @@ fun EnterResults(
                     ) { Text("Generate pairs") }
 
                     Button(
-                        onClick = { navController.navigate("manualPairing") }
-                    ){ Text("Manual pairing") }
-
-                    Button(
                         enabled =
                             pairingList.all { pairing ->
                                 pairing.all {
@@ -158,11 +154,20 @@ fun EnterResults(
                     ) { Text("Finish round") }
                 }
 
-                Button(
-                    onClick = { vmTournament.clearPairings() },
-                    enabled = !pairingList.isEmpty()
-                ) {
-                    Text("Clear pairs")
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Button(
+                        onClick = { navController.navigate("manualPairing") }
+                    ){ Text("Manual pairing") }
+
+                    Button(
+                        onClick = { vmTournament.clearPairings() },
+                        enabled = !pairingList.isEmpty()
+                    ) {
+                        Text("Clear pairs")
+                    }
                 }
             }
         }

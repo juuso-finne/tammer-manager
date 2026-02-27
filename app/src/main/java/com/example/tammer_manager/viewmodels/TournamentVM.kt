@@ -114,7 +114,6 @@ class TournamentViewModel(
     }
 
     fun editRound(round: Int, newResults: PairingList){
-        val players = registeredPlayers.value
         newResults.forEach { pairing ->
             pairing.forEach { item ->
                 val ownColor = item.key
@@ -229,6 +228,10 @@ class TournamentViewModel(
 
     fun clearPairings(){
         savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
+    }
+
+    fun setPairs(newPairs: PairingList){
+        savedStateHandle["currentRoundPairings"] = newPairs
     }
 
     fun generatePairs(
