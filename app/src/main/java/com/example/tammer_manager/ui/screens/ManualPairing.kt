@@ -17,11 +17,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
+import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
-import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -45,44 +47,40 @@ fun ManualPairing(
     navController: NavController,
     modifier: Modifier = Modifier
 ){
-    vmTournament.activeTournament.collectAsState().value?.let { activeTournament ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+    val globalPairs = vmTournament.currentRoundPairings.collectAsState().value
+    val localPairs = remember { mutableStateListOf<Pairing>().apply { addAll(globalPairs) } }
+    val unsavedChanges = remember { derivedStateOf { globalPairs != localPairs } }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (!localPairs.isEmpty()) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(horizontal = 5.dp)
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            val pairingList = vmTournament.currentRoundPairings.collectAsState().value
+            items(localPairs.size) { i ->
+                val pairing = localPairs[i]
 
-            if (!pairingList.isEmpty()) {
-                LazyColumn(
-                    modifier = Modifier.Companion
-                        .padding(horizontal = 5.dp)
-                        .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(pairingList.size) { i ->
-                        val pairing = pairingList[i]
+                val idWhite = pairing[PlayerColor.WHITE]?.playerID
+                val idBlack = pairing[PlayerColor.BLACK]?.playerID
 
-                        val idWhite = pairing[PlayerColor.WHITE]?.playerID
-                        val idBlack = pairing[PlayerColor.BLACK]?.playerID
-
-                        if (idWhite != null && idBlack != null) {
-                            ManualPairingItem(
-                                vmTournament = vmTournament,
-                                pairing = pairing,
-                                index = i,
-                                setScore = { whitePlayerScore, blackPlayerScore ->
-                                    vmTournament.setPairingScore(index = i, playerColor = PlayerColor.WHITE, points = whitePlayerScore)
-                                    vmTournament.setPairingScore(index = i, playerColor = PlayerColor.BLACK, points = blackPlayerScore)
-                                }
-                            )
-                        }
-                    }
+                if (idWhite != null && idBlack != null) {
+                    ManualPairingItem(
+                        vmTournament = vmTournament,
+                        pairing = pairing,
+                        index = i
+                    )
                 }
             }
-
         }
-    }?: NoActiveTournament()
+    }
+
+    }
 }
 
 @Composable
@@ -90,15 +88,15 @@ fun PlayerRow(
     vmTournament: TournamentViewModel,
     color: PlayerColor,
     pairingData: HalfPairing?,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
 ) {
 
-    val player = vmTournament.findPlayerById(pairingData?.playerID ?: 0)
+    val player = pairingData?.playerID?.let{vmTournament.findPlayerById(it)}
 
-    val score = player?.score ?: 0f
+    val score = player?.score
     val scoreAsText =
-        if (score % 1.0 == 0.0) "%,.0f".format(score)
+        if ((score ?: 0f) % 1.0 == 0.0) "%,.0f".format(score)
         else "%,.1f".format(score)
 
     Row(
@@ -114,7 +112,7 @@ fun PlayerRow(
     ) {
 
         Box(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .background(color = color.colorValue)
                 .border(width = borderThickness, color = Color.Black)
                 .fillMaxHeight()
@@ -129,7 +127,7 @@ fun PlayerRow(
         ) {}
 
         Text(
-            text = "${player?.fullName ?: '-'} ($scoreAsText)",
+            text = "${player?.fullName}, ${player?.rating} ($scoreAsText)",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -144,7 +142,7 @@ fun PlayerRow(
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 contentDescription = "Choose player",
-                //tint = Color.Blue
+                tint = Color.Blue
             )
         }
     }
@@ -157,7 +155,6 @@ fun ManualPairingItem(
     pairing: Pairing,
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
-    setScore: (Float, Float) -> Unit
 ){
     val (isMenuOpen, setIsMenuOpen) = remember { mutableStateOf(false) }
 
@@ -192,7 +189,7 @@ fun ManualPairingItem(
                     .fillMaxHeight()
                     .border(
                         width = borderThickness,
-                        color = Color.Companion.Black
+                        color = Color.Black
                     )
             ) {
                 Icon(
@@ -203,4 +200,31 @@ fun ManualPairingItem(
             }
         }
     }
+}
+
+@Composable
+fun PlayerDropDownItem(
+    player: RegisteredPlayer,
+    setIsOpen: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    selectPlayer: (id: Int) -> Unit
+){
+    val score = player.score
+    val scoreAsText =
+        if (score % 1.0 == 0.0) "%,.0f".format(score)
+        else "%,.1f".format(score)
+
+    DropdownMenuItem(
+        modifier = modifier,
+        text = {
+            Text(
+                text = "${player.fullName}, ${player.rating} ($scoreAsText)",
+                style = Typography.bodyLarge
+            )
+        },
+        onClick = {
+            selectPlayer(player.id)
+            setIsOpen(false)
+        }
+    )
 }
