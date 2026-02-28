@@ -75,7 +75,7 @@ fun ManualPairing(
     fun setPlayer(
         pairIndex: Int,
         color: PlayerColor,
-        playerID: Int
+        playerID: Int?
     ){
         val copy = localPairs[pairIndex].toMutableMap()
         copy[color] = HalfPairing(playerID = playerID)
@@ -179,7 +179,7 @@ fun PlayerRow(
     pairingData: HalfPairing?,
     modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
-    selectPlayer: (playerID: Int) -> Unit,
+    selectPlayer: (playerID: Int?) -> Unit,
     players: List<RegisteredPlayer>
 ) {
 
@@ -260,7 +260,7 @@ fun ManualPairingItem(
     borderThickness: Dp = 1.dp,
     selectPlayer: (
         color: PlayerColor,
-        playerID: Int
+        playerID: Int?
     ) -> Unit,
     deletePair: () -> Unit,
     players: List<RegisteredPlayer>
@@ -314,7 +314,7 @@ fun ManualPairingItem(
 @Composable
 fun PlayerDropdownMenu(
     players: List<RegisteredPlayer>,
-    selectPlayer: (id: Int) -> Unit,
+    selectPlayer: (id: Int?) -> Unit,
     isOpen: Boolean,
     setIsOpen: (Boolean) -> Unit,
 ){
@@ -322,6 +322,11 @@ fun PlayerDropdownMenu(
         expanded = isOpen,
         onDismissRequest = { setIsOpen(false) },
     ){
+        PlayerDropdownItem(
+            player = null,
+            setIsOpen = setIsOpen,
+            selectPlayer = selectPlayer
+        )
         players.forEach {
             PlayerDropdownItem(
                 player = it,
@@ -334,26 +339,28 @@ fun PlayerDropdownMenu(
 
 @Composable
 fun PlayerDropdownItem(
-    player: RegisteredPlayer,
+    player: RegisteredPlayer?,
     setIsOpen: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    selectPlayer: (id: Int) -> Unit
+    selectPlayer: (id: Int?) -> Unit
 ){
-    val score = player.score
+    val score = player?.score
     val scoreAsText =
-        if (score % 1.0 == 0.0) "%,.0f".format(score)
+        if ((score ?: 0f) % 1.0 == 0.0) "%,.0f".format(score)
         else "%,.1f".format(score)
 
     DropdownMenuItem(
         modifier = modifier,
         text = {
             Text(
-                text = "${player.fullName}, ${player.rating} ($scoreAsText)",
+                text =
+                    if (player == null) "<Empty>"
+                    else "${player.fullName}, ${player.rating} ($scoreAsText)",
                 style = Typography.bodyLarge
             )
         },
         onClick = {
-            selectPlayer(player.id)
+            selectPlayer(player?.id)
             setIsOpen(false)
         }
     )
