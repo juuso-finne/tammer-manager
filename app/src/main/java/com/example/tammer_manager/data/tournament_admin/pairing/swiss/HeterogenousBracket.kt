@@ -6,7 +6,6 @@ import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
 import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
-import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.collections.iterator
 import kotlin.math.min
@@ -73,12 +72,12 @@ fun pairHeterogenousBracket(
             disapprovedDownfloaters = disapprovedDownfloaters
         )
 
-        if(bracketData.isValidCandidate){
+        if(bracketData.foundValidCandidate){
             if(!lookForBestScore){
                 return true
             }
 
-            if (bracketData.bestPossibleScore){
+            if (bracketData.foundBestPossibleScore){
                 break
             }
         }
@@ -86,14 +85,14 @@ fun pairHeterogenousBracket(
         applyIndexSwap(s1, s2, swappingIndices)
     }
 
-    if (!bracketData.isValidCandidate){
+    if (!bracketData.foundValidCandidate){
         return false
     }
 
     output.addAll(bracketData.bestCandidate)
 
     if (isLastBracket){
-        return bracketData.isValidCandidate
+        return bracketData.foundValidCandidate
     }
 
     return nextBracket(
@@ -163,12 +162,13 @@ fun iterateMdpOpponents(
                 maxRounds = maxRounds
             )
 
-            val bestPossibleRemainderScore = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
+            bracketData.remainderTheoreticalBest = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
+
+            val bestPotential = bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest
 
             if(
-                PairingAssessmentCriteria.colorConflictComparator.compare(
-                    bracketData.mdpPairingScore + bestPossibleRemainderScore, bracketData.bestTotal
-                ) >= 0
+                bestPotential.compareByColorConflict(bracketData.bestTotal) >= 0 ||
+                (bracketData.foundValidCandidate && bestPotential.compareByColorConflict(bracketData.bracketTheoreticalBest) > 0)
             ){
                 setupPermutationSkip(
                     list = s2,
@@ -196,7 +196,7 @@ fun iterateMdpOpponents(
             disapprovedDownfloaters = disapprovedDownfloaters
         )
 
-        if(!bracketData.isValidCandidate){
+        if(!bracketData.foundValidCandidate){
             setupPermutationSkip(
                 list = s2,
                 i = lastImperfectPair ?: s2.indices.last,
@@ -207,7 +207,7 @@ fun iterateMdpOpponents(
 
         if(
             !lookForBestScore ||
-            bracketData.bestPossibleScore){
+            bracketData.foundBestPossibleScore){
             return
         }
 

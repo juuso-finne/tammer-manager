@@ -25,7 +25,7 @@ fun generateSwissPairs(
         {it.getColorPreference()}
     )
 
-    if (fastNextBracket(
+    if (nextBracket(
         output = playerPairs,
         remainingPlayers = players.sorted().toMutableList(),
         colorPreferenceMap = colorPreferenceMap,

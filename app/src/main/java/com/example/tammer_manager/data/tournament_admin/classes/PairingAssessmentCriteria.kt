@@ -95,4 +95,8 @@ data class PairingAssessmentCriteria(
             difference
         }
     }
+
+    fun compareByColorConflict(other: PairingAssessmentCriteria):Int{
+        return Companion.colorConflictComparator.compare(this, other)
+    }
 }

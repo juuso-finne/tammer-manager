@@ -6,7 +6,6 @@ import com.example.tammer_manager.data.combinatorics.nextPermutation
 import com.example.tammer_manager.data.combinatorics.setupPermutationSkip
 import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
-import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import kotlin.collections.iterator
 
@@ -32,24 +31,35 @@ fun iterateHomogenousBracket(
         applyIndexSwap(s1, s2, swappingIndices)
 
         bracketData.remainderSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
+        val bestPotential = bracketData.remainderSplitTheoreticalBest + bracketData.mdpPairingScore
 
-        iterateS2Permutations(
-            remainingPlayers = remainingPlayers,
-            s1 = s1,
-            s2 = s2.sorted().toMutableList(),
-            colorPreferenceMap = colorPreferenceMap,
-            roundsCompleted = roundsCompleted,
-            maxRounds = maxRounds,
-            maxPairs = maxPairs,
-            limbo = limbo,
-            bracketData = bracketData,
-            lookForBestScore = lookForBestScore,
-            downfloats = downfloats,
-            approvedDownfloaters = approvedDownfloaters,
-            disapprovedDownfloaters = disapprovedDownfloaters
-        )
-        if (bracketData.isValidCandidate) {
-            if(!lookForBestScore || bracketData.bestPossibleScore){
+        if(
+            !bracketData.foundValidCandidate ||
+            bestPotential.compareByColorConflict(bracketData.bestTotal) < 0
+        ){
+            iterateS2Permutations(
+                remainingPlayers = remainingPlayers,
+                s1 = s1,
+                s2 = s2.sorted().toMutableList(),
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                maxPairs = maxPairs,
+                limbo = limbo,
+                bracketData = bracketData,
+                lookForBestScore = lookForBestScore,
+                downfloats = downfloats,
+                approvedDownfloaters = approvedDownfloaters,
+                disapprovedDownfloaters = disapprovedDownfloaters
+            )
+        }
+
+        if (bracketData.foundValidCandidate) {
+            if(
+                !lookForBestScore ||
+                bracketData.foundBestPossibleScore ||
+                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest).compareByColorConflict(bracketData.bestTotal) >= 0
+            ){
                 return
             }
         }
@@ -133,21 +143,27 @@ fun iterateS2Permutations(
             approvedDownfloaters[remainingPlayers.first().score]?.add(candidateDownfloaters.toSet())
         }
 
-        bracketData.isValidCandidate = true
+        var lastImperfectPair: Int? = null
+
+        if(lookForBestScore){
+            lastImperfectPair  = lastImperfectPair(
+                pairs = bracketData.remainderPairs,
+                bestScore = bracketData.bestTotal,
+                baseScore = bracketData.mdpPairingScore,
+                cumulativeScore = bracketData.remainderPairingScore,
+                colorPreferenceMap = colorPreferenceMap,
+                roundsCompleted = roundsCompleted,
+                maxRounds = maxRounds,
+                theoreticalBest = bracketData.remainderSplitTheoreticalBest,
+                foundValidCandidate = bracketData.foundValidCandidate
+            )
+        }
+
+        bracketData.foundValidCandidate = true
 
         if(!lookForBestScore){
             return
         }
-
-        val lastImperfectPair  = lastImperfectPair(
-            pairs = bracketData.remainderPairs,
-            bestScore = bracketData.bestTotal,
-            baseScore = bracketData.mdpPairingScore,
-            cumulativeScore = bracketData.remainderPairingScore,
-            colorPreferenceMap = colorPreferenceMap,
-            roundsCompleted = roundsCompleted,
-            maxRounds = maxRounds
-        )
 
         if (bracketData.updateHiScore()){
             downfloats.clear()
@@ -159,10 +175,8 @@ fun iterateS2Permutations(
         }
 
         if(
-            bracketData.bestPossibleScore ||
-            PairingAssessmentCriteria.colorConflictComparator.compare(
-                bracketData.remainderPairingScore, bracketData.remainderSplitTheoreticalBest
-            ) <= 0
+            bracketData.foundBestPossibleScore ||
+            bracketData.remainderPairingScore.compareByColorConflict(bracketData.remainderSplitTheoreticalBest) <= 0
         ){
             return
         }

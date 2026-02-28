@@ -35,7 +35,16 @@ fun lastImperfectPair(
     cumulativeScore: PairingAssessmentCriteria,
     colorPreferenceMap: Map<Int, ColorPreference>,
     roundsCompleted: Int,
-    maxRounds: Int
+    maxRounds: Int,
+    theoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(
+        pabAssigneeScore = Float.MAX_VALUE,
+        pabAssigneeUnplayedGames = Int.MAX_VALUE,
+        topScorerOrOpponentColorImbalanceCount = Int.MAX_VALUE,
+        topScorersOrOpponentsColorstreakCount = Int.MAX_VALUE,
+        colorpreferenceConflicts = Int.MAX_VALUE,
+        strongColorpreferenceConflicts = Int.MAX_VALUE
+    ),
+    foundValidCandidate: Boolean = false
 ):Int?{
     var output: Int? = null
     for(i in pairs.indices){
@@ -52,7 +61,12 @@ fun lastImperfectPair(
 
         cumulativeScore += score
 
-        if(cumulativeScore + baseScore >= bestScore){
+        val exceedsTheoreticalBest =
+            PairingAssessmentCriteria.colorConflictComparator.compare(
+                cumulativeScore, theoreticalBest
+            ) > 0 && foundValidCandidate
+
+        if(cumulativeScore + baseScore >= bestScore || exceedsTheoreticalBest){
             return i
         }
     }
