@@ -32,7 +32,8 @@ fun fastNextBracket(
             remainingPlayers = remainingPlayers,
             colorPreferenceMap = colorPreferenceMap,
             roundsCompleted = roundsCompleted,
-            maxRounds = maxRounds
+            maxRounds = maxRounds,
+            incomingDownfloaters = residentPlayers.toList()
         )
     }
 
