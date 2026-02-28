@@ -123,7 +123,7 @@ fun EnterResults(
             } else {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.Companion.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Button(
                         onClick = {
@@ -154,11 +154,20 @@ fun EnterResults(
                     ) { Text("Finish round") }
                 }
 
-                Button(
-                    onClick = { vmTournament.clearPairings() },
-                    enabled = !pairingList.isEmpty()
-                ) {
-                    Text("Clear pairs")
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    Button(
+                        onClick = { navController.navigate("manualPairing") }
+                    ){ Text("Manual pairing") }
+
+                    Button(
+                        onClick = { vmTournament.clearPairings() },
+                        enabled = !pairingList.isEmpty()
+                    ) {
+                        Text("Clear pairs")
+                    }
                 }
             }
         }
