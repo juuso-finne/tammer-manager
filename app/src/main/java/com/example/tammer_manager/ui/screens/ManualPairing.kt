@@ -55,13 +55,10 @@ fun ManualPairing(
     val currentRoundPairings by vmTournament.currentRoundPairings.collectAsState()
     val players = vmTournament.registeredPlayers.collectAsState().value.filter{it.isActive}
     val globalPairs = remember(currentRoundPairings) {
-        currentRoundPairings
-            .filter { it[PlayerColor.BLACK]?.playerID != null }
+        currentRoundPairings.filter { it[PlayerColor.BLACK]?.playerID != null }
     }
     val localPairs = remember(globalPairs) {
-        mutableStateListOf<Pairing>().apply {
-            addAll(globalPairs)
-        }
+        mutableStateListOf<Pairing>().apply { addAll(globalPairs) }
     }
     val unsavedChanges by remember (globalPairs, localPairs) { derivedStateOf{ globalPairs != localPairs }  }
 
@@ -93,7 +90,7 @@ fun ManualPairing(
         Row(modifier = Modifier.fillMaxWidth()){
             val addButtonEnabled = remainingPairs > 0
             IconButton(
-                onClick = {localPairs.add(mapOf())},
+                onClick = {localPairs.add(0,mapOf())},
                 enabled = addButtonEnabled
             ) {
                 Icon(
