@@ -70,7 +70,7 @@ fun ManualPairing(
         )
      } }
 
-    val remainingPairs = players.size/2 - localPairs.size
+    val remainingPairs = remember (localPairs) { derivedStateOf { players.size / 2 - localPairs.size } }
 
     fun setPlayer(
         pairIndex: Int,
@@ -88,7 +88,7 @@ fun ManualPairing(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(modifier = Modifier.fillMaxWidth()){
-            val addButtonEnabled = remainingPairs > 0
+            val addButtonEnabled = remainingPairs.value > 0
             IconButton(
                 onClick = {localPairs.add(0,mapOf())},
                 enabled = addButtonEnabled
@@ -102,7 +102,7 @@ fun ManualPairing(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Pairs remaining: $remainingPairs",
+                text = "Pairs remaining: ${remainingPairs.value}",
                 style = Typography.labelMedium
             )
         }
@@ -127,7 +127,12 @@ fun ManualPairing(
             }
         }
 
-        Button(onClick = {localPairs.clear()}){
+        Button(
+            onClick = {
+                localPairs.clear()
+                localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
+            }
+        ){
             Text("Clear all")
         }
 
@@ -167,7 +172,7 @@ fun ManualPairing(
         }
 
         Button(onClick = { navController.navigate("enterResults") }){
-            Text ("Cancel")
+            Text ("Return")
         }
     }
 }
