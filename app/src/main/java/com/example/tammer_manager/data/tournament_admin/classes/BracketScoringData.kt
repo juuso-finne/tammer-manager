@@ -36,9 +36,7 @@ data class BracketScoringData(
 
         foundBestPossibleScore = (
             this.bestTotal == PairingAssessmentCriteria() ||
-            PairingAssessmentCriteria.colorConflictComparator.compare(
-                this.bestTotal, this.bracketTheoreticalBest
-            ) <= 0
+            this.bestTotal.compareByColorConflict(this.bracketTheoreticalBest) <= 0
         )
         return true
     }

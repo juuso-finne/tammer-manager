@@ -62,9 +62,8 @@ fun lastImperfectPair(
         cumulativeScore += score
 
         val exceedsTheoreticalBest =
-            PairingAssessmentCriteria.colorConflictComparator.compare(
-                cumulativeScore, theoreticalBest
-            ) > 0 && foundValidCandidate
+            cumulativeScore.compareByColorConflict(theoreticalBest) > 0 &&
+            foundValidCandidate
 
         if(cumulativeScore + baseScore >= bestScore || exceedsTheoreticalBest){
             return i
