@@ -54,30 +54,24 @@ fun pairHeterogenousBracket(
 
         applyIndexSwap(s1, s2, swappingIndices)
 
-        bracketData.mdpSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
+        iterateMdpOpponents(
+            limbo = limbo,
+            remainingPlayers = remainingPlayers,
+            s2Downfloats = s2Downfloats,
+            s1 = s1,
+            s2 = s2.sorted().toMutableList(),
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            bracketData = bracketData,
+            lookForBestScore = lookForBestScore,
+            maxPairs =
+                if (isLastBracket) (s1.size + s2.size) / 2
+                else maxPairs,
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
+        )
 
-        if(
-            !bracketData.foundValidCandidate &&
-            bracketData.mdpSplitTheoreticalBest.compareByColorConflict(bracketData.bracketTheoreticalBest) <= 0
-        ) {
-            iterateMdpOpponents(
-                limbo = limbo,
-                remainingPlayers = remainingPlayers,
-                s2Downfloats = s2Downfloats,
-                s1 = s1,
-                s2 = s2.sorted().toMutableList(),
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                bracketData = bracketData,
-                lookForBestScore = lookForBestScore,
-                maxPairs =
-                    if (isLastBracket) (s1.size + s2.size) / 2
-                    else maxPairs,
-                approvedDownfloaters = approvedDownfloaters,
-                disapprovedDownfloaters = disapprovedDownfloaters
-            )
-        }
 
         if(bracketData.foundValidCandidate){
             if(!lookForBestScore){
@@ -171,7 +165,6 @@ fun iterateMdpOpponents(
             )
 
             bracketData.remainderTheoreticalBest = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
-
             val bestPotential = bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest
 
             if(
@@ -185,7 +178,6 @@ fun iterateMdpOpponents(
                 continue
             }
         }
-
 
         iterateHomogenousBracket(
             remainingPlayers = remainingPlayers,

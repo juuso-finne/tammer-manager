@@ -30,29 +30,21 @@ fun iterateHomogenousBracket(
 
         applyIndexSwap(s1, s2, swappingIndices)
 
-        bracketData.remainderSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
-        val bestPotential = bracketData.remainderSplitTheoreticalBest + bracketData.mdpPairingScore
-
-        if(
-            !bracketData.foundValidCandidate ||
-            bestPotential.compareByColorConflict(bracketData.bestTotal) < 0
-        ){
-            iterateS2Permutations(
-                remainingPlayers = remainingPlayers,
-                s1 = s1,
-                s2 = s2.sorted().toMutableList(),
-                colorPreferenceMap = colorPreferenceMap,
-                roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                maxPairs = maxPairs,
-                limbo = limbo,
-                bracketData = bracketData,
-                lookForBestScore = lookForBestScore,
-                downfloats = downfloats,
-                approvedDownfloaters = approvedDownfloaters,
-                disapprovedDownfloaters = disapprovedDownfloaters
-            )
-        }
+        iterateS2Permutations(
+            remainingPlayers = remainingPlayers,
+            s1 = s1,
+            s2 = s2.sorted().toMutableList(),
+            colorPreferenceMap = colorPreferenceMap,
+            roundsCompleted = roundsCompleted,
+            maxRounds = maxRounds,
+            maxPairs = maxPairs,
+            limbo = limbo,
+            bracketData = bracketData,
+            lookForBestScore = lookForBestScore,
+            downfloats = downfloats,
+            approvedDownfloaters = approvedDownfloaters,
+            disapprovedDownfloaters = disapprovedDownfloaters
+        )
 
         if (bracketData.foundValidCandidate) {
             if(
@@ -174,8 +166,7 @@ fun iterateS2Permutations(
         }
 
         if(
-            bracketData.foundBestPossibleScore ||
-            bracketData.remainderPairingScore.compareByColorConflict(bracketData.remainderSplitTheoreticalBest) <= 0
+            bracketData.foundBestPossibleScore
         ){
             return
         }
