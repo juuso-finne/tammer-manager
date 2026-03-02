@@ -147,15 +147,14 @@ fun iterateS2Permutations(
 
         if(lookForBestScore){
             lastImperfectPair  = lastImperfectPair(
-                pairs = bracketData.remainderPairs,
+                s1 = s1,
+                s2 = s2,
                 bestScore = bracketData.bestTotal,
                 baseScore = bracketData.mdpPairingScore,
                 cumulativeScore = bracketData.remainderPairingScore,
                 colorPreferenceMap = colorPreferenceMap,
                 roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds,
-                theoreticalBest = bracketData.remainderSplitTheoreticalBest,
-                foundValidCandidate = bracketData.foundValidCandidate
+                maxRounds = maxRounds
             )
         }
 
