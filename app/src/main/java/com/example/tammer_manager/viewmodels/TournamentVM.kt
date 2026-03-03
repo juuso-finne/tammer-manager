@@ -8,6 +8,7 @@ import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.file_management.deleteTournament
 import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
+import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
@@ -73,6 +74,9 @@ class TournamentViewModel(
         savedStateHandle["nextPlayerId"] = 0
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
         savedStateHandle["filename"] = ""
+        savedStateHandle["isGrouped"] = false
+        savedStateHandle["currentGroup"] = ""
+        savedStateHandle["groupList"] = listOf<String>()
     }
 
     fun initateTournament(
@@ -83,6 +87,40 @@ class TournamentViewModel(
     ){
         clearTournament()
         savedStateHandle["tournament"] = Tournament(name, maxRounds, type, doubleRoundRobin)
+    }
+
+    fun splitTournament(
+        context: Context,
+        updatedPlayerList: List<RegisteredPlayer>
+    ){
+        delete(
+            context = context,
+            filename = filename.value
+        )
+
+        savedStateHandle["groupList"] = updatedPlayerList.map { it.group }.distinct()
+
+        groupList.value.forEachIndexed { i,  group ->
+            saveGroup(
+                context = context,
+                filename = filename.value,
+                groupIndex = i,
+                data = TournamentVMState(
+                    tournament = activeTournament.value!!,
+                    registeredPlayers = registeredPlayers.value.filter { player -> player.group == group},
+                    nextPlayerId = nextPlayerId.value,
+                    currentRoundPairings = listOf(),
+                    isGrouped = true,
+                    currentGroup = group,
+                    groupList = groupList.value
+                )
+            )
+        }
+
+        load(
+            context = context,
+            filename = filename.value
+        )
     }
 
     private fun advanceRound(){
