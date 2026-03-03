@@ -52,6 +52,21 @@ class TournamentViewModel(
         initialValue = ""
     )
 
+    val isGrouped: StateFlow<Boolean> = savedStateHandle.getStateFlow(
+        key = "isGrouped",
+        initialValue = false
+    )
+
+    val currentGroup: StateFlow<String> = savedStateHandle.getStateFlow(
+        key = "currentGroup",
+        initialValue = ""
+    )
+
+    val groupList: StateFlow<List<String>> = savedStateHandle.getStateFlow(
+        key = "groupList",
+        initialValue = listOf()
+    )
+
     fun clearTournament(){
         savedStateHandle["tournament"] = null
         savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
@@ -295,7 +310,10 @@ class TournamentViewModel(
             tournament = activeTournament.value!!,
             registeredPlayers = registeredPlayers.value,
             nextPlayerId = nextPlayerId.value,
-            currentRoundPairings = currentRoundPairings.value
+            currentRoundPairings = currentRoundPairings.value,
+            isGrouped = isGrouped.value,
+            currentGroup = currentGroup.value,
+            groupList = groupList.value,
         )
 
         return saveTournament(
@@ -354,6 +372,9 @@ class TournamentViewModel(
         savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
         savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
         savedStateHandle["filename"] = filename
+        savedStateHandle["isGrouped"] = loadedData.isGrouped
+        savedStateHandle["currentGroup"] = loadedData.currentGroup
+        savedStateHandle["groupList"] = loadedData.groupList
 
         return true
     }
