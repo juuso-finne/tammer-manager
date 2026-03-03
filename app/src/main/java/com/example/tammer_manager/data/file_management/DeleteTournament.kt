@@ -9,10 +9,8 @@ fun deleteTournament(
     context: Context,
     filename: String,
 ): Boolean{
-    val directory = File(context.filesDir, "tournaments")
-
     try {
-        deleteFile(File(directory, filename).toPath())
+        File("${context.filesDir.path}/tournaments/$filename").deleteRecursively()
         return true
     }catch (e: Exception){
         e.printStackTrace()
