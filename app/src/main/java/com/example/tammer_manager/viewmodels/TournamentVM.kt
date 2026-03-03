@@ -337,10 +337,12 @@ class TournamentViewModel(
     fun load (
         context: Context,
         filename: String,
+        groupIndex: Int? = null
     ): Boolean{
         val loadedData = loadTournament(
             context = context,
-            filename = filename
+            filename = filename,
+            groupIndex = groupIndex
         )
 
         if(loadedData == null){
