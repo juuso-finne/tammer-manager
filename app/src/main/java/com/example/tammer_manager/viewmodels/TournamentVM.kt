@@ -57,7 +57,7 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
         savedStateHandle["nextPlayerId"] = 0
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
-        savedStateHandle["fileName"] = ""
+        savedStateHandle["filename"] = ""
     }
 
     fun initateTournament(
