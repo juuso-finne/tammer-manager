@@ -30,6 +30,8 @@ fun iterateHomogenousBracket(
 
         applyIndexSwap(s1, s2, swappingIndices)
 
+        bracketData.remainderSplitTheoreticalBest = bestPossibleSplitScore(s1, s2, colorPreferenceMap)
+
         iterateS2Permutations(
             remainingPlayers = remainingPlayers,
             s1 = s1,
@@ -50,7 +52,8 @@ fun iterateHomogenousBracket(
             if(
                 !lookForBestScore ||
                 bracketData.foundBestPossibleScore ||
-                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest).compareByColorConflict(bracketData.bestTotal) >= 0
+                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest)
+                    .compareByColorConflict(bracketData.bestTotal) >= 0
             ){
                 return
             }
@@ -166,7 +169,9 @@ fun iterateS2Permutations(
         }
 
         if(
-            bracketData.foundBestPossibleScore
+            bracketData.foundBestPossibleScore ||
+            (bracketData.mdpPairingScore + bracketData.remainderSplitTheoreticalBest)
+                .compareByColorConflict(bracketData.bestTotal) >= 0
         ){
             return
         }

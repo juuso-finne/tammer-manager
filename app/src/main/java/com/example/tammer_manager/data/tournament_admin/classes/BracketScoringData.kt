@@ -19,6 +19,7 @@ data class BracketScoringData(
     val remainderPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     val remainderPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
     var remainderTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
+    var remainderSplitTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
     var foundValidCandidate: Boolean = false,
     var foundBestPossibleScore: Boolean = false
