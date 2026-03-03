@@ -313,16 +313,14 @@ class PairingAssessmentCriteriaTest {
         maxAssessment.colorpreferenceConflicts = 1
         maxAssessment.strongColorpreferenceConflicts = 1
 
-        assertThat(PairingAssessmentCriteria.colorConflictComparator.compare(
-            maxAssessment, zeroAssessment
-        )).isEqualTo(0)
+        assertThat(maxAssessment.compareByColorConflict(zeroAssessment))
+        .isEqualTo(0)
 
         maxAssessment.colorpreferenceConflicts = 0
         maxAssessment.strongColorpreferenceConflicts = 0
 
-        assertThat(PairingAssessmentCriteria.colorConflictComparator.compare(
-            maxAssessment, zeroAssessment
-        )).isLessThan(0)
+        assertThat(maxAssessment.compareByColorConflict(zeroAssessment))
+        .isLessThan(0)
 
     }
 }

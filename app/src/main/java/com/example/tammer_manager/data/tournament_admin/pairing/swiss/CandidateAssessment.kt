@@ -29,7 +29,8 @@ fun firstIneligiblePair(
 }
 
 fun lastImperfectPair(
-    pairs: List<Pair<RegisteredPlayer, RegisteredPlayer>>,
+    s1: List<RegisteredPlayer>,
+    s2: List<RegisteredPlayer>,
     bestScore: PairingAssessmentCriteria,
     baseScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     cumulativeScore: PairingAssessmentCriteria,
@@ -38,22 +39,36 @@ fun lastImperfectPair(
     maxRounds: Int
 ):Int?{
     var output: Int? = null
-    for(i in pairs.indices){
+    var isOutputMutable = true
+
+    for(i in s1.indices){
         val score  = assessPairing(
-            candidate = pairs[i],
+            candidate = Pair(s1[i], s2[i]),
             roundsCompleted = roundsCompleted,
             maxRounds = maxRounds,
             colorPreferenceMap = colorPreferenceMap
         )
 
-        if (score > PairingAssessmentCriteria()){
-            output = i
-        }
-
         cumulativeScore += score
 
-        if(cumulativeScore + baseScore >= bestScore){
-            return i
+        if (score == PairingAssessmentCriteria() || !isOutputMutable){
+            continue
+        }
+
+        output = i
+
+        val remainingPairsBest = bestPossibleSplitScore(
+            s1.subList(i + 1, s1.size),
+            s2.subList(i + 1, s2.size),
+            colorPreferenceMap
+        )
+
+        val exceedsTheoreticalBest =
+            cumulativeScore + baseScore >= bestScore ||
+            (cumulativeScore + baseScore + remainingPairsBest).compareByColorConflict(bestScore) >= 0
+
+        if(exceedsTheoreticalBest){
+            isOutputMutable = false
         }
     }
     return output

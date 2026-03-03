@@ -6,7 +6,6 @@ import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.ColorPreferenceStrength
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
-import com.example.tammer_manager.data.tournament_admin.pairing.fast_swiss.fastNextBracket
 import kotlin.collections.get
 import kotlin.math.abs
 import kotlin.math.max
@@ -25,7 +24,7 @@ fun generateSwissPairs(
         {it.getColorPreference()}
     )
 
-    if (fastNextBracket(
+    if (nextBracket(
         output = playerPairs,
         remainingPlayers = players.sorted().toMutableList(),
         colorPreferenceMap = colorPreferenceMap,

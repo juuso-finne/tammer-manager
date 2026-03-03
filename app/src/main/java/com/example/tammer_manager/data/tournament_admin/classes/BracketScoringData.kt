@@ -15,14 +15,14 @@ data class BracketScoringData(
 
     val mdpPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     val mdpPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
-    var mdpSplitTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
     val remainderPairingScore: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     val remainderPairs: MutableList<Pair<RegisteredPlayer, RegisteredPlayer>> = mutableListOf(),
+    var remainderTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
     var remainderSplitTheoreticalBest: PairingAssessmentCriteria = PairingAssessmentCriteria(),
 
-    var isValidCandidate: Boolean = false,
-    var bestPossibleScore: Boolean = false
+    var foundValidCandidate: Boolean = false,
+    var foundBestPossibleScore: Boolean = false
 ){
     fun updateHiScore():Boolean{
         if (this.mdpPairingScore + this.remainderPairingScore >= this.bestTotal){
@@ -33,11 +33,9 @@ data class BracketScoringData(
         this.bestCandidate.clear()
         this.bestCandidate.addAll(this.mdpPairs.plus(this.remainderPairs))
 
-        bestPossibleScore = (
+        foundBestPossibleScore = (
             this.bestTotal == PairingAssessmentCriteria() ||
-            PairingAssessmentCriteria.colorConflictComparator.compare(
-                this.bestTotal, this.bracketTheoreticalBest
-            ) <= 0
+            this.bestTotal.compareByColorConflict(this.bracketTheoreticalBest) <= 0
         )
         return true
     }
