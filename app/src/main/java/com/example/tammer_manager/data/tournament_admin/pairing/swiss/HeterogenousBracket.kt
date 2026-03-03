@@ -154,6 +154,8 @@ fun iterateMdpOpponents(
         val s2R = remainder.subList(remainderPairs, remainder.size)
 
         if(lookForBestScore){
+            bracketData.remainderTheoreticalBest = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
+
             lastImperfectPair = lastImperfectPair(
                 s1 = s1,
                 s2 = s2,
@@ -161,14 +163,12 @@ fun iterateMdpOpponents(
                 cumulativeScore = bracketData.mdpPairingScore,
                 colorPreferenceMap = colorPreferenceMap,
                 roundsCompleted = roundsCompleted,
-                maxRounds = maxRounds
+                maxRounds = maxRounds,
+                baseScore = bracketData.remainderTheoreticalBest
             )
 
-            bracketData.remainderTheoreticalBest = bestPossibleScore(remainder, colorPreferenceMap, remainderPairs)
-            val bestPotential = bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest
-
             if(
-                bestPotential.compareByColorConflict(bracketData.bestTotal) >= 0
+                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest).compareByColorConflict(bracketData.bestTotal) >= 0
             ){
                 setupPermutationSkip(
                     list = s2,
