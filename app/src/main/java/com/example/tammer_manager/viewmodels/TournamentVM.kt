@@ -123,6 +123,34 @@ class TournamentViewModel(
         )
     }
 
+    fun switchGroup(
+        context: Context,
+        newGroup: String
+    ){
+        val groupIndex = groupList.value.indexOfFirst { it == newGroup }
+
+        saveGroup(
+            context = context,
+            filename = filename.value,
+            groupIndex = groupIndex,
+            data = TournamentVMState(
+                tournament = activeTournament.value!!,
+                registeredPlayers = registeredPlayers.value,
+                nextPlayerId = nextPlayerId.value,
+                currentRoundPairings = currentRoundPairings.value,
+                isGrouped = isGrouped.value,
+                currentGroup = currentGroup.value,
+                groupList = groupList.value,
+            )
+        )
+
+        load(
+            context = context,
+            filename = filename.value,
+            groupIndex = groupIndex
+        )
+    }
+
     private fun advanceRound(){
         val oldValue = activeTournament.value?.roundsCompleted ?: 0
         savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
