@@ -168,7 +168,8 @@ fun iterateMdpOpponents(
             )
 
             if(
-                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest).compareByColorConflict(bracketData.bestTotal) >= 0
+                (bracketData.mdpPairingScore + bracketData.remainderTheoreticalBest)
+                    .compareByColorConflict(bracketData.bestTotal) >= 0
             ){
                 setupPermutationSkip(
                     list = s2,
@@ -195,20 +196,21 @@ fun iterateMdpOpponents(
             disapprovedDownfloaters = disapprovedDownfloaters
         )
 
-        if(!bracketData.foundValidCandidate){
-            setupPermutationSkip(
-                list = s2,
-                i = lastImperfectPair ?: s2.indices.last,
-                length = maxPairs
-            )
-            continue
-        }
-
         if(
-            !lookForBestScore ||
-            bracketData.foundBestPossibleScore){
+            bracketData.foundValidCandidate &&
+            (
+                !lookForBestScore ||
+                bracketData.foundBestPossibleScore
+            )
+        ){
             return
         }
+
+        setupPermutationSkip(
+            list = s2,
+            i = lastImperfectPair ?: s2.indices.last,
+            length = maxPairs
+        )
 
     }while(nextPermutation(list = s2, length = s1.size))
     return
