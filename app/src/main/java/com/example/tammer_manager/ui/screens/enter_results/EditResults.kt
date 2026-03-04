@@ -62,6 +62,10 @@ fun EditResults(
             GroupSelector(vmTournament = vmTournament)
         }
 
+        if(currentlyEditingRound > completedRounds){
+            navController.navigate("enterResults")
+        }
+
         HeaderRow(
             current = currentlyEditingRound,
             max = maxRounds,
