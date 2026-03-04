@@ -79,6 +79,28 @@ class TournamentViewModel(
         savedStateHandle["groupList"] = listOf<String>()
     }
 
+    fun setVMState(data: TournamentVMState){
+        savedStateHandle["tournament"] = data.tournament
+        savedStateHandle["registeredPlayers"] = data.registeredPlayers
+        savedStateHandle["nextPlayerId"] = data.nextPlayerId
+        savedStateHandle["currentRoundPairings"] = data.currentRoundPairings
+        savedStateHandle["isGrouped"] = data.isGrouped
+        savedStateHandle["currentGroup"] = data.currentGroup
+        savedStateHandle["groupList"] = data.groupList
+    }
+
+    fun getVMState(): TournamentVMState{
+        return TournamentVMState(
+            tournament = activeTournament.value!!,
+            registeredPlayers = registeredPlayers.value,
+            nextPlayerId = nextPlayerId.value,
+            currentRoundPairings = currentRoundPairings.value,
+            isGrouped = isGrouped.value,
+            currentGroup = currentGroup.value,
+            groupList = groupList.value,
+        )
+    }
+
     fun initateTournament(
         name: String,
         maxRounds: Int,
@@ -132,15 +154,7 @@ class TournamentViewModel(
             context = context,
             filename = filename.value,
             groupIndex = groupIndex,
-            data = TournamentVMState(
-                tournament = activeTournament.value!!,
-                registeredPlayers = registeredPlayers.value,
-                nextPlayerId = nextPlayerId.value,
-                currentRoundPairings = currentRoundPairings.value,
-                isGrouped = isGrouped.value,
-                currentGroup = currentGroup.value,
-                groupList = groupList.value,
-            )
+            data = getVMState()
         )
 
         load(
@@ -371,15 +385,7 @@ class TournamentViewModel(
             throw Exception("Filename cannot be empty string")
         }
 
-        val data = TournamentVMState(
-            tournament = activeTournament.value!!,
-            registeredPlayers = registeredPlayers.value,
-            nextPlayerId = nextPlayerId.value,
-            currentRoundPairings = currentRoundPairings.value,
-            isGrouped = isGrouped.value,
-            currentGroup = currentGroup.value,
-            groupList = groupList.value,
-        )
+        val data = getVMState()
 
         if(isGrouped.value){
             val groupIndex = groupList.value.indexOfFirst { it == currentGroup.value }
@@ -479,14 +485,8 @@ class TournamentViewModel(
             return false
         }
 
-        savedStateHandle["tournament"] = loadedData.tournament
-        savedStateHandle["registeredPlayers"] = loadedData.registeredPlayers
-        savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
-        savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
         savedStateHandle["filename"] = filename
-        savedStateHandle["isGrouped"] = loadedData.isGrouped
-        savedStateHandle["currentGroup"] = loadedData.currentGroup
-        savedStateHandle["groupList"] = loadedData.groupList
+        setVMState(loadedData)
 
         return true
     }
