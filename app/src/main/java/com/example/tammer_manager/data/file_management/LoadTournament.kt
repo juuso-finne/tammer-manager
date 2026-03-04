@@ -16,11 +16,10 @@ fun loadTournament(
         var file = File(filePath)
 
         if(file.isDirectory){
-            val filenames = file.list()
-            if(filenames?.isEmpty() ?: true){
-                throw Exception("Tournament has no groups")
+            if(file.list()?.isEmpty() ?: true){
+                throw Exception("Tournament is marked as split but has no groups")
             }
-            file = File(filePath + "group${groupIndex ?: 0}")
+            file = File(filePath + "/group${groupIndex ?: 0}")
         }
 
         file.inputStream().use { stream ->

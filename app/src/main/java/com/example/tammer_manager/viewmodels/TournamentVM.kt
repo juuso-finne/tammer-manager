@@ -97,8 +97,7 @@ class TournamentViewModel(
             context = context,
             filename = filename.value
         )
-
-        savedStateHandle["groupList"] = updatedPlayerList.map { it.group }.distinct()
+        savedStateHandle["groupList"] = updatedPlayerList.map { it.group }.distinct().sorted()
 
         groupList.value.forEachIndexed { i,  group ->
             saveGroup(
@@ -107,7 +106,7 @@ class TournamentViewModel(
                 groupIndex = i,
                 data = TournamentVMState(
                     tournament = activeTournament.value!!,
-                    registeredPlayers = registeredPlayers.value.filter { player -> player.group == group},
+                    registeredPlayers = updatedPlayerList.filter { player -> player.group == group},
                     nextPlayerId = nextPlayerId.value,
                     currentRoundPairings = listOf(),
                     isGrouped = true,
@@ -382,6 +381,16 @@ class TournamentViewModel(
             groupList = groupList.value,
         )
 
+        if(isGrouped.value){
+            val groupIndex = groupList.value.indexOfFirst { it == currentGroup.value }
+            return saveGroup(
+                context = context,
+                filename = filename.value,
+                groupIndex = groupIndex,
+                data = data
+            )
+        }
+
         return saveTournament(
             context = context,
             data = data,
@@ -408,14 +417,51 @@ class TournamentViewModel(
             return
         }
 
+        val oldFilename = filename.value
         savedStateHandle["filename"] = newFilename
 
-        if (save(context = context)){
-            onSuccess()
+        if (!deleteTournament(
+                context = context,
+                filename = newFilename
+        )){
+            onError()
             return
         }
 
-        onError()
+        if(!isGrouped.value){
+            if (save(context = context)){
+                onSuccess()
+                return
+            }
+
+            onError()
+            return
+        }
+
+        for(i in groupList.value.indices) {
+            val groupData = loadTournament(
+                context = context,
+                filename = oldFilename,
+                groupIndex = i
+            )
+
+            if (groupData == null){
+                onError()
+                return
+            }
+
+            if(!saveGroup(
+                context = context,
+                filename = filename.value,
+                groupIndex = i,
+                data = groupData
+            )){
+                onError()
+                return
+            }
+        }
+
+        onSuccess()
     }
 
     fun load (
