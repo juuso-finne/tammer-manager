@@ -123,15 +123,14 @@ class TournamentViewModel(
         savedStateHandle["groupMap"] = updatedPlayerList.associateBy(
             keySelector = {updatedPlayer -> updatedPlayer.group},
             valueTransform = {updatedPlayer -> getVMState().copy(
-                registeredPlayers = registeredPlayers.value.filter{it.group == updatedPlayer.group},
+                registeredPlayers = updatedPlayerList.filter{it.group == updatedPlayer.group},
                 currentGroup = updatedPlayer.group
             )}
         )
 
-        load(
-            context = context,
-            filename = filename.value
-        )
+        val newGroup = groupMap.value.keys.sorted()[0]
+        savedStateHandle["currentGroup"] = newGroup
+        setVMState(groupMap.value[newGroup]!!)
     }
 
     fun switchGroup(

@@ -36,6 +36,9 @@ fun Home(
     ) {
 
         val tournament = vmTournament.activeTournament.collectAsState().value
+        val isGrouped = vmTournament.isGrouped.collectAsState().value
+        val players = vmTournament.registeredPlayers.collectAsState().value
+        val pairings = vmTournament.currentRoundPairings.collectAsState().value
         val context = LocalContext.current
 
         Text(
@@ -58,16 +61,24 @@ fun Home(
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
-        ){
-            Button (
+        ) {
+            Button(
                 onClick = { navController.navigate("newTournament") }
-            ){
+            ) {
                 Text("New tournament")
             }
 
-            Button(onClick = { navController.navigate("splitTournament") }
-            ){
-                Text("Split tournament")
+            if (
+                !isGrouped &&
+                players.size > 1 &&
+                tournament?.roundsCompleted == 0 &&
+                pairings.isEmpty()
+            ) {
+                Button(
+                    onClick = { navController.navigate("splitTournament") }
+                ) {
+                    Text("Split tournament")
+                }
             }
         }
 
@@ -121,7 +132,6 @@ fun Home(
         Button(
             onClick = {
                 vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)
-                val players = mutableListOf<ImportedPlayer>()
                 for(i in 0 until 50){
                     vmTournament.addPlayer(ImportedPlayer("Player $i", 1000 + i*20))
                 }
