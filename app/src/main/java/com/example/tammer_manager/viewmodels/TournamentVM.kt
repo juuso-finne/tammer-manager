@@ -63,9 +63,9 @@ class TournamentViewModel(
         initialValue = ""
     )
 
-    val groupList: StateFlow<List<String>> = savedStateHandle.getStateFlow(
-        key = "groupList",
-        initialValue = listOf()
+    val groupMap: StateFlow<Map<String, TournamentVMState>> = savedStateHandle.getStateFlow(
+        key = "groupMap",
+        initialValue = mapOf()
     )
 
     fun clearTournament(){
@@ -76,7 +76,7 @@ class TournamentViewModel(
         savedStateHandle["filename"] = ""
         savedStateHandle["isGrouped"] = false
         savedStateHandle["currentGroup"] = ""
-        savedStateHandle["groupList"] = listOf<String>()
+        savedStateHandle["groupMap"] = mapOf<String, TournamentVMState>()
     }
 
     fun setVMState(data: TournamentVMState){
@@ -86,7 +86,6 @@ class TournamentViewModel(
         savedStateHandle["currentRoundPairings"] = data.currentRoundPairings
         savedStateHandle["isGrouped"] = data.isGrouped
         savedStateHandle["currentGroup"] = data.currentGroup
-        savedStateHandle["groupList"] = data.groupList
     }
 
     fun getVMState(): TournamentVMState{
@@ -97,7 +96,6 @@ class TournamentViewModel(
             currentRoundPairings = currentRoundPairings.value,
             isGrouped = isGrouped.value,
             currentGroup = currentGroup.value,
-            groupList = groupList.value,
         )
     }
 
@@ -115,28 +113,20 @@ class TournamentViewModel(
         context: Context,
         updatedPlayerList: List<RegisteredPlayer>
     ){
+        savedStateHandle["isGrouped"] = true
+
         delete(
             context = context,
             filename = filename.value
         )
-        savedStateHandle["groupList"] = updatedPlayerList.map { it.group }.distinct().sorted()
 
-        groupList.value.forEachIndexed { i,  group ->
-            saveGroup(
-                context = context,
-                filename = filename.value,
-                groupIndex = i,
-                data = TournamentVMState(
-                    tournament = activeTournament.value!!,
-                    registeredPlayers = updatedPlayerList.filter { player -> player.group == group},
-                    nextPlayerId = nextPlayerId.value,
-                    currentRoundPairings = listOf(),
-                    isGrouped = true,
-                    currentGroup = group,
-                    groupList = groupList.value
-                )
-            )
-        }
+        savedStateHandle["groupMap"] = updatedPlayerList.associateBy(
+            keySelector = {updatedPlayer -> updatedPlayer.group},
+            valueTransform = {updatedPlayer -> getVMState().copy(
+                registeredPlayers = registeredPlayers.value.filter{it.group == updatedPlayer.group},
+                currentGroup = updatedPlayer.group
+            )}
+        )
 
         load(
             context = context,
@@ -145,23 +135,13 @@ class TournamentViewModel(
     }
 
     fun switchGroup(
-        context: Context,
         newGroup: String
     ){
-        val groupIndex = groupList.value.indexOfFirst { it == newGroup }
+        val newGroupMap = mutableMapOf<String, TournamentVMState>()
+        newGroupMap[currentGroup.value] = getVMState()
+        savedStateHandle["groupMap"] = newGroupMap
 
-        saveGroup(
-            context = context,
-            filename = filename.value,
-            groupIndex = groupIndex,
-            data = getVMState()
-        )
-
-        load(
-            context = context,
-            filename = filename.value,
-            groupIndex = groupIndex
-        )
+        setVMState(groupMap.value[newGroup]!!)
     }
 
     private fun advanceRound(){
@@ -388,13 +368,17 @@ class TournamentViewModel(
         val data = getVMState()
 
         if(isGrouped.value){
-            val groupIndex = groupList.value.indexOfFirst { it == currentGroup.value }
-            return saveGroup(
-                context = context,
-                filename = filename.value,
-                groupIndex = groupIndex,
-                data = data
-            )
+            var success: Boolean
+            groupMap.value.keys.forEachIndexed{ i, group ->
+                success = saveGroup(
+                   context = context,
+                   filename = filename.value,
+                   groupIndex = i,
+                   data = groupMap.value[group]!!
+                )
+                if(!success){ return false }
+            }
+            return true
         }
 
         return saveTournament(
@@ -423,7 +407,6 @@ class TournamentViewModel(
             return
         }
 
-        val oldFilename = filename.value
         savedStateHandle["filename"] = newFilename
 
         if (!deleteTournament(
@@ -434,51 +417,24 @@ class TournamentViewModel(
             return
         }
 
-        if(!isGrouped.value){
-            if (save(context = context)){
-                onSuccess()
-                return
-            }
-
-            onError()
+        if (save(context = context)){
+            onSuccess()
             return
         }
 
-        for(i in groupList.value.indices) {
-            val groupData = loadTournament(
-                context = context,
-                filename = oldFilename,
-                groupIndex = i
-            )
-
-            if (groupData == null){
-                onError()
-                return
-            }
-
-            if(!saveGroup(
-                context = context,
-                filename = filename.value,
-                groupIndex = i,
-                data = groupData
-            )){
-                onError()
-                return
-            }
-        }
-
-        onSuccess()
+        onError()
     }
 
     fun load (
         context: Context,
-        filename: String,
-        groupIndex: Int? = null
+        filename: String
     ): Boolean{
+        val loadedGroupMap = mutableMapOf<String, TournamentVMState>()
+
         val loadedData = loadTournament(
             context = context,
             filename = filename,
-            groupIndex = groupIndex
+            groupMap = loadedGroupMap
         )
 
         if(loadedData == null){
@@ -487,6 +443,10 @@ class TournamentViewModel(
 
         savedStateHandle["filename"] = filename
         setVMState(loadedData)
+
+        if(isGrouped.value){
+            savedStateHandle["groupMap"] = loadedGroupMap
+        }
 
         return true
     }

@@ -13,5 +13,4 @@ data class TournamentVMState(
     val currentRoundPairings: PairingList,
     val isGrouped: Boolean,
     val currentGroup: String,
-    val groupList: List<String>
 )
