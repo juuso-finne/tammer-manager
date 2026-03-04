@@ -115,10 +115,6 @@ class TournamentViewModel(
     ){
         savedStateHandle["isGrouped"] = true
 
-        delete(
-            context = context,
-            filename = filename.value
-        )
 
         savedStateHandle["groupMap"] = updatedPlayerList.associateBy(
             keySelector = {updatedPlayer -> updatedPlayer.group},
@@ -136,7 +132,7 @@ class TournamentViewModel(
     fun switchGroup(
         newGroup: String
     ){
-        val newGroupMap = mutableMapOf<String, TournamentVMState>()
+        val newGroupMap = groupMap.value.toMutableMap()
         newGroupMap[currentGroup.value] = getVMState()
         savedStateHandle["groupMap"] = newGroupMap
 
@@ -364,6 +360,15 @@ class TournamentViewModel(
             throw Exception("Filename cannot be empty string")
         }
 
+        if(filename.value in listTournaments(context)){
+            if (!deleteTournament(
+                    context = context,
+                    filename = filename.value
+                )){
+                return false
+            }
+        }
+
         val data = getVMState()
 
         if(isGrouped.value){
@@ -408,19 +413,10 @@ class TournamentViewModel(
 
         savedStateHandle["filename"] = newFilename
 
-        if (!deleteTournament(
-                context = context,
-                filename = newFilename
-        )){
-            onError()
-            return
-        }
-
         if (save(context = context)){
             onSuccess()
             return
         }
-
         onError()
     }
 

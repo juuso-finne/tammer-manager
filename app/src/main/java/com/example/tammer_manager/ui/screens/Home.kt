@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
+import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -45,6 +46,10 @@ fun Home(
             text = if(tournament != null) "${tournament.name}:" else "No active tournament",
             style = Typography.bodyLarge
         )
+
+        if(isGrouped){
+            GroupSelector(vmTournament = vmTournament)
+        }
 
         Text(
             text =

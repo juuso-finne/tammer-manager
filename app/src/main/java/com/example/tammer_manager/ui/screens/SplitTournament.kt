@@ -68,7 +68,10 @@ fun SplitTournament(
         }
 
         Button(
-            enabled = players.all{ it.group.isNotEmpty() },
+            enabled =
+                players.all{ it.group.isNotEmpty() } &&
+                players.map { it.group }.distinct().size > 1
+            ,
             onClick = {
                 vmTournament.splitTournament(
                     context = context,

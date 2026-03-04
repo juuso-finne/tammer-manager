@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.ui.components.ErrorDialog
+import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
@@ -44,12 +45,18 @@ fun EnterResults(
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
             val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
 
+            val isGrouped = vmTournament.isGrouped.collectAsState().value
+
             when {
                 pairingError ->
                     ErrorDialog(
                         onDismissRequest = { setPairingError(false) },
                         errorText = "Unable to complete automatic pairing."
                     )
+            }
+
+            if(isGrouped){
+                GroupSelector(vmTournament = vmTournament)
             }
 
             if(playerCount <= 1){
