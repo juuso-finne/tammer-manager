@@ -55,10 +55,20 @@ fun Home(
 
         Spacer(Modifier.height(20.dp))
 
-        Button (
-            onClick = { navController.navigate("newTournament") }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
         ){
-            Text("New tournament")
+            Button (
+                onClick = { navController.navigate("newTournament") }
+            ){
+                Text("New tournament")
+            }
+
+            Button(onClick = { navController.navigate("splitTournament") }
+            ){
+                Text("Split tournament")
+            }
         }
 
         Row(

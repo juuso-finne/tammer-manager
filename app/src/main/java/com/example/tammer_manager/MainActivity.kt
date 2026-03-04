@@ -20,6 +20,7 @@ import com.example.tammer_manager.ui.screens.Home
 import com.example.tammer_manager.ui.screens.ManualPairing
 import com.example.tammer_manager.ui.screens.NewTorunament
 import com.example.tammer_manager.ui.screens.PlayerImport
+import com.example.tammer_manager.ui.screens.SplitTournament
 import com.example.tammer_manager.ui.screens.Standings
 import com.example.tammer_manager.ui.screens.enter_results.EditResults
 import com.example.tammer_manager.ui.screens.save_and_load.FileBrowser
@@ -117,6 +118,13 @@ fun App( context: Context) {
 
             composable (route = "manualPairing") {
                 ManualPairing(
+                    vmTournament = vmTournament,
+                    navController = navController
+                )
+            }
+
+            composable (route = "splitTournament") {
+                SplitTournament(
                     vmTournament = vmTournament,
                     navController = navController
                 )
