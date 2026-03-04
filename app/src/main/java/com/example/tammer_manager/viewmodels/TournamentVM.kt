@@ -110,7 +110,6 @@ class TournamentViewModel(
     }
 
     fun splitTournament(
-        context: Context,
         updatedPlayerList: List<RegisteredPlayer>
     ){
         savedStateHandle["isGrouped"] = true
