@@ -126,6 +126,7 @@ class TournamentViewModel(
         val newGroup = groupMap.value.keys.sorted()[0]
         savedStateHandle["currentGroup"] = newGroup
         setVMState(groupMap.value[newGroup]!!)
+        updateMaxRounds()
     }
 
     fun switchGroup(
@@ -136,6 +137,7 @@ class TournamentViewModel(
         savedStateHandle["groupMap"] = newGroupMap
 
         setVMState(groupMap.value[newGroup]!!)
+        updateMaxRounds()
     }
 
     private fun advanceRound(){
