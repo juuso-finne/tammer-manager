@@ -1,8 +1,10 @@
 package com.example.tammer_manager.data.tournament_admin.enums
 
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import kotlinx.serialization.Serializable
 import kotlin.math.max
 
+@Serializable
 enum class TieBreak (val abbreviation: String) {
     BUCHHOLZ(abbreviation = "BH"){
 
