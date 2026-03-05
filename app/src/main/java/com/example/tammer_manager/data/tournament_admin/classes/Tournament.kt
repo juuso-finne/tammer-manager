@@ -14,5 +14,5 @@ data class Tournament (
     val type: TournamentType,
     val doubleRoundRobin: Boolean = false,
     var roundsCompleted: Int = 0,
-    val tieBreaks: List<TieBreak> = listOf()
+    val tieBreaks: List<TieBreak>
 ): Parcelable

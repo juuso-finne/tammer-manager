@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
+import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.theme.Typography
@@ -115,7 +116,11 @@ fun Home(
 
         Button(
             onClick = {
-                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)
+                vmTournament.initateTournament(
+                    name = "Placeholder",
+                    maxRounds = 5,
+                    TournamentType.SWISS,
+                   tieBreaks = listOf())
                 listOf(
                     ImportedPlayer("Hannu Hanhi", 2000),
                     ImportedPlayer("Aku Ankka", 1900),
@@ -136,7 +141,7 @@ fun Home(
 
         Button(
             onClick = {
-                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)
+                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS, tieBreaks = listOf())
                 for(i in 0 until 50){
                     vmTournament.addPlayer(ImportedPlayer("Player $i", 1000 + i*20))
                 }

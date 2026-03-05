@@ -35,14 +35,32 @@ fun Standings(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val activeTournament = vmTournament.activeTournament.collectAsState().value
+            val tieBreaks = activeTournament!!.tieBreaks
+
             val playersState = vmTournament.registeredPlayers.collectAsState().value
             val players = remember(playersState) {
-                playersState.sortedByDescending { it.score }
+                playersState.sortedWith(
+                    compareByDescending<RegisteredPlayer> { it.score }.thenComparator
+                    { a, b ->
+                        var diff = 0f
+                        for (i in tieBreaks.indices) {
+                            val tieBreak = tieBreaks[i]
+                            diff = tieBreak.calculate(a, playersState) - tieBreak.calculate(
+                                b,
+                                playersState
+                            )
+                            if (diff != 0f) {
+                                break
+                            }
+                        }
+                        (-2 * diff).toInt()
+                    }
+                )
             }
 
-            val activeTournament = vmTournament.activeTournament.collectAsState().value
-            val completedRounds = activeTournament?.roundsCompleted ?: 0
-            val maxRounds = activeTournament?.maxRounds ?: 0
+            val completedRounds = activeTournament.roundsCompleted
+            val maxRounds = activeTournament.maxRounds
 
             val isGrouped = vmTournament.isGrouped.collectAsState().value
 
@@ -62,7 +80,7 @@ fun Standings(
                 .padding(horizontal = 5.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ){
-              items(players.size){ i->
+              items(players.size){ i ->
                   StandingsItem(
                       player = players[i],
                       placement = i + 1

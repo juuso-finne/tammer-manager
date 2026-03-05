@@ -107,7 +107,8 @@ fun NewTorunament(
                     name =  tournamentName,
                     maxRounds = if (type == TournamentType.SWISS) rounds else 0,
                     type = type,
-                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN
+                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN,
+                    tieBreaks = selectedTieBreaks
                 )
                 navController.navigate("Home")
             },
