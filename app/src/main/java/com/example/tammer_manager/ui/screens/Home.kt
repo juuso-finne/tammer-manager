@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
+import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
@@ -36,12 +37,19 @@ fun Home(
     ) {
 
         val tournament = vmTournament.activeTournament.collectAsState().value
+        val isGrouped = vmTournament.isGrouped.collectAsState().value
+        val players = vmTournament.registeredPlayers.collectAsState().value
+        val pairings = vmTournament.currentRoundPairings.collectAsState().value
         val context = LocalContext.current
 
         Text(
             text = if(tournament != null) "${tournament.name}:" else "No active tournament",
             style = Typography.bodyLarge
         )
+
+        if(isGrouped){
+            GroupSelector(vmTournament = vmTournament)
+        }
 
         Text(
             text =
@@ -55,10 +63,28 @@ fun Home(
 
         Spacer(Modifier.height(20.dp))
 
-        Button (
-            onClick = { navController.navigate("newTournament") }
-        ){
-            Text("New tournament")
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                onClick = { navController.navigate("newTournament") }
+            ) {
+                Text("New tournament")
+            }
+
+            if (
+                !isGrouped &&
+                players.size > 1 &&
+                tournament?.roundsCompleted == 0 &&
+                pairings.isEmpty()
+            ) {
+                Button(
+                    onClick = { navController.navigate("splitTournament") }
+                ) {
+                    Text("Split tournament")
+                }
+            }
         }
 
         Row(
@@ -111,7 +137,6 @@ fun Home(
         Button(
             onClick = {
                 vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS)
-                val players = mutableListOf<ImportedPlayer>()
                 for(i in 0 until 50){
                     vmTournament.addPlayer(ImportedPlayer("Player $i", 1000 + i*20))
                 }

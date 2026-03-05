@@ -8,6 +8,7 @@ import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.file_management.deleteTournament
 import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
+import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
 import com.example.tammer_manager.data.player_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
@@ -52,12 +53,50 @@ class TournamentViewModel(
         initialValue = ""
     )
 
+    val isGrouped: StateFlow<Boolean> = savedStateHandle.getStateFlow(
+        key = "isGrouped",
+        initialValue = false
+    )
+
+    val currentGroup: StateFlow<String> = savedStateHandle.getStateFlow(
+        key = "currentGroup",
+        initialValue = ""
+    )
+
+    val groupMap: StateFlow<Map<String, TournamentVMState>> = savedStateHandle.getStateFlow(
+        key = "groupMap",
+        initialValue = mapOf()
+    )
+
     fun clearTournament(){
         savedStateHandle["tournament"] = null
         savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
         savedStateHandle["nextPlayerId"] = 0
         savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
-        savedStateHandle["fileName"] = ""
+        savedStateHandle["filename"] = ""
+        savedStateHandle["isGrouped"] = false
+        savedStateHandle["currentGroup"] = ""
+        savedStateHandle["groupMap"] = mapOf<String, TournamentVMState>()
+    }
+
+    fun setVMState(data: TournamentVMState){
+        savedStateHandle["tournament"] = data.tournament
+        savedStateHandle["registeredPlayers"] = data.registeredPlayers
+        savedStateHandle["nextPlayerId"] = data.nextPlayerId
+        savedStateHandle["currentRoundPairings"] = data.currentRoundPairings
+        savedStateHandle["isGrouped"] = data.isGrouped
+        savedStateHandle["currentGroup"] = data.currentGroup
+    }
+
+    fun getVMState(): TournamentVMState{
+        return TournamentVMState(
+            tournament = activeTournament.value!!,
+            registeredPlayers = registeredPlayers.value,
+            nextPlayerId = nextPlayerId.value,
+            currentRoundPairings = currentRoundPairings.value,
+            isGrouped = isGrouped.value,
+            currentGroup = currentGroup.value,
+        )
     }
 
     fun initateTournament(
@@ -68,6 +107,37 @@ class TournamentViewModel(
     ){
         clearTournament()
         savedStateHandle["tournament"] = Tournament(name, maxRounds, type, doubleRoundRobin)
+    }
+
+    fun splitTournament(
+        updatedPlayerList: List<RegisteredPlayer>
+    ){
+        savedStateHandle["isGrouped"] = true
+
+
+        savedStateHandle["groupMap"] = updatedPlayerList.associateBy(
+            keySelector = {updatedPlayer -> updatedPlayer.group},
+            valueTransform = {updatedPlayer -> getVMState().copy(
+                registeredPlayers = updatedPlayerList.filter{it.group == updatedPlayer.group},
+                currentGroup = updatedPlayer.group
+            )}
+        )
+
+        val newGroup = groupMap.value.keys.sorted()[0]
+        savedStateHandle["currentGroup"] = newGroup
+        setVMState(groupMap.value[newGroup]!!)
+        updateMaxRounds()
+    }
+
+    fun switchGroup(
+        newGroup: String
+    ){
+        val newGroupMap = groupMap.value.toMutableMap()
+        newGroupMap[currentGroup.value] = getVMState()
+        savedStateHandle["groupMap"] = newGroupMap
+
+        setVMState(groupMap.value[newGroup]!!)
+        updateMaxRounds()
     }
 
     private fun advanceRound(){
@@ -291,12 +361,30 @@ class TournamentViewModel(
             throw Exception("Filename cannot be empty string")
         }
 
-        val data = TournamentVMState(
-            tournament = activeTournament.value!!,
-            registeredPlayers = registeredPlayers.value,
-            nextPlayerId = nextPlayerId.value,
-            currentRoundPairings = currentRoundPairings.value
-        )
+        if(filename.value in listTournaments(context)){
+            if (!deleteTournament(
+                    context = context,
+                    filename = filename.value
+                )){
+                return false
+            }
+        }
+
+        val data = getVMState()
+
+        if(isGrouped.value){
+            var success: Boolean
+            groupMap.value.keys.forEachIndexed{ i, group ->
+                success = saveGroup(
+                   context = context,
+                   filename = filename.value,
+                   groupIndex = i,
+                   data = groupMap.value[group]!!
+                )
+                if(!success){ return false }
+            }
+            return true
+        }
 
         return saveTournament(
             context = context,
@@ -330,28 +418,31 @@ class TournamentViewModel(
             onSuccess()
             return
         }
-
         onError()
     }
 
     fun load (
         context: Context,
-        filename: String,
+        filename: String
     ): Boolean{
+        val loadedGroupMap = mutableMapOf<String, TournamentVMState>()
+
         val loadedData = loadTournament(
             context = context,
-            filename = filename
+            filename = filename,
+            groupMap = loadedGroupMap
         )
 
         if(loadedData == null){
             return false
         }
 
-        savedStateHandle["tournament"] = loadedData.tournament
-        savedStateHandle["registeredPlayers"] = loadedData.registeredPlayers
-        savedStateHandle["nextPlayerId"] = loadedData.nextPlayerId
-        savedStateHandle["currentRoundPairings"] = loadedData.currentRoundPairings
         savedStateHandle["filename"] = filename
+        setVMState(loadedData)
+
+        if(isGrouped.value){
+            savedStateHandle["groupMap"] = loadedGroupMap
+        }
 
         return true
     }

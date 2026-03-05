@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
@@ -43,13 +44,19 @@ fun Standings(
             val completedRounds = activeTournament?.roundsCompleted ?: 0
             val maxRounds = activeTournament?.maxRounds ?: 0
 
+            val isGrouped = vmTournament.isGrouped.collectAsState().value
+
             Text(
                 text =
                     if (completedRounds >= maxRounds && maxRounds != 0) "Final standings"
-                    else if (completedRounds != 0) "Standings after round ${completedRounds}"
+                    else if (completedRounds != 0) "Standings after round $completedRounds"
                     else "Standings",
                 style = Typography.headlineMedium
             )
+
+            if(isGrouped){
+                GroupSelector(vmTournament = vmTournament)
+            }
 
             LazyColumn(modifier = Modifier
                 .padding(horizontal = 5.dp),

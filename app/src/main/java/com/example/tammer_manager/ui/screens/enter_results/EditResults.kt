@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.reconstructPairings
+import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 
 @Composable
@@ -53,6 +54,16 @@ fun EditResults(
 
         val unsavedChanges = remember(localResults, reconstructedPairings) {
             localResults != reconstructedPairings
+        }
+
+        val isGrouped = vmTournament.isGrouped.collectAsState().value
+
+        if(isGrouped){
+            GroupSelector(vmTournament = vmTournament)
+        }
+
+        if(currentlyEditingRound > completedRounds){
+            navController.navigate("enterResults")
         }
 
         HeaderRow(
