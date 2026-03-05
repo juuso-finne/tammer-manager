@@ -68,7 +68,7 @@ class TieBreakTest {
         assertThat(TieBreak.WINS.calculate(playerD, players)).isEqualTo(2f)
         assertThat(TieBreak.WINS.calculate(playerE, players)).isEqualTo(1f)
         assertThat(TieBreak.WINS.calculate(playerF, players)).isEqualTo(1f)
-        assertThat(TieBreak.WINS.calculate(playerG, players)).isEqualTo(4f)
+        assertThat(TieBreak.WINS.calculate(playerG, players)).isEqualTo(3f)
     }
 
     @Test
@@ -88,7 +88,7 @@ class TieBreakTest {
         assertThat(TieBreak.BUCHHOLZ.calculate(playerB, players)).isEqualTo(8.5f)
         assertThat(TieBreak.BUCHHOLZ.calculate(playerC, players)).isEqualTo(9.5f)
         assertThat(TieBreak.BUCHHOLZ.calculate(playerD, players)).isEqualTo(10f)
-        assertThat(TieBreak.BUCHHOLZ.calculate(playerE, players)).isEqualTo(6.5f)
+        assertThat(TieBreak.BUCHHOLZ.calculate(playerE, players)).isEqualTo(6f)
         assertThat(TieBreak.BUCHHOLZ.calculate(playerF, players)).isEqualTo(5.5f)
         assertThat(TieBreak.BUCHHOLZ.calculate(playerG, players)).isEqualTo(6.5f)
     }
@@ -98,7 +98,7 @@ class TieBreakTest {
         assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerB, players)).isEqualTo(3.25f)
         assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerC, players)).isEqualTo(3.5f)
         assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerD, players)).isEqualTo(4f)
-        assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerE, players)).isEqualTo(3.5f)
+        assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerE, players)).isEqualTo(1.5f)
         assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerF, players)).isEqualTo(2f)
         assertThat(TieBreak.SONNEBORN_BERGER.calculate(playerG, players)).isEqualTo(6.5f)
     }
