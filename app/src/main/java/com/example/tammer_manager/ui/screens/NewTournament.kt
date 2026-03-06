@@ -1,27 +1,40 @@
 package com.example.tammer_manager.ui.screens
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
@@ -36,6 +49,7 @@ fun NewTorunament(
     val (rounds, setRounds) = remember { mutableIntStateOf(0) }
     val (type, setType) = remember {mutableStateOf(TournamentType.SWISS)}
     val (doubleRoundRobin, setDoubleRoundRobin) = remember { mutableStateOf(false) }
+    val selectedTieBreaks = remember { mutableStateListOf<TieBreak>() }
 
     Column(
         modifier = Modifier
@@ -71,6 +85,21 @@ fun NewTorunament(
             )
         }
 
+        for(i in selectedTieBreaks.indices){
+            TieBreakSelector(
+                selectedTieBreaks = selectedTieBreaks,
+                index = i
+            )
+        }
+
+        if(selectedTieBreaks.size < TieBreak.entries.size){
+            TieBreakSelector(
+                selectedTieBreaks = selectedTieBreaks,
+                index = selectedTieBreaks.size
+            )
+        }
+
+
 
         Button(
             onClick = {
@@ -78,7 +107,8 @@ fun NewTorunament(
                     name =  tournamentName,
                     maxRounds = if (type == TournamentType.SWISS) rounds else 0,
                     type = type,
-                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN
+                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN,
+                    tieBreaks = selectedTieBreaks
                 )
                 navController.navigate("Home")
             },
@@ -104,7 +134,9 @@ fun RadioGroupType(
     selectedType: TournamentType,
     setType: (TournamentType) -> Unit
     ){
-    Row (modifier = modifier.fillMaxWidth().selectableGroup(),
+    Row (modifier = modifier
+        .fillMaxWidth()
+        .selectableGroup(),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         TournamentType.entries.forEach {
@@ -138,7 +170,9 @@ fun RadioGroupDouble(
     doubleroundRobin: Boolean,
     setdoubleRoundRobin: (Boolean) -> Unit
 ){
-    Row (modifier = modifier.fillMaxWidth().selectableGroup(),
+    Row (modifier = modifier
+        .fillMaxWidth()
+        .selectableGroup(),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
             Row(
@@ -181,6 +215,87 @@ fun RadioGroupDouble(
                 style = Typography.bodyLarge,
                 modifier = Modifier.padding(start = 16.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun TieBreakSelector(
+    modifier: Modifier = Modifier,
+    selectedTieBreaks: SnapshotStateList<TieBreak>,
+    index: Int
+){
+    val availableTieBreaks = TieBreak.entries - selectedTieBreaks
+    val (isOpen, setIsOpen) = remember { mutableStateOf(false) }
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+
+        Text(
+            text = "Tie-break ${index + 1}:",
+            style = Typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Row(modifier = modifier
+            .border(
+                width = 1.dp,
+                color = Color.Black
+            )
+            .padding(5.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+
+            Text(
+                style = Typography.bodyLarge,
+                text =
+                    if(selectedTieBreaks.size > index) selectedTieBreaks[index].toString()
+                    else "<select>"
+            )
+
+            IconButton(
+                onClick = {
+                    setIsOpen(true)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Choose tie-break",
+                    tint = Color.Blue
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = isOpen,
+            onDismissRequest = { setIsOpen(false) },
+        ){
+            if(selectedTieBreaks.size > index){
+                DropdownMenuItem(
+                    text = { Text ("<remove>") },
+                    onClick = {
+                        selectedTieBreaks.removeAt(index)
+                        setIsOpen(false)
+                    }
+                )
+            }
+           availableTieBreaks.forEach {
+                DropdownMenuItem(
+                    text = { Text(text = it.toString()) },
+                    onClick = {
+                        if(selectedTieBreaks.size > index){
+                            selectedTieBreaks[index] = it
+                        } else {
+                            selectedTieBreaks.add(it)
+                        }
+                        setIsOpen(false)
+                    }
+                )
+            }
         }
     }
 }

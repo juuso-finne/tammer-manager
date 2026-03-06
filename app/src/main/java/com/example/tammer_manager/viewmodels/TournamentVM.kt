@@ -18,6 +18,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.data.tournament_admin.pairing.generateRoundRobinPairs
 import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
@@ -103,10 +104,17 @@ class TournamentViewModel(
         name: String,
         maxRounds: Int,
         type: TournamentType,
-        doubleRoundRobin: Boolean = false
+        doubleRoundRobin: Boolean = false,
+        tieBreaks: List<TieBreak>
     ){
         clearTournament()
-        savedStateHandle["tournament"] = Tournament(name, maxRounds, type, doubleRoundRobin)
+        savedStateHandle["tournament"] = Tournament(
+            name = name,
+            maxRounds = maxRounds,
+            type = type,
+            doubleRoundRobin = doubleRoundRobin,
+            tieBreaks = tieBreaks
+        )
     }
 
     fun splitTournament(
