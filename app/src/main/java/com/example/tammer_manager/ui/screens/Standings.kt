@@ -1,5 +1,8 @@
 package com.example.tammer_manager.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -19,9 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.ui.components.GroupSelector
@@ -68,7 +74,9 @@ fun Standings(
             val maxRounds = activeTournament.maxRounds
 
             val isGrouped = vmTournament.isGrouped.collectAsState().value
+
             val (showTieBreaks, setShowTieBreaks) = remember { mutableStateOf(false) }
+            val (showRoundResults, setShowRoundResults) = remember { mutableStateOf(false) }
 
             Text(
                 text =
@@ -83,21 +91,44 @@ fun Standings(
             }
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Text(
-                    style = Typography.labelLarge,
-                    text = "Show tie-breaks"
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
 
-                Spacer(modifier = Modifier.width(10.dp))
+                    ){
+                    Text(
+                        style = Typography.labelLarge,
+                        text = "Show tie-breaks"
+                    )
 
-                Switch(
-                    checked = showTieBreaks,
-                    onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
-                )
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Switch(
+                        checked = showTieBreaks,
+                        onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ){
+                    Text(
+                        style = Typography.labelLarge,
+                        text = "Show round results"
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Switch(
+                        checked = showRoundResults,
+                        onCheckedChange = { setShowRoundResults(!showRoundResults) },
+                    )
+                }
             }
+
+
 
             LazyColumn(modifier = Modifier
                 .padding(horizontal = 5.dp),
@@ -109,7 +140,8 @@ fun Standings(
                       placement = i + 1,
                       showTieBreaks = showTieBreaks,
                       players = players,
-                      tieBreaks = tieBreaks
+                      tieBreaks = tieBreaks,
+                      showRoundResults = showRoundResults
                   )
               }
             }
@@ -123,7 +155,8 @@ fun StandingsItem(
     placement: Int,
     showTieBreaks: Boolean,
     players: List<RegisteredPlayer>,
-    tieBreaks: List<TieBreak>
+    tieBreaks: List<TieBreak>,
+    showRoundResults: Boolean
 ){
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier
@@ -179,7 +212,46 @@ fun StandingsItem(
             }
         }
 
+        if(showRoundResults){ RoundResults(player, players) }
+
         Spacer(Modifier.size(5.dp))
         HorizontalDivider()
+    }
+}
+
+@Composable
+fun RoundResults(
+    player: RegisteredPlayer,
+    players: List<RegisteredPlayer>,
+){
+    val sortedHistory = player.matchHistory.sortedBy { it.round }
+
+    fun getResultText(match: MatchHistoryItem):String{
+
+        if(match.opponentId == null){ return "bye" }
+
+        var resultText = "${players.indexOfFirst { it.id == match.opponentId } + 1}:"
+
+        if(match.result == .5f){
+            resultText += "½"
+        } else{
+            resultText += "${match.result.toInt()}"
+        }
+
+        return resultText
+    }
+
+    LazyRow (modifier = Modifier.fillMaxWidth()){
+        items(sortedHistory.size){
+            val match = sortedHistory[it]
+            Text(
+                text = getResultText(match),
+                color = match.color.reverse().colorValue,
+                modifier = Modifier
+                    .background(match.color.colorValue)
+                    .border(BorderStroke(1.dp, Color.Black))
+                    .padding(2.dp)
+            )
+        }
     }
 }
