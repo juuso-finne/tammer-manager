@@ -21,6 +21,11 @@ enum class TieBreak (val abbreviation: String) {
         override fun calculate(player: RegisteredPlayer, players: List<RegisteredPlayer>): Float {
             val oppnentIds = player.matchHistory.mapNotNull { it.opponentId }
             val opponentScores = oppnentIds.mapNotNull { players.find { player -> player.id == it }?.score }
+
+            if(opponentScores.isEmpty()){
+                return 0f
+            }
+
             val total = opponentScores.sum() - opponentScores.max() - opponentScores.min()
             return max(0f, total)
         }
