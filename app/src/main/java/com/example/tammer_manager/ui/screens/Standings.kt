@@ -8,17 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
+import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
@@ -63,6 +68,7 @@ fun Standings(
             val maxRounds = activeTournament.maxRounds
 
             val isGrouped = vmTournament.isGrouped.collectAsState().value
+            val (showTieBreaks, setShowTieBreaks) = remember { mutableStateOf(false) }
 
             Text(
                 text =
@@ -76,6 +82,23 @@ fun Standings(
                 GroupSelector(vmTournament = vmTournament)
             }
 
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Text(
+                    style = Typography.labelLarge,
+                    text = "Show tie-breaks"
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Switch(
+                    checked = showTieBreaks,
+                    onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
+                )
+            }
+
             LazyColumn(modifier = Modifier
                 .padding(horizontal = 5.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -83,7 +106,10 @@ fun Standings(
               items(players.size){ i ->
                   StandingsItem(
                       player = players[i],
-                      placement = i + 1
+                      placement = i + 1,
+                      showTieBreaks = showTieBreaks,
+                      players = players,
+                      tieBreaks = tieBreaks
                   )
               }
             }
@@ -94,7 +120,10 @@ fun Standings(
 @Composable
 fun StandingsItem(
     player: RegisteredPlayer,
-    placement: Int
+    placement: Int,
+    showTieBreaks: Boolean,
+    players: List<RegisteredPlayer>,
+    tieBreaks: List<TieBreak>
 ){
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier
@@ -117,12 +146,37 @@ fun StandingsItem(
                 if (player.score % 1.0 == 0.0) "%,.0f".format(player.score)
                 else "%,.1f".format(player.score)
 
-            Text(
-                text = scoreAsText,
-                maxLines = 1,
-                modifier = Modifier.padding(horizontal = 2.dp),
-                style = Typography.headlineSmall
-            )
+            var tieBreakText = ""
+
+            for (i in tieBreaks.indices){
+                val tieBreak = tieBreaks[i]
+                val value = tieBreak.calculate(player, players)
+
+                tieBreakText += "${tieBreak.abbreviation}:"
+                tieBreakText += if (tieBreak == TieBreak.WINS) value.toInt() else value
+
+                if(i < tieBreaks.indices.last){
+                    tieBreakText += ", "
+                }
+            }
+
+            Row(verticalAlignment = Alignment.Bottom){
+                Text(
+                    text = scoreAsText,
+                    maxLines = 1,
+                    modifier = Modifier.padding(horizontal = 2.dp),
+                    style = Typography.headlineSmall.copy(lineHeight = 20.sp),
+                )
+
+                if(showTieBreaks){
+                    Text(
+                        text = tieBreakText,
+                        maxLines = 1,
+                        modifier = Modifier.padding(start = 5.dp),
+                        style = Typography.bodyMedium
+                    )
+                }
+            }
         }
 
         Spacer(Modifier.size(5.dp))
