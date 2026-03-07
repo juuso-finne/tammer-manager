@@ -21,7 +21,6 @@ fun exportResults(
     onError: () -> Unit,
     players: List<RegisteredPlayer>,
     tournament: Tournament,
-    tieBreaks: List<TieBreak>
 ){
     if (uri == null){
         return
@@ -32,7 +31,6 @@ fun exportResults(
         generateWorkbook(
             players = players,
             tournament = tournament,
-            tieBreaks = tieBreaks,
             workbook = workbook
         )
 
@@ -51,7 +49,6 @@ fun exportResults(
 fun generateWorkbook(
     players: List<RegisteredPlayer>,
     tournament: Tournament,
-    tieBreaks: List<TieBreak>,
     workbook: XSSFWorkbook
 ){
 
@@ -91,7 +88,7 @@ fun generateWorkbook(
     generateTableHeader(
         sheet = sheet,
         roundsCompleted = roundsCompleted,
-        tieBreaks = tieBreaks,
+        tieBreaks = tournament.tieBreaks,
         row = sheet.createRow(sheet.lastRowNum + 2),
         tableHeaderStyle = tableHeaderStyle
     )
@@ -102,7 +99,7 @@ fun generateWorkbook(
             row = sheet.createRow(sheet.lastRowNum + 1),
             player = it,
             players = players,
-            tieBreaks = tieBreaks,
+            tieBreaks = tournament.tieBreaks,
             roundsCompleted = roundsCompleted,
             baseStyle = baseStyle
         )
@@ -234,9 +231,7 @@ fun populatePlayerRow(
         }
     }
 
-    val scoreAsText =
-        if (player.score % 1.0 == 0.0) "%,.0f".format(player.score)
-        else "%,.1f".format(player.score)
+    val scoreAsText = "${player.score}" + if (player.score % 1.0 != 0.0) "½" else ""
 
     val scoreColIndex = firstRoundColIndex + 3 * roundsCompleted
 
