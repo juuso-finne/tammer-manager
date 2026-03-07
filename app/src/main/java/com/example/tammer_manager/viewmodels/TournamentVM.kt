@@ -10,7 +10,7 @@ import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
-import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing

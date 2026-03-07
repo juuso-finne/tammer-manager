@@ -3,7 +3,6 @@ package com.example.tammer_manager.ui.screens
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.tammer_manager.data.player_import.importFromExcel
+import com.example.tammer_manager.data.export_import.importFromExcel
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import kotlinx.coroutines.launch
 

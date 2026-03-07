@@ -1,11 +1,10 @@
-package com.example.tammer_manager.data.player_import
+package com.example.tammer_manager.data.export_import
 
 import android.content.Context
 import android.net.Uri
 
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import kotlin.reflect.typeOf
 
 class InvalidRatingException(message: String): Exception(message)
 

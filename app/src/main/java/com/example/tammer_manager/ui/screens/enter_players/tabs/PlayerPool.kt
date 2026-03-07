@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.ui.screens.enter_players.TextRow
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.example.tammer_manager.data.player_import.ImportedPlayer
-import com.example.tammer_manager.data.tournament_admin.classes.Tournament
-import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.theme.Typography

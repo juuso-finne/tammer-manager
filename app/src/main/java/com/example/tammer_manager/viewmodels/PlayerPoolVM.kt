@@ -2,7 +2,7 @@ package com.example.tammer_manager.viewmodels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import kotlin.collections.listOf
 
 

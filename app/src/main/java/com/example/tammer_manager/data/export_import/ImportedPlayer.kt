@@ -1,4 +1,4 @@
-package com.example.tammer_manager.data.player_import
+package com.example.tammer_manager.data.export_import
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
