@@ -7,8 +7,10 @@ import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
+import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
@@ -50,7 +52,7 @@ fun exportResults(
         workBookHeader.cellStyle = workbookHeaderStyle
         workBookHeader.setCellValue(tournament.name)
 
-        val subHeaderRow = sheet.createRow(workbookHeaderRow.rowNum + 2)
+        val subHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
         val subHeader = subHeaderRow.createCell(0)
         subHeader.cellStyle = boldStyle
         subHeader.setCellValue(
@@ -59,13 +61,13 @@ fun exportResults(
             else "Final standings:"
         )
 
-        val tableHeaderRowIndex = subHeaderRow.rowNum + 2
+        val tableHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
 
         generateTableHeader(
             sheet = sheet,
             roundsCompleted = roundsCompleted,
             tieBreaks = tieBreaks,
-            tableHeaderRowIndex = tableHeaderRowIndex,
+            row = tableHeaderRow,
             tableHeaderStyle = tableHeaderStyle
         )
 
@@ -111,36 +113,35 @@ fun generateTableHeader(
     sheet: XSSFSheet,
     roundsCompleted: Int,
     tieBreaks: List<TieBreak>,
-    tableHeaderRowIndex: Int,
+    row: XSSFRow,
     tableHeaderStyle: XSSFCellStyle,
 ){
-    val tableHeaderRow = sheet.createRow(tableHeaderRowIndex)
-    val rankCol = tableHeaderRow.createCell(0)
-    rankCol.setCellValue("Rank")
+    row.createCell(0).setCellValue("Rank")
+    row.createCell(row.lastCellNum.toInt()).setCellValue("SNo.")
+    row.createCell(row.lastCellNum.toInt()).setCellValue("Name")
+    row.createCell(row.lastCellNum.toInt()).setCellValue("Rtg")
 
-    val tpnCol = tableHeaderRow.createCell(rankCol.columnIndex + 1)
-    tpnCol.setCellValue("SNo.")
-
-    val nameCol = tableHeaderRow.createCell(tpnCol.columnIndex + 1)
-    nameCol.setCellValue("Name")
-
-    val ratingCol = tableHeaderRow.createCell(nameCol.columnIndex + 1)
-    ratingCol.setCellValue("Rtg")
-
-    for (i in 1 until roundsCompleted + 1){
-        tableHeaderRow
-            .createCell(ratingCol.columnIndex + (3 * i - 2))
+    for (i in 0 until roundsCompleted){
+        val regionStartIndex = row.lastCellNum.toInt() + 3 * i
+        row
+            .createCell(regionStartIndex)
             .setCellValue("$i.Rd.")
+
+        sheet.addMergedRegion(CellRangeAddress(
+            row.rowNum,
+            row.rowNum,
+            regionStartIndex,
+            regionStartIndex + 2
+        ))
     }
 
-    val pointsCol = tableHeaderRow.createCell(ratingCol.columnIndex + 3 * roundsCompleted + 1)
-    pointsCol.setCellValue("Pts")
+     row.createCell(row.lastCellNum.toInt() + 3 * roundsCompleted).setCellValue("Pts")
 
     tieBreaks.forEachIndexed { i, it ->
-        tableHeaderRow
-            .createCell(pointsCol.columnIndex + i + 1)
+        row
+            .createCell(row.lastCellNum.toInt() + i)
             .setCellValue(it.abbreviation)
     }
 
-    tableHeaderRow.cellIterator().forEach { it.cellStyle = tableHeaderStyle }
+    row.cellIterator().forEach { it.cellStyle = tableHeaderStyle }
 }
