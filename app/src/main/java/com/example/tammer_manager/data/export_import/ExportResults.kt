@@ -16,66 +16,98 @@ import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 fun exportResults(
-    players: List<RegisteredPlayer>,
-    tournament: Tournament,
-    tieBreaks: List<TieBreak>,
     context: Context,
     uri: Uri?,
-    onError: () -> Unit
+    onError: () -> Unit,
+    players: List<RegisteredPlayer>,
+    tournament: Tournament,
+    tieBreaks: List<TieBreak>
 ){
     if (uri == null){
         return
     }
 
+    try {
+        val workbook = XSSFWorkbook()
+        generateWorkbook(
+            players = players,
+            tournament = tournament,
+            tieBreaks = tieBreaks,
+            workbook = workbook
+        )
+
+        val outputStream = context.contentResolver.openOutputStream(uri)
+        outputStream?.use{ stream ->
+            workbook.write(stream)
+            workbook.close()
+        }
+
+    } catch(e: Exception){
+        onError()
+    }
+
+}
+
+fun generateWorkbook(
+    players: List<RegisteredPlayer>,
+    tournament: Tournament,
+    tieBreaks: List<TieBreak>,
+    workbook: XSSFWorkbook
+){
+
     val roundsCompleted = tournament.roundsCompleted
     val maxRounds = tournament.maxRounds
 
-    try{
 
-        val workbook = XSSFWorkbook()
-        val sheet = workbook.createSheet()
+    val sheet = workbook.createSheet()
 
-        val baseStyle = workbook.createCellStyle()
-        val boldStyle = workbook.createCellStyle()
-        val tableHeaderStyle = workbook.createCellStyle()
-        val workbookHeaderStyle = workbook.createCellStyle()
+    val baseStyle = workbook.createCellStyle()
+    val boldStyle = workbook.createCellStyle()
+    val tableHeaderStyle = workbook.createCellStyle()
+    val workbookHeaderStyle = workbook.createCellStyle()
 
-        setCellStyles(
-            workbook = workbook,
-            baseStyle = baseStyle,
-            boldStyle =  boldStyle,
-            tableHeaderStyle = tableHeaderStyle,
-            workbookHeaderStyle = workbookHeaderStyle
-        )
+    setCellStyles(
+        workbook = workbook,
+        baseStyle = baseStyle,
+        boldStyle =  boldStyle,
+        tableHeaderStyle = tableHeaderStyle,
+        workbookHeaderStyle = workbookHeaderStyle
+    )
 
-        val workbookHeaderRow = sheet.createRow(0)
-        val workBookHeader = workbookHeaderRow.createCell(0)
-        workBookHeader.cellStyle = workbookHeaderStyle
-        workBookHeader.setCellValue(tournament.name)
+    val workbookHeaderRow = sheet.createRow(0)
+    val workBookHeader = workbookHeaderRow.createCell(0)
+    workBookHeader.cellStyle = workbookHeaderStyle
+    workBookHeader.setCellValue(tournament.name)
 
-        val subHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
-        val subHeader = subHeaderRow.createCell(0)
-        subHeader.cellStyle = boldStyle
-        subHeader.setCellValue(
-            if (roundsCompleted == 0) "Participants:"
-            else if (roundsCompleted < maxRounds) "Standings after $roundsCompleted out of $maxRounds rounds:"
-            else "Final standings:"
-        )
+    val subHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
+    val subHeader = subHeaderRow.createCell(0)
+    subHeader.cellStyle = boldStyle
+    subHeader.setCellValue(
+        if (roundsCompleted == 0) "Participants:"
+        else if (roundsCompleted < maxRounds) "Standings after $roundsCompleted out of $maxRounds rounds:"
+        else "Final standings:"
+    )
 
-        generateTableHeader(
-            sheet = sheet,
-            roundsCompleted = roundsCompleted,
+    generateTableHeader(
+        sheet = sheet,
+        roundsCompleted = roundsCompleted,
+        tieBreaks = tieBreaks,
+        row = sheet.createRow(sheet.lastRowNum + 2),
+        tableHeaderStyle = tableHeaderStyle
+    )
+
+    players.forEachIndexed { i, it ->
+        populatePlayerRow(
+            rank = i + 1,
+            row = sheet.createRow(sheet.lastRowNum + 1),
+            player = it,
+            players = players,
             tieBreaks = tieBreaks,
-            row = sheet.createRow(sheet.lastRowNum + 2),
-            tableHeaderStyle = tableHeaderStyle
+            roundsCompleted = roundsCompleted,
+            baseStyle = baseStyle
         )
-
-
-    } catch (e: Exception){
-        println(e.message)
-        e.printStackTrace()
-        onError()
     }
+
 }
 
 fun setCellStyles(
@@ -152,7 +184,8 @@ fun populatePlayerRow(
     player: RegisteredPlayer,
     players: List<RegisteredPlayer>,
     tieBreaks: List<TieBreak>,
-    roundsCompleted: Int
+    roundsCompleted: Int,
+    baseStyle: XSSFCellStyle,
 ){
     val missedRounds = MutableList(roundsCompleted){it}
 
@@ -211,5 +244,9 @@ fun populatePlayerRow(
 
     tieBreaks.forEach {
         row.createCell(row.lastCellNum.toInt()).setCellValue("$it.calculate(player, players)")
+    }
+
+    row.cellIterator().forEach {
+        it.cellStyle = baseStyle
     }
 }
