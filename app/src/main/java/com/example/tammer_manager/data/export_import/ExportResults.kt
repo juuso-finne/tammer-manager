@@ -238,7 +238,7 @@ fun populatePlayerRow(
     row.createCell(scoreColIndex).setCellValue(scoreAsText)
 
     tieBreaks.forEach {
-        row.createCell(row.lastCellNum.toInt()).setCellValue("$it.calculate(player, players)")
+        row.createCell(row.lastCellNum.toInt()).setCellValue("${it.calculate(player, players)}")
     }
 
     row.cellIterator().forEach {
