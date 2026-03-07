@@ -6,6 +6,7 @@ import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.util.CellRangeAddress
@@ -106,6 +107,8 @@ fun generateWorkbook(
         )
     }
 
+    sheet.setColumnWidth(2, 25 * 256)
+
 }
 
 fun setCellStyles(
@@ -118,16 +121,18 @@ fun setCellStyles(
     val baseFont = workbook.createFont()
     baseFont.fontHeightInPoints = 12
     baseStyle.setFont(baseFont)
+    baseStyle.borderLeft = BorderStyle.THIN
+    baseStyle.borderRight = BorderStyle.THIN
+    baseStyle.borderTop = BorderStyle.THIN
+    baseStyle.borderBottom = BorderStyle.THIN
 
     val boldFont = workbook.createFont()
     boldFont.fontHeightInPoints = 12
     boldFont.bold = true
     boldStyle.setFont(boldFont)
 
-    val tableHeaderFont = workbook.createFont()
-    tableHeaderFont.bold = true
-    tableHeaderFont.fontHeightInPoints = 12
-    tableHeaderStyle.setFont(tableHeaderFont)
+    tableHeaderStyle.cloneStyleFrom(baseStyle)
+    tableHeaderStyle.setFont(boldFont)
     tableHeaderStyle.alignment = HorizontalAlignment.CENTER
     tableHeaderStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
     tableHeaderStyle.setFillForegroundColor(XSSFColor(ByteArray(3){ 0xD3.toByte()}))
