@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
+import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
@@ -61,13 +62,11 @@ fun exportResults(
             else "Final standings:"
         )
 
-        val tableHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
-
         generateTableHeader(
             sheet = sheet,
             roundsCompleted = roundsCompleted,
             tieBreaks = tieBreaks,
-            row = tableHeaderRow,
+            row = sheet.createRow(sheet.lastRowNum + 2),
             tableHeaderStyle = tableHeaderStyle
         )
 
@@ -120,28 +119,97 @@ fun generateTableHeader(
     row.createCell(row.lastCellNum.toInt()).setCellValue("SNo.")
     row.createCell(row.lastCellNum.toInt()).setCellValue("Name")
     row.createCell(row.lastCellNum.toInt()).setCellValue("Rtg")
+    val firstRoundColumnIndex =  row.lastCellNum
 
     for (i in 0 until roundsCompleted){
-        val regionStartIndex = row.lastCellNum.toInt() + 3 * i
+        val regionStartIndex = firstRoundColumnIndex + 3 * i
         row
             .createCell(regionStartIndex)
-            .setCellValue("$i.Rd.")
+            .setCellValue("${i + 1}.Rd.")
 
         sheet.addMergedRegion(CellRangeAddress(
-            row.rowNum,
-            row.rowNum,
-            regionStartIndex,
-            regionStartIndex + 2
+            /* firstRow = */ row.rowNum,
+            /* lastRow = */ row.rowNum,
+            /* firstCol = */ regionStartIndex,
+            /* lastCol = */ regionStartIndex + 2
         ))
     }
 
-     row.createCell(row.lastCellNum.toInt() + 3 * roundsCompleted).setCellValue("Pts")
+     row.createCell(firstRoundColumnIndex + 3 * roundsCompleted).setCellValue("Pts")
 
-    tieBreaks.forEachIndexed { i, it ->
+    tieBreaks.forEach {
         row
-            .createCell(row.lastCellNum.toInt() + i)
+            .createCell(row.lastCellNum.toInt())
             .setCellValue(it.abbreviation)
     }
 
     row.cellIterator().forEach { it.cellStyle = tableHeaderStyle }
+}
+
+fun populatePlayerRow(
+    rank: Int,
+    row: XSSFRow,
+    player: RegisteredPlayer,
+    players: List<RegisteredPlayer>,
+    tieBreaks: List<TieBreak>,
+    roundsCompleted: Int
+){
+    val missedRounds = MutableList(roundsCompleted){it}
+
+    row.createCell(0).setCellValue("$rank")
+    row.createCell(row.lastCellNum.toInt()).setCellValue("${player.tpn}")
+    row.createCell(row.lastCellNum.toInt()).setCellValue(player.fullName)
+    row.createCell(row.lastCellNum.toInt()).setCellValue("${player.rating}")
+
+    val firstRoundColIndex =  row.lastCellNum
+
+    for (i in player.matchHistory.indices){
+        val match = player.matchHistory[i]
+        val round = match.round
+
+        missedRounds.remove(round)
+
+        val opponentColIndex = firstRoundColIndex + 3 * (round - 1)
+        val colorColIndex = opponentColIndex + 1
+        val resultColIndex = colorColIndex + 1
+
+        if(match.opponentId == null){
+            row.createCell(opponentColIndex).setCellValue("-")
+            row.createCell(colorColIndex).setCellValue("-")
+            row.createCell(resultColIndex).setCellValue("1")
+
+            continue
+        }
+
+        val opponentRank = players.indexOfFirst { it.id == match.opponentId } + 1
+        val result = if (match.result == 0.5f) "½" else "${match.result.toInt()}"
+        val color = if(match.color == PlayerColor.WHITE) "w" else "b"
+
+        row.createCell(opponentColIndex).setCellValue("$opponentRank")
+
+        val existingResult = row.getCell(resultColIndex)?.stringCellValue
+        row.createCell(resultColIndex).setCellValue(existingResult?.let{"$it $result"} ?: result)
+
+        val existingColor = row.getCell(colorColIndex)?.stringCellValue
+        row.createCell(resultColIndex).setCellValue(existingColor?.let{"$it $color"} ?: color)
+    }
+
+    missedRounds.forEach {
+        val columnIndex = firstRoundColIndex + 3 * (it - 1)
+        for (subIndex in 0 until 3){
+            row.createCell(columnIndex + subIndex).setCellValue("-")
+        }
+    }
+
+    val scoreAsText =
+        if (player.score % 1.0 == 0.0) "%,.0f".format(player.score)
+        else "%,.1f".format(player.score)
+
+    val scoreColIndex = firstRoundColIndex + 3 * roundsCompleted
+
+    row.createCell(scoreColIndex).setCellValue(scoreAsText)
+
+    tieBreaks.forEach {
+        row.createCell(row.lastCellNum.toInt()).setCellValue("$it.calculate(player, players)")
+    }
 }
