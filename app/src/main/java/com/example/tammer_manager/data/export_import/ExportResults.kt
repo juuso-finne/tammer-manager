@@ -232,7 +232,7 @@ fun populatePlayerRow(
         }
     }
 
-    val scoreAsText = "${player.score}" + if (player.score % 1.0 != 0.0) "½" else ""
+    val scoreAsText = if (player.score != 0.5f) "${player.score.toInt()}" else "" + if (player.score % 1.0 != 0.0) "½" else ""
 
     val scoreColIndex = firstRoundColIndex + 3 * roundsCompleted
 
