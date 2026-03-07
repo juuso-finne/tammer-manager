@@ -476,8 +476,8 @@ class TournamentViewModel(
         context: Context,
         uri: Uri?,
         onError: () -> Unit,
-        tieBreaks: List<TieBreak>
     ){
+        val tieBreaks = activeTournament.value!!.tieBreaks
         val sortedPlayers = registeredPlayers.value.sortedWith(
             compareByDescending<RegisteredPlayer> { it.score }.thenComparator
             { a, b ->
