@@ -22,6 +22,7 @@ fun exportResults(
     onError: () -> Unit,
     players: List<RegisteredPlayer>,
     tournament: Tournament,
+    group: String
 ){
     if (uri == null){
         return
@@ -32,7 +33,8 @@ fun exportResults(
         generateWorkbook(
             players = players,
             tournament = tournament,
-            workbook = workbook
+            workbook = workbook,
+            group = group
         )
 
         val outputStream = context.contentResolver.openOutputStream(uri)
@@ -51,7 +53,8 @@ fun exportResults(
 fun generateWorkbook(
     players: List<RegisteredPlayer>,
     tournament: Tournament,
-    workbook: XSSFWorkbook
+    workbook: XSSFWorkbook,
+    group: String
 ){
 
     val roundsCompleted = tournament.roundsCompleted
@@ -76,7 +79,7 @@ fun generateWorkbook(
     val workbookHeaderRow = sheet.createRow(0)
     val workBookHeader = workbookHeaderRow.createCell(0)
     workBookHeader.cellStyle = workbookHeaderStyle
-    workBookHeader.setCellValue(tournament.name)
+    workBookHeader.setCellValue(tournament.name + if(group.isNotEmpty()) ", group $group" else "")
 
     val subHeaderRow = sheet.createRow(sheet.lastRowNum + 2)
     val subHeader = subHeaderRow.createCell(0)

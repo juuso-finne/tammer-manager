@@ -501,7 +501,8 @@ class TournamentViewModel(
             uri = uri,
             onError = onError,
             players = sortedPlayers,
-            tournament = activeTournament.value!!
+            tournament = activeTournament.value!!,
+            group = currentGroup.value
         )
     }
 }
