@@ -222,7 +222,7 @@ fun populatePlayerRow(
         row.createCell(resultColIndex).setCellValue(existingResult?.let{"$it $result"} ?: result)
 
         val existingColor = row.getCell(colorColIndex)?.stringCellValue
-        row.createCell(resultColIndex).setCellValue(existingColor?.let{"$it $color"} ?: color)
+        row.createCell(colorColIndex).setCellValue(existingColor?.let{"$it $color"} ?: color)
     }
 
     missedRounds.forEach {
