@@ -41,6 +41,7 @@ fun exportResults(
         }
 
     } catch(e: Exception){
+        e.printStackTrace()
         onError()
     }
 
@@ -184,7 +185,7 @@ fun populatePlayerRow(
     roundsCompleted: Int,
     baseStyle: XSSFCellStyle,
 ){
-    val missedRounds = MutableList(roundsCompleted){it}
+    val missedRounds = MutableList(roundsCompleted){it + 1}
 
     row.createCell(0).setCellValue("$rank")
     row.createCell(row.lastCellNum.toInt()).setCellValue("${player.tpn}")
