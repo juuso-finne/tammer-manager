@@ -171,12 +171,28 @@ class TournamentViewModel(
         advanceRound()
 
         currentRoundPairings.value.forEach { pairing ->
+            val round = activeTournament.value?.roundsCompleted ?: 0
+
+            if(pairing[PlayerColor.BLACK]?.playerID != null){
+                val white = registeredPlayers.value.find { player -> player.id == pairing[PlayerColor.WHITE]!!.playerID }
+                val black = registeredPlayers.value.find { player -> player.id == pairing[PlayerColor.BLACK]!!.playerID }
+
+                if(white!!.score > black!!.score){
+                    addUpfloat(black.id, round)
+                    addDownfloat(white.id, round)
+                } else if(black.score > white.score){
+                    addUpfloat(white.id, round)
+                    addDownfloat(black.id, round)
+                }
+            }
+
             pairing.forEach { item ->
                 val ownColor = item.key
+
                 item.value.playerID?.let{
                     val newItem = MatchHistoryItem(
                         opponentId = pairing[ownColor.reverse()]?.playerID,
-                        round = activeTournament.value?.roundsCompleted ?: 0,
+                        round = round,
                         result = item.value.points ?: 0f,
                         color = ownColor,
                     )
@@ -272,6 +288,20 @@ class TournamentViewModel(
         val playerList = registeredPlayers.value.toMutableList()
         val index = playerList.indexOfFirst { it.id == id }
         playerList[index] = playerList[index].copy(receivedPairingBye = value)
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
+    fun addDownfloat(playerId: Int, round:Int){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == playerId }
+        playerList[index] = playerList[index].let { it.copy(downfloats = it.downfloats.plus(round)) }
+        savedStateHandle["registeredPlayers"] = playerList.toList()
+    }
+
+    fun addUpfloat(playerId: Int, round:Int){
+        val playerList = registeredPlayers.value.toMutableList()
+        val index = playerList.indexOfFirst { it.id == playerId }
+        playerList[index] = playerList[index].let { it.copy(upfloats = it.upfloats.plus(round)) }
         savedStateHandle["registeredPlayers"] = playerList.toList()
     }
 
