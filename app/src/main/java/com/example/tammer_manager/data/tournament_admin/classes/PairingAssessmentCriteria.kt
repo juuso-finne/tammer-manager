@@ -5,6 +5,9 @@ data class PairingAssessmentCriteria(
     /**Minimise the score of the assignee of the pairing-allocated-bye.*/
     var pabAssigneeScore: Float = 0f,
 
+    /**Minimise the scores (taken in descending order) of the downfloaters.*/
+    val downfloaterScores: MutableList<Float> = mutableListOf(),
+
     /**Minimise the number of unplayed games of the assignee of the pairing-allocated-bye.*/
     var pabAssigneeUnplayedGames:Int = 0,
 
@@ -36,6 +39,7 @@ data class PairingAssessmentCriteria(
 
     operator fun plusAssign(other: PairingAssessmentCriteria){
         this.pabAssigneeScore += other.pabAssigneeScore
+        this.downfloaterScores.addAll(other.downfloaterScores)
         this.pabAssigneeUnplayedGames += other.pabAssigneeUnplayedGames
         this.topScorerOrOpponentColorImbalanceCount += other.topScorerOrOpponentColorImbalanceCount
         this.topScorersOrOpponentsColorstreakCount += other.topScorersOrOpponentsColorstreakCount
@@ -49,6 +53,7 @@ data class PairingAssessmentCriteria(
 
     operator fun minusAssign(other: PairingAssessmentCriteria){
         this.pabAssigneeScore -= other.pabAssigneeScore
+        this.downfloaterScores.removeAll(other.downfloaterScores)
         this.pabAssigneeUnplayedGames -= other.pabAssigneeUnplayedGames
         this.topScorerOrOpponentColorImbalanceCount -= other.topScorerOrOpponentColorImbalanceCount
         this.topScorersOrOpponentsColorstreakCount -= other.topScorersOrOpponentsColorstreakCount
@@ -64,6 +69,8 @@ data class PairingAssessmentCriteria(
         return PairingAssessmentCriteria(
             pabAssigneeScore =
                 this.pabAssigneeScore + other.pabAssigneeScore,
+            downfloaterScores =
+                (this.downfloaterScores + other.downfloaterScores).toMutableList(),
             pabAssigneeUnplayedGames =
                 this.pabAssigneeUnplayedGames + other.pabAssigneeUnplayedGames,
             topScorerOrOpponentColorImbalanceCount =
@@ -86,21 +93,22 @@ data class PairingAssessmentCriteria(
     }
 
     override fun compareTo(other: PairingAssessmentCriteria): Int =
-        compareBy<PairingAssessmentCriteria>(
-            { it.pabAssigneeScore },
-            { it.pabAssigneeUnplayedGames },
-            { it.topScorerOrOpponentColorImbalanceCount },
-            { it.topScorersOrOpponentsColorstreakCount },
-            { it.colorpreferenceConflicts },
-            { it.strongColorpreferenceConflicts },
-            { it.previousRoundDownfloaters },
-            { it.previousRoundUpfloaters },
-            { it.twoRoundsPriorDownfloaters },
-            { it.twoRoundsPriorUpfloaters }
-        ).compare(this, other)
+        compareBy<PairingAssessmentCriteria> { it.pabAssigneeScore }
+            .thenComparator { a, b -> descendingComparator.compare(a.downfloaterScores, b.downfloaterScores) }
+            .thenBy { it.pabAssigneeUnplayedGames }
+            .thenBy { it.topScorerOrOpponentColorImbalanceCount }
+            .thenBy { it.topScorersOrOpponentsColorstreakCount }
+            .thenBy { it.colorpreferenceConflicts }
+            .thenBy { it.strongColorpreferenceConflicts }
+            .thenBy { it.previousRoundDownfloaters }
+            .thenBy { it.previousRoundUpfloaters }
+            .thenBy { it.twoRoundsPriorDownfloaters }
+            .thenBy { it.twoRoundsPriorUpfloaters }
+        .compare(this, other)
 
     fun reset(){
         this.pabAssigneeScore = 0f
+        this.downfloaterScores.clear()
         this.pabAssigneeUnplayedGames = 0
         this.topScorerOrOpponentColorImbalanceCount = 0
         this.topScorersOrOpponentsColorstreakCount = 0
@@ -133,6 +141,22 @@ data class PairingAssessmentCriteria(
             }
             difference
         }
+
+        fun <T : Comparable<T>> compareLexicographically(a: List<T>, b: List<T>): Int {
+            for ((x, y) in a.zip(b)) {
+                val cmp = x.compareTo(y)
+                if (cmp != 0) return cmp
+            }
+            return a.size.compareTo(b.size)
+        }
+
+        val descendingComparator = compareBy<List<Float>> { it.size }
+            .thenComparator { a, b ->
+                compareLexicographically(
+                    a.sortedDescending(),
+                    b.sortedDescending()
+                )
+            }
     }
 
     fun compareByColorConflict(other: PairingAssessmentCriteria):Int{

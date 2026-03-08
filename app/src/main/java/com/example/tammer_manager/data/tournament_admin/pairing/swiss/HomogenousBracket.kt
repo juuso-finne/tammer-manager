@@ -118,6 +118,10 @@ fun iterateS2Permutations(
         bracketData.remainderPairingScore.twoRoundsPriorDownfloaters +=
             candidateDownfloaters.count { roundsCompleted - 1 in it.downfloats }
 
+        bracketData.remainderPairingScore.downfloaterScores.addAll(
+            candidateDownfloaters.map { it.score }
+        )
+
         val compatibleWithLowerBrackets =
             if(isLastBracket)
                 true
