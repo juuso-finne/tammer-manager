@@ -173,9 +173,15 @@ class TournamentViewModel(
         currentRoundPairings.value.forEach { pairing ->
             val round = activeTournament.value?.roundsCompleted ?: 0
 
-            if(pairing[PlayerColor.BLACK]?.playerID != null){
-                val white = registeredPlayers.value.find { player -> player.id == pairing[PlayerColor.WHITE]!!.playerID }
-                val black = registeredPlayers.value.find { player -> player.id == pairing[PlayerColor.BLACK]!!.playerID }
+            if(
+                pairing[PlayerColor.BLACK]?.playerID != null &&
+                activeTournament.value!!.type == TournamentType.SWISS
+            ){
+                val white = registeredPlayers.value
+                    .find { player -> player.id == pairing[PlayerColor.WHITE]!!.playerID }
+
+                val black = registeredPlayers.value
+                    .find { player -> player.id == pairing[PlayerColor.BLACK]!!.playerID }
 
                 if(white!!.score > black!!.score){
                     addUpfloat(black.id, round)
