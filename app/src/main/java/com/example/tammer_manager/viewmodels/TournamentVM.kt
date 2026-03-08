@@ -1,6 +1,7 @@
 package com.example.tammer_manager.viewmodels
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +11,7 @@ import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
-import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
@@ -468,6 +469,40 @@ class TournamentViewModel(
     fun getFileList(context: Context): List<String>{
         return listTournaments(
             context = context
+        )
+    }
+
+    fun exportResults(
+        context: Context,
+        uri: Uri?,
+        onError: () -> Unit,
+    ){
+        val tieBreaks = activeTournament.value!!.tieBreaks
+        val sortedPlayers = registeredPlayers.value.sortedWith(
+            compareByDescending<RegisteredPlayer> { it.score }.thenComparator
+            { a, b ->
+                var diff = 0f
+                for (i in tieBreaks.indices) {
+                    val tieBreak = tieBreaks[i]
+                    diff = tieBreak.calculate(a, registeredPlayers.value) - tieBreak.calculate(
+                        b,
+                        registeredPlayers.value
+                    )
+                    if (diff != 0f) {
+                        break
+                    }
+                }
+                (-2 * diff).toInt()
+            }
+        )
+
+        com.example.tammer_manager.data.export_import.exportResults(
+            context = context,
+            uri = uri,
+            onError = onError,
+            players = sortedPlayers,
+            tournament = activeTournament.value!!,
+            group = currentGroup.value
         )
     }
 }

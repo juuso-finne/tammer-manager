@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.tammer_manager.data.player_import.ImportedPlayer
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.viewmodels.TournamentViewModel
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.math.NumberUtils

@@ -1,5 +1,7 @@
 package com.example.tammer_manager.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -24,16 +27,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tammer_manager.data.export_import.exportResults
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
+import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.TournamentViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Standings(
@@ -46,6 +54,21 @@ fun Standings(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val context = LocalContext.current
+            val (exportError, setExportError) = remember { mutableStateOf(false) }
+
+            val documentPicker = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.CreateDocument(
+                    mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+            ){ uri ->
+                vmTournament.exportResults(
+                    context = context,
+                    uri = uri,
+                    onError = { setExportError(true) },
+                )
+            }
+
             val activeTournament = vmTournament.activeTournament.collectAsState().value
             val tieBreaks = activeTournament!!.tieBreaks
 
@@ -91,7 +114,9 @@ fun Standings(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Row(
@@ -130,8 +155,11 @@ fun Standings(
 
 
 
-            LazyColumn(modifier = Modifier
-                .padding(horizontal = 5.dp),
+            LazyColumn(
+                modifier = Modifier
+                    .padding(horizontal = 5.dp)
+                    .weight(1f)
+                ,
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ){
               items(players.size){ i ->
@@ -145,6 +173,23 @@ fun Standings(
                   )
               }
             }
+
+            Button(onClick = {
+                documentPicker.launch(
+                    "Tournament" +
+                    LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                )
+            }) {
+                Text ("Export as xslx")
+            }
+
+            when{ exportError ->
+                ErrorDialog(
+                    onDismissRequest = { setExportError(false) },
+                    errorText = "Unable to export results to xlsx"
+                )
+            }
+
         }
     }?: NoActiveTournament()
 }
