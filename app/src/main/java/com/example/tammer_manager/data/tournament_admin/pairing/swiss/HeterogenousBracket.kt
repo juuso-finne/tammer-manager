@@ -122,7 +122,7 @@ fun iterateMdpOpponents(
     lookForBestScore: Boolean,
     maxPairs: Int,
     approvedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
-    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>,
+    disapprovedDownfloaters:Map<Float, MutableSet<Set<RegisteredPlayer>>>
 ){
     do{
         bracketData.setMdpPairs(s1, s2)

@@ -112,6 +112,12 @@ fun iterateS2Permutations(
 
         val candidateDownfloaters = s2.subList(maxPairs, s2.size).plus(limbo).sorted()
 
+        bracketData.remainderPairingScore.previousRoundDownfloaters +=
+            candidateDownfloaters.count { roundsCompleted in it.downfloats }
+
+        bracketData.remainderPairingScore.twoRoundsPriorDownfloaters +=
+            candidateDownfloaters.count { roundsCompleted - 1 in it.downfloats }
+
         val compatibleWithLowerBrackets =
             if(isLastBracket)
                 true

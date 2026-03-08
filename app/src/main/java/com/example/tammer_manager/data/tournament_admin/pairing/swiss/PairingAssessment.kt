@@ -91,6 +91,18 @@ fun assessPairing(
         output.strongColorpreferenceConflicts++
     }
 
+    if (candidate.first.score != candidate.second.score){
+        val mdpOpponent = candidate.toList().minBy { it.score }
+
+        if(roundsCompleted in mdpOpponent.upfloats){
+            output.previousRoundUpfloaters++
+        }
+
+        if(roundsCompleted - 1 in mdpOpponent.upfloats){
+          output.twoRoundsPriorUpfloaters++
+        }
+    }
+
     return output
 }
 
