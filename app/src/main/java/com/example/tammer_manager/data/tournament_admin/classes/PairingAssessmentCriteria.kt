@@ -33,7 +33,19 @@ data class PairingAssessmentCriteria(
     var twoRoundsPriorDownfloaters: Int = 0,
 
     /**Minimise the number of MDP opponents who received an upfloat two rounds before.*/
-    var twoRoundsPriorUpfloaters: Int = 0
+    var twoRoundsPriorUpfloaters: Int = 0,
+
+    /**Minimise the score differences (taken in descending order) of MDPs who received a downfloat the previous round.*/
+    val previousRoundDownfloaterScoreDiffs: MutableList<Float> = mutableListOf(),
+
+    /**Minimise the score differences (taken in descending order) of MDP opponents who received an upfloat the previous round.*/
+    val previousRoundUpfloaterScoreDiffs: MutableList<Float> = mutableListOf(),
+
+    /**Minimise the score differences (taken in descending order) of MDPs who received a downfloat two rounds before.*/
+    val twoRoundsPriorDownfloaterScoreDiffs: MutableList<Float> = mutableListOf(),
+
+    /**Minimise the score differences (taken in descending order) of MDP opponents who received an upfloat two rounds before.*/
+    val twoRoundsPriorUpfloaterScoreDiffs: MutableList<Float> = mutableListOf()
 
 ): Comparable<PairingAssessmentCriteria>{
 
@@ -49,6 +61,10 @@ data class PairingAssessmentCriteria(
         this.previousRoundUpfloaters += other.previousRoundUpfloaters
         this.twoRoundsPriorDownfloaters += other.twoRoundsPriorDownfloaters
         this.twoRoundsPriorUpfloaters += other.twoRoundsPriorUpfloaters
+        this.previousRoundDownfloaterScoreDiffs.addAll(other.previousRoundDownfloaterScoreDiffs)
+        this.previousRoundUpfloaterScoreDiffs.addAll(other.previousRoundUpfloaterScoreDiffs)
+        this.twoRoundsPriorDownfloaterScoreDiffs.addAll(other.twoRoundsPriorDownfloaterScoreDiffs)
+        this.twoRoundsPriorUpfloaterScoreDiffs.addAll(other.twoRoundsPriorUpfloaterScoreDiffs)
     }
 
     operator fun minusAssign(other: PairingAssessmentCriteria){
@@ -63,6 +79,10 @@ data class PairingAssessmentCriteria(
         this.previousRoundUpfloaters -= other.previousRoundUpfloaters
         this.twoRoundsPriorDownfloaters -= other.twoRoundsPriorDownfloaters
         this.twoRoundsPriorUpfloaters -= other.twoRoundsPriorUpfloaters
+        this.previousRoundDownfloaterScoreDiffs.removeAll(other.previousRoundDownfloaterScoreDiffs)
+        this.previousRoundUpfloaterScoreDiffs.removeAll(other.previousRoundUpfloaterScoreDiffs)
+        this.twoRoundsPriorDownfloaterScoreDiffs.removeAll(other.twoRoundsPriorDownfloaterScoreDiffs)
+        this.twoRoundsPriorUpfloaterScoreDiffs.removeAll(other.twoRoundsPriorUpfloaterScoreDiffs)
     }
 
     operator fun plus(other: PairingAssessmentCriteria): PairingAssessmentCriteria {
@@ -88,7 +108,15 @@ data class PairingAssessmentCriteria(
             twoRoundsPriorDownfloaters =
                 this.twoRoundsPriorDownfloaters + other.twoRoundsPriorDownfloaters,
             twoRoundsPriorUpfloaters =
-                this.twoRoundsPriorUpfloaters + other.twoRoundsPriorUpfloaters
+                this.twoRoundsPriorUpfloaters + other.twoRoundsPriorUpfloaters,
+            previousRoundDownfloaterScoreDiffs =
+                (this.previousRoundDownfloaterScoreDiffs + other.previousRoundDownfloaterScoreDiffs).toMutableList(),
+            previousRoundUpfloaterScoreDiffs =
+                (this.previousRoundUpfloaterScoreDiffs + other.previousRoundUpfloaterScoreDiffs).toMutableList(),
+            twoRoundsPriorDownfloaterScoreDiffs =
+                (this.twoRoundsPriorDownfloaterScoreDiffs + other.twoRoundsPriorDownfloaterScoreDiffs).toMutableList(),
+            twoRoundsPriorUpfloaterScoreDiffs =
+                (this.twoRoundsPriorUpfloaterScoreDiffs + other.twoRoundsPriorUpfloaterScoreDiffs).toMutableList()
         )
     }
 
@@ -104,6 +132,10 @@ data class PairingAssessmentCriteria(
             .thenBy { it.previousRoundUpfloaters }
             .thenBy { it.twoRoundsPriorDownfloaters }
             .thenBy { it.twoRoundsPriorUpfloaters }
+            .thenComparator { a, b -> descendingComparator.compare(a.previousRoundDownfloaterScoreDiffs, b.previousRoundDownfloaterScoreDiffs) }
+            .thenComparator { a, b -> descendingComparator.compare(a.previousRoundUpfloaterScoreDiffs, b.previousRoundUpfloaterScoreDiffs) }
+            .thenComparator { a, b -> descendingComparator.compare(a.twoRoundsPriorDownfloaterScoreDiffs, b.twoRoundsPriorDownfloaterScoreDiffs) }
+            .thenComparator { a, b -> descendingComparator.compare(a.twoRoundsPriorUpfloaterScoreDiffs, b.twoRoundsPriorUpfloaterScoreDiffs) }
         .compare(this, other)
 
     fun reset(){
