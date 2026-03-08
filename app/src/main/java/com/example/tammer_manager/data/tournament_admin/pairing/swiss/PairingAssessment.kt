@@ -93,14 +93,28 @@ fun assessPairing(
 
     if (candidate.first.score != candidate.second.score){
         val mdpOpponent = candidate.toList().minBy { it.score }
+        val mdp = candidate.toList().maxBy { it.score }
+
+        val scoreDifference = mdp.score - mdpOpponent.score
 
         if(roundsCompleted in mdpOpponent.upfloats){
             output.previousRoundUpfloaters++
+            output.previousRoundUpfloaterScoreDiffs.add(scoreDifference)
         }
 
         if(roundsCompleted - 1 in mdpOpponent.upfloats){
-          output.twoRoundsPriorUpfloaters++
+            output.twoRoundsPriorUpfloaters++
+            output.twoRoundsPriorUpfloaterScoreDiffs.add(scoreDifference)
         }
+
+        if(roundsCompleted in mdp.downfloats){
+            output.previousRoundDownfloaterScoreDiffs.add(scoreDifference)
+        }
+
+        if(roundsCompleted - 1 in mdp.downfloats){
+            output.twoRoundsPriorDownfloaterScoreDiffs.add(scoreDifference)
+        }
+
     }
 
     return output
