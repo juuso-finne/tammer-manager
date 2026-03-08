@@ -41,10 +41,9 @@ fun PlayerImport(
     ) {
         val documentPicker = rememberLauncherForActivityResult(
             ActivityResultContracts.OpenDocument()){
-            uri -> importFromExcel(
+            uri -> vmPlayerPool.importPlayers(
                 context = context,
                 uri = uri,
-                vmPlayerPool = vmPlayerPool,
                 onError = { message  -> scope.launch { snackBarHostState.showSnackbar(message) } },
                 onSuccess = { navController.navigate("enterPlayers") }
             )

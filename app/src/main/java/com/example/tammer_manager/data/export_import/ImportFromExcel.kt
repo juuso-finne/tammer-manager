@@ -9,11 +9,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class InvalidRatingException(message: String): Exception(message)
 
 fun importFromExcel(
-    vmPlayerPool: PlayerPoolViewModel,
     context: Context,
-    onError: (String) -> Unit,
-    onSuccess: () -> Unit,
-    uri: Uri?
+    uri: Uri?,
+    output: MutableList<ImportedPlayer>
 ){
     val tempList = mutableListOf<ImportedPlayer>()
     uri?.let {
@@ -22,7 +20,7 @@ fun importFromExcel(
             inputStream?.use { stream ->
                 val workbook = XSSFWorkbook(stream)
                 val sheet = workbook.getSheetAt(0)
-                val numRows = sheet.getPhysicalNumberOfRows()
+                val numRows = sheet.physicalNumberOfRows
 
                 for(i in 0..<numRows){
                     val name = sheet.getRow(i).getCell(1).toString()
@@ -44,10 +42,9 @@ fun importFromExcel(
             if (e is InvalidRatingException){
                 message = e.message.toString()
             }
-            onError(message)
-            return
+            throw Exception (message)
         }
     }
-    vmPlayerPool.setPlayerPool(tempList)
-    onSuccess()
+    output.addAll(tempList)
+    return
 }
