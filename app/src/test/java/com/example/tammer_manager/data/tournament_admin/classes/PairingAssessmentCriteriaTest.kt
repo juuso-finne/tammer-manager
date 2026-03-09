@@ -56,6 +56,30 @@ class PairingAssessmentCriteriaTest {
                 strongColorpreferenceConflicts = 1
             )
         )
+
+        assertThat(
+            PairingAssessmentCriteria(
+                downfloaterScores = mutableListOf(1f, 2f, 6f)
+            )
+        )
+        .isGreaterThan(
+            PairingAssessmentCriteria(
+                downfloaterScores = mutableListOf(3f,4f,5f)
+            )
+        )
+
+        assertThat(
+            PairingAssessmentCriteria(
+                previousRoundDownfloaterScoreDiffs = mutableListOf(1f)
+            )
+        )
+            .isGreaterThan(
+                PairingAssessmentCriteria(
+                    previousRoundUpfloaterScoreDiffs = mutableListOf(99f),
+                    twoRoundsPriorDownfloaterScoreDiffs = mutableListOf(99f),
+                    twoRoundsPriorUpfloaterScoreDiffs = mutableListOf(99f)
+                )
+            )
     }
 
     @Test

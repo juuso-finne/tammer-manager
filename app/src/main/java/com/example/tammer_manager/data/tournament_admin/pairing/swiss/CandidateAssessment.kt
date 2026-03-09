@@ -1,5 +1,6 @@
 package com.example.tammer_manager.data.tournament_admin.pairing.swiss
 
+import com.example.tammer_manager.data.tournament_admin.classes.BracketScoringData
 import com.example.tammer_manager.data.tournament_admin.classes.ColorPreference
 import com.example.tammer_manager.data.tournament_admin.classes.PairingAssessmentCriteria
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -26,6 +27,22 @@ fun firstIneligiblePair(
         }
     }
     return null
+}
+
+fun assessDownfloaters(
+    bracketData: BracketScoringData,
+    downfloaters: List<RegisteredPlayer>,
+    roundsCompleted: Int
+){
+    bracketData.remainderPairingScore.previousRoundDownfloaters +=
+        downfloaters.count { roundsCompleted in it.downfloats }
+
+    bracketData.remainderPairingScore.twoRoundsPriorDownfloaters +=
+        downfloaters.count { roundsCompleted - 1 in it.downfloats }
+
+    bracketData.remainderPairingScore.downfloaterScores.addAll(
+        downfloaters.map { it.score }
+    )
 }
 
 fun lastImperfectPair(
