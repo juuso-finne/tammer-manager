@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tammer_manager.data.export_import.exportResults
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
@@ -45,8 +44,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Standings(
-    vmTournament: TournamentViewModel,
-    modifier: Modifier = Modifier
+    vmTournament: TournamentViewModel
 ){
     vmTournament.activeTournament.collectAsState().value?.let {
         Column(
@@ -119,21 +117,22 @@ fun Standings(
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-
+                if(tieBreaks.isNotEmpty()){
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                     ){
-                    Text(
-                        style = Typography.labelLarge,
-                        text = "Show tie-breaks"
-                    )
+                        Text(
+                            style = Typography.labelLarge,
+                            text = "Show tie-breaks"
+                        )
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
 
-                    Switch(
-                        checked = showTieBreaks,
-                        onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
-                    )
+                        Switch(
+                            checked = showTieBreaks,
+                            onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
+                        )
+                    }
                 }
 
                 Row(
@@ -277,11 +276,10 @@ fun RoundResults(
 
         var resultText = "${players.indexOfFirst { it.id == match.opponentId } + 1}:"
 
-        if(match.result == .5f){
-            resultText += "½"
-        } else{
-            resultText += "${match.result.toInt()}"
-        }
+        resultText +=
+            if(match.result == .5f) "½"
+            else "${match.result.toInt()}"
+
 
         return resultText
     }
