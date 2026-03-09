@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.ui.components.ConfirmDialog
 import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
@@ -27,14 +28,13 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 @Composable
 fun EnterResults(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier.Companion
+    navController: NavController
 ) {
     vmTournament.activeTournament.collectAsState().value?.let { activeTournament ->
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.Companion.fillMaxSize(),
-            horizontalAlignment = Alignment.Companion.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
             val playerCount = vmTournament.registeredPlayers.collectAsState().value.size
@@ -44,6 +44,7 @@ fun EnterResults(
 
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
             val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
+            val (clearPairsDialog, setClearPairsDialog) = remember { mutableStateOf(false) }
 
             val isGrouped = vmTournament.isGrouped.collectAsState().value
 
@@ -89,7 +90,7 @@ fun EnterResults(
 
             if (!pairingList.isEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .padding(horizontal = 5.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -170,12 +171,25 @@ fun EnterResults(
                     ){ Text("Manual pairing") }
 
                     Button(
-                        onClick = { vmTournament.clearPairings() },
+                        onClick = { setClearPairsDialog(true) },
                         enabled = !pairingList.isEmpty()
                     ) {
                         Text("Clear pairs")
                     }
                 }
+            }
+
+            when { clearPairsDialog ->
+                ConfirmDialog(
+                    onDismissRequest = { setClearPairsDialog(false) },
+                    onConfirmRequest = {
+                        vmTournament.clearPairings()
+                        setClearPairsDialog(false)
+                    },
+                    confirmButtonText = "Yes",
+                    dismissButtonText = "No",
+                    dialogText = "Do you want to clear all pairs?"
+                )
             }
         }
     }?: NoActiveTournament()
