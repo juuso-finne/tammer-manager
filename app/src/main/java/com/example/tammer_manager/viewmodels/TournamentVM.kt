@@ -105,7 +105,6 @@ class TournamentViewModel(
         name: String,
         maxRounds: Int,
         type: TournamentType,
-        doubleRoundRobin: Boolean = false,
         tieBreaks: List<TieBreak>
     ){
         clearTournament()
@@ -113,7 +112,6 @@ class TournamentViewModel(
             name = name,
             maxRounds = maxRounds,
             type = type,
-            doubleRoundRobin = doubleRoundRobin,
             tieBreaks = tieBreaks
         )
     }
@@ -381,7 +379,7 @@ class TournamentViewModel(
                         players = registeredPlayers.value.sortedByDescending { it.rating },
                         output = newPairs,
                         roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
-                        doubleRoundRobin = activeTournament.value?.doubleRoundRobin ?: false
+                        doubleRoundRobin = activeTournament.value?.type == TournamentType.DOUBLE_ROUND_ROBIN
                     )
                 }
                 savedStateHandle["currentRoundPairings"] = newPairs

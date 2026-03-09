@@ -25,8 +25,7 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 @Composable
 fun Home(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier) {
+    navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

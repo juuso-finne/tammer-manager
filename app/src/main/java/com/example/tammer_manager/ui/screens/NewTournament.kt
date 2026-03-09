@@ -48,14 +48,13 @@ fun NewTorunament(
     val (tournamentName, setTournamentName) = remember { mutableStateOf("") }
     val (rounds, setRounds) = remember { mutableIntStateOf(0) }
     val (type, setType) = remember {mutableStateOf(TournamentType.SWISS)}
-    val (doubleRoundRobin, setDoubleRoundRobin) = remember { mutableStateOf(false) }
     val selectedTieBreaks = remember { mutableStateListOf<TieBreak>() }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         TextField(
@@ -76,12 +75,6 @@ fun NewTorunament(
                 value = if (rounds == 0) "" else rounds.toString(),
                 onValueChange = { setRounds(NumberUtils.toInt(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        } else {
-            RadioGroupDouble(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                doubleroundRobin = doubleRoundRobin,
-                setdoubleRoundRobin = setDoubleRoundRobin
             )
         }
 
@@ -107,13 +100,12 @@ fun NewTorunament(
                     name =  tournamentName,
                     maxRounds = if (type == TournamentType.SWISS) rounds else 0,
                     type = type,
-                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN,
                     tieBreaks = selectedTieBreaks
                 )
                 navController.navigate("Home")
             },
             enabled =
-                (rounds > 0 || type == TournamentType.ROUND_ROBIN) &&
+                (rounds > 0 || type != TournamentType.SWISS) &&
                 tournamentName.isNotEmpty()
             ,
             modifier = Modifier.padding(top = 10.dp)
@@ -140,15 +132,13 @@ fun RadioGroupType(
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         TournamentType.entries.forEach {
-            Row(
+            Column(
                 Modifier
                     .selectable(
                         selected = (it == selectedType),
                         onClick = { setType(it) },
                         role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    ),
             ) {
                 RadioButton(
                     selected = (it == selectedType),
@@ -157,64 +147,8 @@ fun RadioGroupType(
                 Text(
                     text = it.toString(),
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun RadioGroupDouble(
-    modifier: Modifier = Modifier,
-    doubleroundRobin: Boolean,
-    setdoubleRoundRobin: (Boolean) -> Unit
-){
-    Row (modifier = modifier
-        .fillMaxWidth()
-        .selectableGroup(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ){
-            Row(
-                Modifier
-                    .selectable(
-                        selected = (!doubleroundRobin),
-                        onClick = { setdoubleRoundRobin(false) },
-                        role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(
-                    selected = (!doubleroundRobin),
-                    onClick = null
-                )
-                Text(
-                    text = "Single",
-                    style = Typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-        Row(
-            Modifier
-                .selectable(
-                    selected = (doubleroundRobin),
-                    onClick = { setdoubleRoundRobin(true) },
-                    role = Role.RadioButton
-                )
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RadioButton(
-                selected = (doubleroundRobin),
-                onClick = null
-            )
-            Text(
-                text = "Double",
-                style = Typography.bodyLarge,
-                modifier = Modifier.padding(start = 16.dp)
-            )
         }
     }
 }

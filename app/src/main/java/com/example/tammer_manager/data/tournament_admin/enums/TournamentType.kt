@@ -10,5 +10,11 @@ enum class TournamentType {
         override fun toString(): String {
             return "Round Robin"
         }
+    },
+
+    DOUBLE_ROUND_ROBIN {
+        override fun toString(): String {
+            return "Round Robin (Double)"
+        }
     }
 }
