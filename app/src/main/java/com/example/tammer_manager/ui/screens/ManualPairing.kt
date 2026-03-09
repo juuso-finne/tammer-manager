@@ -1,6 +1,5 @@
 package com.example.tammer_manager.ui.screens
 
-import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -49,8 +48,7 @@ import com.example.tammer_manager.viewmodels.TournamentViewModel
 @Composable
 fun ManualPairing(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ){
     val currentRoundPairings by vmTournament.currentRoundPairings.collectAsState()
     val players = vmTournament.registeredPlayers.collectAsState().value.filter{it.isActive}
@@ -126,38 +124,35 @@ fun ManualPairing(
                 }
             }
         }
-
         Button(
+            enabled = unpairedPlayers.value.size < 2 && unsavedChanges,
             onClick = {
-                localPairs.clear()
-                localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
+                val localPairsCopy = localPairs.toMutableList()
+                if (unpairedPlayers.value.size == 1){
+                    val playerReceivingBye = unpairedPlayers.value[0]
+                    localPairsCopy.add(mapOf(
+                        PlayerColor.WHITE to HalfPairing(playerReceivingBye.id, 1f),
+                        PlayerColor.BLACK to HalfPairing(null, 0f)
+                    ))
+                }
+                vmTournament.setPairs(localPairsCopy)
             }
-        ){
-            Text("Clear all")
+        ) {
+            Text("Save changes")
         }
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Button(
-                enabled =
-                    unpairedPlayers.value.size < 2 &&
-                    unsavedChanges
-                ,
                 onClick = {
-                    val localPairsCopy = localPairs.toMutableList()
-                    if (unpairedPlayers.value.size == 1){
-                        val playerReceivingBye = unpairedPlayers.value[0]
-                        localPairsCopy.add(mapOf(
-                            PlayerColor.WHITE to HalfPairing(playerReceivingBye.id, 1f),
-                            PlayerColor.BLACK to HalfPairing(null, 0f)
-                        ))
-                    }
-                    vmTournament.setPairs(localPairsCopy)
+                    localPairs.clear()
+                    localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
                 }
-            ) {
-                Text("Save changes")
+            ){
+                Text("Clear all")
             }
 
             Button(
@@ -214,7 +209,7 @@ fun PlayerRow(
                 .background(color = color.colorValue)
                 .border(width = borderThickness, color = Color.Black)
                 .fillMaxHeight()
-                .layout() { measurable, constraints ->
+                .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     val currentHeight = placeable.height
 
@@ -261,7 +256,6 @@ fun PlayerRow(
 fun ManualPairingItem(
     vmTournament: TournamentViewModel,
     pairing: Pairing,
-    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
     selectPlayer: (
         color: PlayerColor,
@@ -295,7 +289,7 @@ fun ManualPairingItem(
             }
         }
 
-        Column() {
+        Column {
             IconButton(
                 onClick = { deletePair() },
                 modifier = Modifier
