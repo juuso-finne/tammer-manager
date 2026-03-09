@@ -34,6 +34,5 @@ class PlayerPoolViewModel (
         } catch(e : Exception){
             onError(e.message ?: "Error loading file")
         }
-
     }
 }

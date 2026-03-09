@@ -10,28 +10,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.tammer_manager.data.export_import.importFromExcel
+import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun PlayerImport(
     navController: NavHostController,
-    snackBarHostState: SnackbarHostState,
     vmPlayerPool: PlayerPoolViewModel,
     context: Context,
-    modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .padding(24.dp)
@@ -39,12 +35,18 @@ fun PlayerImport(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val (importError, setImportError) = remember { mutableStateOf(false) }
+        val (errorText, setErrorText) = remember { mutableStateOf("") }
+
         val documentPicker = rememberLauncherForActivityResult(
             ActivityResultContracts.OpenDocument()){
             uri -> vmPlayerPool.importPlayers(
                 context = context,
                 uri = uri,
-                onError = { message  -> scope.launch { snackBarHostState.showSnackbar(message) } },
+                onError = { message ->
+                    setErrorText(message)
+                    setImportError(true)
+                },
                 onSuccess = { navController.navigate("enterPlayers") }
             )
         }
@@ -66,6 +68,13 @@ fun PlayerImport(
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = { navController.navigate("enterPlayers") }) {
             Text("Cancel")
+        }
+
+        when { importError ->
+            ErrorDialog(
+                onDismissRequest = { setImportError(false) },
+                errorText = errorText
+            )
         }
     }
 }

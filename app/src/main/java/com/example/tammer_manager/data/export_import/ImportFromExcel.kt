@@ -3,7 +3,6 @@ package com.example.tammer_manager.data.export_import
 import android.content.Context
 import android.net.Uri
 
-import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class InvalidRatingException(message: String): Exception(message)
@@ -24,10 +23,10 @@ fun importFromExcel(
 
                 for(i in 0..<numRows){
                     val name = sheet.getRow(i).getCell(1).toString()
-                    var rating = 0
+                    var rating:Int
                     try {
                         rating = sheet.getRow(i).getCell(2).numericCellValue.toInt()
-                    } catch (e: Exception){
+                    } catch (_: Exception){
                         throw InvalidRatingException("Error! Invalid rating on row ${i + 1}")
                     }
                     tempList.add(ImportedPlayer(

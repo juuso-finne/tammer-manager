@@ -152,8 +152,6 @@ fun Standings(
                 }
             }
 
-
-
             LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 5.dp)
@@ -188,7 +186,6 @@ fun Standings(
                     errorText = "Unable to export results to xlsx"
                 )
             }
-
         }
     }?: NoActiveTournament()
 }

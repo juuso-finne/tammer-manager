@@ -64,8 +64,7 @@ fun App( context: Context) {
             composable("playerImport") { PlayerImport(
                 context = context,
                 vmPlayerPool = vmPlayerPool,
-                navController = navController,
-                snackBarHostState = snackbarHostState
+                navController = navController
             ) }
 
             composable (route = "enterPlayers") { EnterPlayers(

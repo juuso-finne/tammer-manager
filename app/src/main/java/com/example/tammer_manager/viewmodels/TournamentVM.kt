@@ -262,7 +262,7 @@ class TournamentViewModel(
     }
 
     fun findPlayerById(id: Int): RegisteredPlayer?{
-        return registeredPlayers.value.find(){it.id == id}
+        return registeredPlayers.value.find{it.id == id}
     }
 
     fun removePlayer(index: Int){
