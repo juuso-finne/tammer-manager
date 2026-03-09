@@ -17,17 +17,17 @@ fun generateRoundRobinPairs(
     val playerParity = players.size % 2
 
     if(playerParity == 1){
-        a.add(0, null)
+        a.add(null)
     }
 
     repeat(roundsCompleted){
-        rotate(a,b)
+        rotate(a, b, playerParity)
     }
 
     for (i in a.indices){
         if(a[i] == null){
             output.add(mapOf(
-                Pair(PlayerColor.WHITE, HalfPairing(b[0]!!.id, 1f)),
+                Pair(PlayerColor.WHITE, HalfPairing(b[i]!!.id, 1f)),
                 Pair(PlayerColor.BLACK, HalfPairing(null, 0f))
             ))
             continue
@@ -36,7 +36,7 @@ fun generateRoundRobinPairs(
         if (i > 0){
             val indexParity = i % 2
 
-            if(indexParity == playerParity){
+            if(indexParity != playerParity){
                 output.add(mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(a[i]!!.id)),
                     Pair(PlayerColor.BLACK, HalfPairing(b[i]!!.id))
@@ -86,9 +86,13 @@ fun generateRoundRobinPairs(
     }
 }
 
-fun rotate(a: MutableList<RegisteredPlayer?>, b: MutableList<RegisteredPlayer?>){
+fun rotate(
+    a: MutableList<RegisteredPlayer?>,
+    b: MutableList<RegisteredPlayer?>,
+    playerParity: Int
+){
     if(a.size > 1){
-        a.removeAt(a.indices.last).also { b.add(it) }
-        b.removeAt(0).also { a.add(1, it) }
+        a.removeAt(a.indices.last - playerParity).also { b.add(it) }
+        b.removeAt(0).also { a.add( (playerParity + 1) % 2, it) }
     }
 }
