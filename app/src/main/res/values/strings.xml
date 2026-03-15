@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Tammer-Manager</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="group_x">Group %s</string>
+    <string name="choose_group">Choose group</string>
+    <string name="no_active_tournament">No active tournament</string>
+    <string name="main_menu">Main menu</string>
+    <string name="enter_players">Enter players</string>
+    <string name="enter_results">Enter results</string>
+    <string name="standings">Standings</string>
+    <string name="close_menu">Close menu</string>
 </resources>

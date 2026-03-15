@@ -16,20 +16,13 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import com.example.tammer_manager.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-val items = listOf(
-    MenuItem("home", "Main menu"),
-    MenuItem("enterPlayers", "Enter players"),
-    MenuItem("enterResults", "Enter results"),
-    MenuItem("standings", "Standings")
-)
-
 
 @Composable
 fun NavigationMenu(
@@ -62,6 +55,14 @@ fun NavigationList(
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
+
+    val items = listOf(
+        MenuItem("home", stringResource(R.string.main_menu)),
+        MenuItem("enterPlayers", stringResource(R.string.enter_players)),
+        MenuItem("enterResults", stringResource(R.string.enter_results)),
+        MenuItem("standings", stringResource(R.string.standings))
+    )
+
     LazyColumn(modifier) {
         item{
             CloseMenuButton(drawerState, scope)
@@ -100,7 +101,7 @@ fun CloseMenuButton(
         ){
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close menu"
+                contentDescription = stringResource(R.string.close_menu)
             )
         }
         HorizontalDivider()

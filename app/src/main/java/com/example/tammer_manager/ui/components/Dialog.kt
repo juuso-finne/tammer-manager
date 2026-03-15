@@ -9,6 +9,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.tammer_manager.R
 
 @Composable
 fun ErrorDialog(
@@ -20,10 +22,10 @@ fun ErrorDialog(
         confirmButton = { TextButton(
             onClick = { onDismissRequest() }
         ) {
-            Text("Ok")
+            Text(stringResource(R.string.ok))
         }},
         text = { Text(errorText) },
-        icon = { Icon(imageVector = Icons.Default.Info, contentDescription = "Error") }
+        icon = { Icon(imageVector = Icons.Default.Info, contentDescription = stringResource(R.string.error)) }
     )
 }
 
@@ -31,8 +33,8 @@ fun ErrorDialog(
 fun ConfirmDialog(
     onDismissRequest: () -> Unit,
     onConfirmRequest: () -> Unit,
-    confirmButtonText: String = "OK",
-    dismissButtonText : String = "Cancel",
+    confirmButtonText: String = stringResource(R.string.ok),
+    dismissButtonText : String = stringResource(R.string.cancel),
     dialogText: String
 ){
     AlertDialog(
@@ -51,6 +53,6 @@ fun ConfirmDialog(
         }},
 
         text = { Text(dialogText) },
-        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Confirmation") }
+        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = stringResource(R.string.confirmation)) }
     )
 }
