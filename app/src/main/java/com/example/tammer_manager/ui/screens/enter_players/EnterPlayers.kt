@@ -1,6 +1,5 @@
 package com.example.tammer_manager.ui.screens.enter_players
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -26,7 +25,6 @@ fun EnterPlayers(
     vmTournament: TournamentViewModel,
     navController: NavController,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier
 ) {
     vmTournament.activeTournament.collectAsState().value?.let {
         val (selectedTab, setSelectedTab) = remember { mutableStateOf(SelectedTab.ENTER_FROM_LIST) }

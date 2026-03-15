@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun NavigationMenu(
     drawerState: DrawerState,
-    modifier: Modifier = Modifier,
     itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp, color = Color.Black),
     onItemClick: (String) -> Unit,
     scope: CoroutineScope,
@@ -70,7 +69,7 @@ fun NavigationList(
             CloseMenuButton(drawerState, scope)
         }
         items(items.size) { i ->
-            Column() {
+            Column {
                 val item = items[i]
                 Row(
                     modifier = Modifier.fillMaxWidth()
@@ -98,7 +97,7 @@ fun CloseMenuButton(
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
-    Column() {
+    Column {
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)

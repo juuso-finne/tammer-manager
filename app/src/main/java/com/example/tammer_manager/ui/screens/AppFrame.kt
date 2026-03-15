@@ -42,7 +42,6 @@ fun AppFrame(
 
     NavigationMenu(
         drawerState = drawerState,
-        modifier =  modifier,
         onItemClick = {route ->
             navController.navigate(route)
             scope.launch { drawerState.close() }

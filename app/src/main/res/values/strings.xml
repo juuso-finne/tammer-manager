@@ -12,4 +12,21 @@
     <string name="enter_results">Enter results</string>
     <string name="standings">Standings</string>
     <string name="close_menu">Close menu</string>
+    <string name="family_name">Family name</string>
+    <string name="given_name">Given name</string>
+    <string name="rating">Rating</string>
+    <string name="x_added">%s Added</string>
+    <string name="enter_player">Enter player</string>
+    <string name="import_player_list">Import player list</string>
+    <string name="name">Name</string>
+    <string name="search_player">Search player</string>
+    <string name="add_player_to_tournament">Add player to tournament</string>
+    <string name="active">Active</string>
+    <string name="player_is_active">Player is active</string>
+    <string name="player_is_not_active">Player is not active</string>
+    <string name="reactivate_player">Reactivate player</string>
+    <string name="remove_player">Remove player</string>
+    <string name="enter_from_list">Enter from list</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="view_remove_players">View/remove players (%s)</string>
 </resources>
