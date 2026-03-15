@@ -18,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.components.ConfirmDialog
 import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.viewmodels.TournamentViewModel
@@ -28,8 +30,7 @@ import com.example.tammer_manager.ui.theme.Typography
 @Composable
 fun SaveTournament(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ){
     Column(
         modifier = Modifier
@@ -47,21 +48,21 @@ fun SaveTournament(
         val context = LocalContext.current
 
         Text(
-            text ="Save as",
+            text = stringResource(R.string.save_as),
             style = Typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         TextField(
-            label = { Text("Filename") },
+            label = { Text(stringResource(R.string.filename)) },
             value = filename,
             onValueChange = { setFilename(it) },
         )
 
         if(illegalCharacters){
             Text(
-                text = "Filename can only contain Letters A-Ö, numbers, dashes(-) and underscores(_)",
+                text = stringResource(R.string.error_filename_chars),
                 color = Color.Red,
                 style = Typography.labelSmall,
                 modifier = Modifier.padding(start = 15.dp)
@@ -86,7 +87,7 @@ fun SaveTournament(
                     )
                 }
             ){
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
 
             Button(
@@ -94,7 +95,7 @@ fun SaveTournament(
                     navController.navigate("home")
                 }
             ){
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
 
@@ -110,16 +111,16 @@ fun SaveTournament(
                         context = context
                     )
                 },
-                confirmButtonText = "Yes",
-                dismissButtonText = "No",
-                dialogText = "File '$filename' already exists. Do you want to replace the file?"
+                confirmButtonText = stringResource(R.string.yes),
+                dismissButtonText = stringResource(R.string.no),
+                dialogText = stringResource(R.string.confirm_overwrite_x, filename)
             )
         }
 
         when{ errorDialog ->
             ErrorDialog(
                 onDismissRequest = { setErrorDialog(false) },
-                errorText = "Unable to save file $filename"
+                errorText = stringResource(R.string.error_saving_x, filename)
             )
         }
     }
