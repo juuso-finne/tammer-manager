@@ -15,8 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.ui.components.ConfirmDialog
 import com.example.tammer_manager.ui.components.ErrorDialog
@@ -52,7 +54,7 @@ fun EnterResults(
                 pairingError ->
                     ErrorDialog(
                         onDismissRequest = { setPairingError(false) },
-                        errorText = "Unable to complete automatic pairing."
+                        errorText = stringResource(R.string.error_auto_pairing)
                     )
             }
 
@@ -62,7 +64,7 @@ fun EnterResults(
 
             if(playerCount <= 1){
                 Text(
-                    text ="Need more players to start tournament",
+                    text = stringResource(R.string.need_more_players),
                     style = Typography.headlineMedium
                 )
             } else if (completedRounds < maxRounds){
@@ -76,14 +78,14 @@ fun EnterResults(
                 )
             } else{
                 Text(
-                    text ="Tournament finished",
+                    text = stringResource(R.string.tounrament_finished),
                     style = Typography.headlineMedium
                 )
             }
 
             if (loadingPairs) {
                 Text(
-                    text = "Generating pairs...",
+                    text = stringResource(R.string.generating_pairs),
                     style = Typography.headlineSmall
                 )
             }
@@ -120,13 +122,13 @@ fun EnterResults(
                 Button(
                     onClick = { navController.navigate("standings") }
                 ) {
-                    Text("View results")
+                    Text(stringResource(R.string.view_results))
                 }
 
                 Button(
                     onClick = { navController.navigate("editResults") }
                 ) {
-                    Text("Edit results")
+                    Text(stringResource(R.string.edit_results))
                 }
             } else {
                 Row(
@@ -148,7 +150,7 @@ fun EnterResults(
                             pairingList.isEmpty() &&
                             !loadingPairs &&
                             playerCount > 1
-                    ) { Text("Generate pairs") }
+                    ) { Text(stringResource(R.string.generate_pairs)) }
 
                     Button(
                         enabled =
@@ -159,7 +161,7 @@ fun EnterResults(
                             }
                             && !pairingList.isEmpty(),
                         onClick = { vmTournament.finishRound() }
-                    ) { Text("Finish round") }
+                    ) { Text(stringResource(R.string.finish_round)) }
                 }
 
                 Row(
@@ -168,13 +170,13 @@ fun EnterResults(
                 ){
                     Button(
                         onClick = { navController.navigate("manualPairing") }
-                    ){ Text("Manual pairing") }
+                    ){ Text(stringResource(R.string.manual_pairing)) }
 
                     Button(
                         onClick = { setClearPairsDialog(true) },
                         enabled = !pairingList.isEmpty()
                     ) {
-                        Text("Clear pairs")
+                        Text(stringResource(R.string.clear_pairs))
                     }
                 }
             }
@@ -186,9 +188,9 @@ fun EnterResults(
                         vmTournament.clearPairings()
                         setClearPairsDialog(false)
                     },
-                    confirmButtonText = "Yes",
-                    dismissButtonText = "No",
-                    dialogText = "Do you want to clear all pairs?"
+                    confirmButtonText = stringResource(R.string.yes),
+                    dismissButtonText = stringResource(R.string.no),
+                    dialogText = stringResource(R.string.confirm_clear_all)
                 )
             }
         }

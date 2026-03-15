@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Tammer-Manager</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -29,4 +29,22 @@
     <string name="enter_from_list">Enter from list</string>
     <string name="enter_manually">Enter manually</string>
     <string name="view_remove_players">View/remove players (%s)</string>
+    <string name="save_changes">Save changes</string>
+    <string name="reset_changes">Reset changes</string>
+    <string name="error_auto_pairing">Unable to complete automatic pairing.</string>
+    <string name="need_more_players">Need more players to start tournament</string>
+    <string name="tounrament_finished">Tournament finished</string>
+    <string name="generating_pairs" tools:ignore="TypographyEllipsis">Generating pairs...</string>
+    <string name="view_results">View results</string>
+    <string name="edit_results">Edit results</string>
+    <string name="generate_pairs">Generate Pairs</string>
+    <string name="finish_round">Finish round</string>
+    <string name="clear_pairs">Clear pairs</string>
+    <string name="manual_pairing">Manual pairing</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_clear_all">Do you want to clear all pairs?</string>
+    <string name="enter_result_for_pair_x">Enter result for pair %s</string>
+    <string name="previous_round">Previous round</string>
+    <string name="next_round">Next round</string>
 </resources>

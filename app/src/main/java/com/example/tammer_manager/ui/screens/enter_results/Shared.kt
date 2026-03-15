@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
@@ -43,7 +45,6 @@ fun PairingItem(
     index: Int,
     vmTournament: TournamentViewModel,
     pairing: Pairing,
-    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
     setScore: (Float, Float) -> Unit
 ) {
@@ -72,7 +73,7 @@ fun PairingItem(
             }
         }
 
-        Column() {
+        Column {
             IconButton(
                 onClick = { setIsMenuOpen(!isMenuOpen) },
                 modifier = Modifier
@@ -85,14 +86,13 @@ fun PairingItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "Enter result for pair ${index + 1}",
+                    contentDescription = stringResource(R.string.enter_result_for_pair_x, index + 1),
                     tint = Color.White
                 )
             }
             ScoringMenu(
                 isOpen = isMenuOpen,
                 setIsOpen = setIsMenuOpen,
-                modifier = Modifier,
                 setScore = setScore
             )
         }
@@ -132,7 +132,7 @@ fun PlayerScoreRow(
                 .background(color = color.colorValue)
                 .border(width = borderThickness, color = Color.Black)
                 .fillMaxHeight()
-                .layout() { measurable, constraints ->
+                .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     val currentHeight = placeable.height
 
@@ -168,8 +168,7 @@ fun PlayerScoreRow(
 fun ScoringMenu(
     setScore: (Float, Float) -> Unit,
     isOpen: Boolean,
-    setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    setIsOpen: (Boolean) -> Unit
 ) {
     DropdownMenu(
         expanded = isOpen,
@@ -201,8 +200,7 @@ fun ScoringMenuItem(
     pointsWhite: Float,
     pointsBlack: Float,
     setScore: (Float, Float) -> Unit,
-    setIsOpen: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    setIsOpen: (Boolean) -> Unit
 ) {
     val whitePointsString = if (pointsWhite == 0.5f) "½" else "%,.0f".format(locale = null, pointsWhite)
     val blackPointsString = if (pointsBlack == 0.5f) "½" else "%,.0f".format(locale = null, pointsBlack)
@@ -243,7 +241,7 @@ fun HeaderRow(
                     Icon(
                         tint = Color.Blue,
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Previous round"
+                        contentDescription = stringResource(R.string.previous_round)
                     )
                 }
             }
@@ -264,11 +262,10 @@ fun HeaderRow(
                     Icon(
                         tint = Color.Blue,
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Next round"
+                        contentDescription = stringResource(R.string.next_round)
                     )
                 }
             }
         }
-
     }
 }

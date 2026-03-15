@@ -16,8 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.reconstructPairings
@@ -81,7 +83,7 @@ fun EditResults(
 
         if (!localResults.isEmpty()) {
             LazyColumn(
-                modifier = Modifier.Companion
+                modifier = Modifier
                     .padding(horizontal = 5.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -123,14 +125,14 @@ fun EditResults(
                 )},
                 enabled = unsavedChanges
             ){
-                Text("Save changes")
+                Text(stringResource(R.string.save_changes))
             }
 
             Button(
                 onClick = {setLocalResults(reconstructedPairings)},
                 enabled = unsavedChanges
             ){
-                Text("Reset changes")
+                Text(stringResource(R.string.reset_changes))
             }
         }
 
