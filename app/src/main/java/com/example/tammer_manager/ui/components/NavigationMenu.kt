@@ -1,6 +1,5 @@
 package com.example.tammer_manager.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +10,14 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -28,7 +30,7 @@ import kotlinx.coroutines.launch
 fun NavigationMenu(
     drawerState: DrawerState,
     modifier: Modifier = Modifier,
-    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
+    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp, color = Color.Black),
     onItemClick: (String) -> Unit,
     scope: CoroutineScope,
     content: @Composable () -> Unit,
@@ -71,15 +73,18 @@ fun NavigationList(
             Column() {
                 val item = items[i]
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onItemClick(item.route) }
-                        .padding(16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = item.text,
-                        style = itemTextStyle
-                    )
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onItemClick(item.route) }
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = item.text,
+                            style = itemTextStyle
+                        )
+                    }
                 }
 
                 HorizontalDivider()
@@ -96,13 +101,17 @@ fun CloseMenuButton(
     Column() {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { scope.launch { drawerState.close() } }
-            .padding(16.dp)
+            .padding(top = 16.dp)
         ){
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(R.string.close_menu)
-            )
+            IconButton(
+                onClick = { scope.launch { drawerState.close() } }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.close_menu)
+                )
+            }
+
         }
         HorizontalDivider()
     }
