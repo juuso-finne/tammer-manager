@@ -1,20 +1,11 @@
 package com.example.tammer_manager.data.tournament_admin.enums
 
-enum class TournamentType {
-    SWISS {
-        override fun toString(): String {
-            return "Swiss"
-        }
-    },
-    ROUND_ROBIN {
-        override fun toString(): String {
-            return "Round Robin"
-        }
-    },
+import androidx.annotation.StringRes
+import com.example.tammer_manager.R
 
-    DOUBLE_ROUND_ROBIN {
-        override fun toString(): String {
-            return "Round Robin (Double)"
-        }
-    }
+enum class TournamentType(@param:StringRes val label: Int) {
+    SWISS(R.string.tournament_type_swiss),
+    ROUND_ROBIN(R.string.tournament_type_round_robin),
+
+    DOUBLE_ROUND_ROBIN(R.string.tournament_type_double_round_robin)
 }

@@ -88,4 +88,7 @@
     <string name="standings_after_round_x">Standings after round %d</string>
     <string name="export_as_xlsx">Export as .xlsx</string>
     <string name="error_export">Unable to export results</string>
+    <string name="tournament_type_swiss">Swiss</string>
+    <string name="tournament_type_round_robin">Round robin</string>
+    <string name="tournament_type_double_round_robin">Round robin (double)</string>
 </resources>

@@ -147,7 +147,7 @@ fun RadioGroupType(
                     onClick = null
                 )
                 Text(
-                    text = it.toString(),
+                    text = stringResource(it.label),
                     style = Typography.bodyLarge,
                 )
             }
