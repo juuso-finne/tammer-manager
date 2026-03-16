@@ -34,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
@@ -93,14 +95,14 @@ fun ManualPairing(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add new pair",
+                    contentDescription = stringResource(R.string.add_new_pair),
                     tint = if (addButtonEnabled) Color.Blue else Color.DarkGray,
                 )
             }
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Pairs remaining: ${remainingPairs.value}",
+                text = stringResource(R.string.pairs_remaining, remainingPairs.value),
                 style = Typography.labelMedium
             )
         }
@@ -138,7 +140,7 @@ fun ManualPairing(
                 vmTournament.setPairs(localPairsCopy)
             }
         ) {
-            Text("Save changes")
+            Text(stringResource(R.string.save_changes))
         }
 
         Row(
@@ -152,7 +154,7 @@ fun ManualPairing(
                     localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
                 }
             ){
-                Text("Clear all")
+                Text(stringResource(R.string.clear_all))
             }
 
             Button(
@@ -162,12 +164,12 @@ fun ManualPairing(
                     localPairs.addAll(globalPairs)
                 }
             ){
-                Text("Reset changes")
+                Text(stringResource(R.string.reset_changes))
             }
         }
 
         Button(onClick = { navController.navigate("enterResults") }){
-            Text ("Return")
+            Text (stringResource(R.string.return_))
         }
     }
 }
@@ -238,7 +240,7 @@ fun PlayerRow(
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Choose player",
+                contentDescription = stringResource(R.string.choose_player),
                 tint = Color.Blue
             )
         }
@@ -302,7 +304,7 @@ fun ManualPairingItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete pair",
+                    contentDescription = stringResource(R.string.delete_pair),
                     tint = Color.Blue
                 )
             }
@@ -353,7 +355,7 @@ fun PlayerDropdownItem(
         text = {
             Text(
                 text =
-                    if (player == null) "<Empty>"
+                    if (player == null) stringResource(R.string.empty)
                     else "${player.fullName}, ${player.rating} ($scoreAsText)",
                 style = Typography.bodyLarge
             )

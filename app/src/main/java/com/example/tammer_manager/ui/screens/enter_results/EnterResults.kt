@@ -78,7 +78,7 @@ fun EnterResults(
                 )
             } else{
                 Text(
-                    text = stringResource(R.string.tounrament_finished),
+                    text = stringResource(R.string.tournament_finished),
                     style = Typography.headlineMedium
                 )
             }

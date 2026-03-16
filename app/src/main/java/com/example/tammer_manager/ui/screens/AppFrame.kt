@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 fun AppFrame(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -52,7 +51,6 @@ fun AppFrame(
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 AppTitleBar(
-                    modifier = modifier,
                     openDrawer = {scope.launch { drawerState.open() }}
                 )
             }
@@ -65,7 +63,6 @@ fun AppFrame(
 
 @Composable
 fun AppTitleBar(
-    modifier: Modifier = Modifier,
     openDrawer: () -> Unit
     ) {
     Row(
@@ -81,7 +78,7 @@ fun AppTitleBar(
             ){
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "Open menu",
+                    contentDescription = stringResource(R.string.open_nav_menu),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }

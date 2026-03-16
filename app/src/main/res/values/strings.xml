@@ -28,13 +28,13 @@
     <string name="remove_player">Remove player</string>
     <string name="enter_from_list">Enter from list</string>
     <string name="enter_manually">Enter manually</string>
-    <string name="view_remove_players">View/remove players (%s)</string>
+    <string name="view_remove_players">View/remove players (%d)</string>
     <string name="save_changes">Save changes</string>
     <string name="reset_changes">Reset changes</string>
     <string name="error_auto_pairing">Unable to complete automatic pairing.</string>
     <string name="need_more_players">Need more players to start tournament</string>
-    <string name="tounrament_finished">Tournament finished</string>
-    <string name="generating_pairs" tools:ignore="TypographyEllipsis">Generating pairs...</string>
+    <string name="tournament_finished">Tournament finished</string>
+    <string name="generating_pairs">Generating pairs...</string>
     <string name="view_results">View results</string>
     <string name="edit_results">Edit results</string>
     <string name="generate_pairs">Generate Pairs</string>
@@ -44,7 +44,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_clear_all">Do you want to clear all pairs?</string>
-    <string name="enter_result_for_pair_x">Enter result for pair %s</string>
+    <string name="enter_result_for_pair_x">Enter result for pair %d</string>
     <string name="previous_round">Previous round</string>
     <string name="next_round">Next round</string>
     <string name="saved_tournaments">Saved tournaments</string>
@@ -55,14 +55,37 @@
     <string name="delete">Delete</string>
     <string name="error_deleting_x">Unable to delete file %s</string>
     <string name="confirm_delete_single">Delete %s?</string>
-    <string name="confirm_delete_multiple">Delete %s files?</string>
+    <string name="confirm_delete_multiple">Delete %d files?</string>
     <string name="select_all">Select all</string>
-    <string name="save_as">Save as</string>
+    <string name="save_as">Save as...</string>
     <string name="filename">Filename</string>
-    <string name="error_filename_chars">
-        Filename can only contain Letters A-Ö,
-        numbers, dashes(-) and underscores(_)
-    </string>
+    <string name="error_filename_chars">Filename can only contain Letters A-Ö,numbers, dashes(-) and underscores(_)</string>
     <string name="confirm_overwrite_x">File %s already exists. Do you want to replace the file?</string>
     <string name="error_saving_x">Unable to save file %s</string>
+    <string name="open_nav_menu">Open navigation menu</string>
+    <string name="x_of_y_rounds_played">%1s/%2s rounds played</string>
+    <string name="new_tournament">New tournament</string>
+    <string name="split_tournament">Split tournament</string>
+    <string name="add_new_pair">Add new pair</string>
+    <string name="pairs_remaining">Pairs remaining: %d</string>
+    <string name="clear_all">Clear all</string>
+    <string name="return_">Return</string>
+    <string name="choose_player">Choose player</string>
+    <string name="delete_pair">Delete pair</string>
+    <string name="empty">&lt;empty&gt;</string>
+    <string name="tournament_name">Tournament name</string>
+    <string name="rounds">Rounds</string>
+    <string name="create_tournament">Create tournament</string>
+    <string name="tie_break_x">Tie-break %1$d:</string>
+    <string name="select">&lt;select&gt;</string>
+    <string name="choose_tie_break">Choose tie-break</string>
+    <string name="remove">&lt;remove&gt;</string>
+    <string name="import_from">Import from:</string>
+    <string name="xlsx_tammer_sh">.xlsx(TammSh)</string>
+    <string name="group">Group</string>
+    <string name="split">Split</string>
+    <string name="final_standings">Final standings</string>
+    <string name="standings_after_round_x">Standings after round %d</string>
+    <string name="export_as_xlsx">Export as .xlsx</string>
+    <string name="error_export">Unable to export results</string>
 </resources>

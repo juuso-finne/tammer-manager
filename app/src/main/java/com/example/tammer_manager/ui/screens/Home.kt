@@ -14,8 +14,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.components.GroupSelector
@@ -39,7 +41,9 @@ fun Home(
         val context = LocalContext.current
 
         Text(
-            text = if(tournament != null) "${tournament.name}:" else "No active tournament",
+            text = if(tournament != null) "${tournament.name}:" else stringResource(
+                R.string.no_active_tournament
+            ),
             style = Typography.bodyLarge
         )
 
@@ -50,8 +54,12 @@ fun Home(
         Text(
             text =
                 if (tournament != null && tournament.roundsCompleted < tournament.maxRounds)
-                    "${tournament.roundsCompleted}/${tournament.maxRounds} rounds played"
-                else if(tournament != null && tournament.maxRounds != 0) "Tournament complete"
+                    stringResource(
+                        R.string.x_of_y_rounds_played,
+                        tournament.roundsCompleted,
+                        tournament.maxRounds
+                    )
+                else if(tournament != null && tournament.maxRounds != 0) stringResource(R.string.tournament_finished)
                 else ""
             ,
             style = Typography.bodyLarge
@@ -66,7 +74,7 @@ fun Home(
             Button(
                 onClick = { navController.navigate("newTournament") }
             ) {
-                Text("New tournament")
+                Text(stringResource(R.string.new_tournament))
             }
 
             if (
@@ -78,7 +86,7 @@ fun Home(
                 Button(
                     onClick = { navController.navigate("splitTournament") }
                 ) {
-                    Text("Split tournament")
+                    Text(stringResource(R.string.split_tournament))
                 }
             }
         }
@@ -91,20 +99,20 @@ fun Home(
                 onClick = { navController.navigate("saveTournament") },
                 enabled = tournament != null
             ){
-                Text("Save as...")
+                Text(stringResource(R.string.save_as))
             }
 
             Button (
                 onClick = { vmTournament.save(context) },
                 enabled = tournament != null && vmTournament.filename.collectAsState().value.isNotEmpty()
             ){
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
 
             Button (
                 onClick = { navController.navigate("fileBrowser") },
             ){
-                Text("Load")
+                Text(stringResource(R.string.load))
             }
         }
 

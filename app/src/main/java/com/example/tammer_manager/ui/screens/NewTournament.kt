@@ -30,10 +30,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.theme.Typography
@@ -58,7 +60,7 @@ fun NewTorunament(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         TextField(
-            label = { Text("Tournament name") },
+            label = { Text(stringResource(R.string.tournament_name)) },
             value = tournamentName,
             onValueChange = { setTournamentName(it) },
         )
@@ -71,7 +73,7 @@ fun NewTorunament(
 
         if(type == TournamentType.SWISS){
             TextField(
-                label = { Text("Rounds") },
+                label = { Text(stringResource(R.string.rounds)) },
                 value = if (rounds == 0) "" else rounds.toString(),
                 onValueChange = { setRounds(NumberUtils.toInt(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -102,7 +104,7 @@ fun NewTorunament(
                     type = type,
                     tieBreaks = selectedTieBreaks
                 )
-                navController.navigate("Home")
+                navController.navigate("home")
             },
             enabled =
                 (rounds > 0 || type != TournamentType.SWISS) &&
@@ -110,12 +112,12 @@ fun NewTorunament(
             ,
             modifier = Modifier.padding(top = 10.dp)
         )
-        { Text("Create tournament") }
+        { Text(stringResource(R.string.create_tournament)) }
 
         Button(
-            onClick = { navController.navigate("Home") }
+            onClick = { navController.navigate("home") }
         ){
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
     }
 }
@@ -168,7 +170,7 @@ fun TieBreakSelector(
     ){
 
         Text(
-            text = "Tie-break ${index + 1}:",
+            text = stringResource(R.string.tie_break_x, index + 1),
             style = Typography.bodyLarge
         )
 
@@ -188,7 +190,7 @@ fun TieBreakSelector(
                 style = Typography.bodyLarge,
                 text =
                     if(selectedTieBreaks.size > index) selectedTieBreaks[index].toString()
-                    else "<select>"
+                    else stringResource(R.string.select)
             )
 
             IconButton(
@@ -198,7 +200,7 @@ fun TieBreakSelector(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Choose tie-break",
+                    contentDescription = stringResource(R.string.choose_tie_break),
                     tint = Color.Blue
                 )
             }
@@ -210,7 +212,7 @@ fun TieBreakSelector(
         ){
             if(selectedTieBreaks.size > index){
                 DropdownMenuItem(
-                    text = { Text ("<remove>") },
+                    text = { Text (stringResource(R.string.remove)) },
                     onClick = {
                         selectedTieBreaks.removeAt(index)
                         setIsOpen(false)

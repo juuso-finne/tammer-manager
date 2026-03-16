@@ -16,11 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
+import com.example.tammer_manager.R
 
 @Composable
 fun PlayerImport(
@@ -51,7 +53,7 @@ fun PlayerImport(
             )
         }
         Text(
-            text = "Import from:",
+            text = stringResource(R.string.import_from),
             fontSize = 32.sp
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -63,11 +65,11 @@ fun PlayerImport(
                 ))
             }
         ) {
-            Text(".xlsx file (TammerSh)")
+            Text(stringResource(R.string.xlsx_tammer_sh))
         }
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = { navController.navigate("enterPlayers") }) {
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
 
         when { importError ->

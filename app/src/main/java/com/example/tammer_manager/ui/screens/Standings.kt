@@ -28,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
@@ -101,9 +103,9 @@ fun Standings(
 
             Text(
                 text =
-                    if (completedRounds >= maxRounds && maxRounds != 0) "Final standings"
-                    else if (completedRounds != 0) "Standings after round $completedRounds"
-                    else "Standings",
+                    if (completedRounds >= maxRounds && maxRounds != 0) stringResource(R.string.final_standings)
+                    else if (completedRounds != 0) stringResource(R.string.standings_after_round_x, completedRounds)
+                    else stringResource(R.string.standings),
                 style = Typography.headlineMedium
             )
 
@@ -177,13 +179,13 @@ fun Standings(
                     LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
                 )
             }) {
-                Text ("Export as xslx")
+                Text (stringResource(R.string.export_as_xlsx))
             }
 
             when{ exportError ->
                 ErrorDialog(
                     onDismissRequest = { setExportError(false) },
-                    errorText = "Unable to export results to xlsx"
+                    errorText = stringResource(R.string.error_export)
                 )
             }
         }
