@@ -217,6 +217,10 @@ class TournamentStateHandler(
         }
     }
 
+    fun setPairs(newPairs: PairingList){
+        savedStateHandle["currentRoundPairings"] = newPairs
+    }
+
     fun generatePairs(
         onError: () -> Unit,
         onSuccess: () -> Unit

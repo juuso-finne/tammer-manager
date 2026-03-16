@@ -5,29 +5,20 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
 import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.file_management.deleteTournament
 import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
-import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
-import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
-import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.PairingList
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.Tournament
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
-import com.example.tammer_manager.data.tournament_admin.pairing.generateRoundRobinPairs
-import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
 import com.example.tammer_manager.viewmodels.TournamentVMState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class TournamentViewModel(
     private val savedStateHandle: SavedStateHandle
@@ -71,17 +62,14 @@ class TournamentViewModel(
         initialValue = mapOf()
     )
 
-    fun clearTournament(){
-        savedStateHandle["tournament"] = null
-        savedStateHandle["registeredPlayers"] = listOf<RegisteredPlayer>()
-        savedStateHandle["nextPlayerId"] = 0
-        savedStateHandle["currentRoundPairings"] = listOf<RegisteredPlayer>()
-        savedStateHandle["filename"] = ""
-        savedStateHandle["isGrouped"] = false
-        savedStateHandle["currentGroup"] = ""
-        savedStateHandle["groupMap"] = mapOf<String, TournamentVMState>()
-    }
-
+    private val vmStateHandler = VMStateHandler(savedStateHandle)
+    private val playerStateHandler = PlayerStateHandler(savedStateHandle)
+    private val tournamentStateHandler = TournamentStateHandler(
+        savedStateHandle = savedStateHandle,
+        viewModelScope = viewModelScope,
+        playerStateHandler = playerStateHandler,
+        vmStateHandler = vmStateHandler
+    )
     fun setVMState(data: TournamentVMState){
         savedStateHandle["tournament"] = data.tournament
         savedStateHandle["registeredPlayers"] = data.registeredPlayers
@@ -108,8 +96,7 @@ class TournamentViewModel(
         type: TournamentType,
         tieBreaks: List<TieBreak>
     ){
-        clearTournament()
-        savedStateHandle["tournament"] = Tournament(
+        tournamentStateHandler.initateTournament(
             name = name,
             maxRounds = maxRounds,
             type = type,
@@ -119,122 +106,17 @@ class TournamentViewModel(
 
     fun splitTournament(
         updatedPlayerList: List<RegisteredPlayer>
-    ){
-        savedStateHandle["isGrouped"] = true
-
-
-        savedStateHandle["groupMap"] = updatedPlayerList.associateBy(
-            keySelector = {updatedPlayer -> updatedPlayer.group},
-            valueTransform = {updatedPlayer -> getVMState().copy(
-                registeredPlayers = updatedPlayerList.filter{it.group == updatedPlayer.group},
-                currentGroup = updatedPlayer.group
-            )}
-        )
-
-        val newGroup = groupMap.value.keys.sorted()[0]
-        savedStateHandle["currentGroup"] = newGroup
-        setVMState(groupMap.value[newGroup]!!)
-        updateMaxRounds()
-    }
+    ){ tournamentStateHandler.splitTournament(updatedPlayerList) }
 
     fun switchGroup(
         newGroup: String
-    ){
-        val newGroupMap = groupMap.value.toMutableMap()
-        newGroupMap[currentGroup.value] = getVMState()
-        savedStateHandle["groupMap"] = newGroupMap
+    ){ tournamentStateHandler.switchGroup(newGroup) }
 
-        setVMState(groupMap.value[newGroup]!!)
-        updateMaxRounds()
-    }
 
-    private fun advanceRound(){
-        val oldValue = activeTournament.value?.roundsCompleted ?: 0
-        savedStateHandle["tournament"] = activeTournament.value?.copy(roundsCompleted = oldValue + 1)
-    }
-
-    private fun updateMaxRounds(){
-        if(activeTournament.value?.type == TournamentType.SWISS){
-            return
-        }
-
-        val playerCount = registeredPlayers.value.size
-        val newMax = playerCount - 1 + playerCount % 2
-
-        savedStateHandle["tournament"] = activeTournament.value?.copy(
-            maxRounds = newMax
-        )
-    }
-
-    fun finishRound(){
-        advanceRound()
-
-        currentRoundPairings.value.forEach { pairing ->
-            val round = activeTournament.value?.roundsCompleted ?: 0
-
-            if(
-                pairing[PlayerColor.BLACK]?.playerID != null &&
-                activeTournament.value!!.type == TournamentType.SWISS
-            ){
-                val white = registeredPlayers.value
-                    .find { player -> player.id == pairing[PlayerColor.WHITE]!!.playerID }
-
-                val black = registeredPlayers.value
-                    .find { player -> player.id == pairing[PlayerColor.BLACK]!!.playerID }
-
-                if(white!!.score > black!!.score){
-                    addUpfloat(black.id, round)
-                    addDownfloat(white.id, round)
-                } else if(black.score > white.score){
-                    addUpfloat(white.id, round)
-                    addDownfloat(black.id, round)
-                }
-            }
-
-            pairing.forEach { item ->
-                val ownColor = item.key
-
-                item.value.playerID?.let{
-                    val newItem = MatchHistoryItem(
-                        opponentId = pairing[ownColor.reverse()]?.playerID,
-                        round = round,
-                        result = item.value.points ?: 0f,
-                        color = ownColor,
-                    )
-                    if(newItem.opponentId == null){
-                        setPlayerReceivedBye(it)
-                    }
-                    addToPlayerScore(id = it, amount = item.value.points ?: 0f)
-                    addToMatchHistory(id = it, item = newItem)
-                }
-            }
-        }
-
-        clearPairings()
-    }
+    fun finishRound(){ tournamentStateHandler.finishRound() }
 
     fun editRound(round: Int, newResults: PairingList){
-        newResults.forEach { pairing ->
-            pairing.forEach { item ->
-                val ownColor = item.key
-                item.value.playerID?.let{
-                    val newItem = MatchHistoryItem(
-                        opponentId = pairing[ownColor.reverse()]?.playerID,
-                        round = round,
-                        result = item.value.points ?: 0f,
-                        color = ownColor,
-                    )
-                    removeFromMatchHistory(playerId = it, round = round, color = ownColor)
-                    addToMatchHistory(id = it, item = newItem)
-                    addToPlayerScore(id = it, amount = item.value.points ?: 0f)
-                }
-            }
-        }
-    }
-
-    private fun getNextPlayerId(): Int{
-        savedStateHandle["nextPlayerId"] = nextPlayerId.value + 1
-        return nextPlayerId.value
+        tournamentStateHandler.editRound(round, newResults)
     }
 
     fun alteringPlayerCountAllowed(): Boolean{
@@ -247,36 +129,13 @@ class TournamentViewModel(
         )
     }
 
-    fun addPlayer(player: ImportedPlayer){
-        val newList = registeredPlayers.value.toMutableList()
-        val tpn = (newList.maxOfOrNull { it.tpn } ?: 0) + 1
-        newList.add(
-            RegisteredPlayer(
-                fullName = player.fullName,
-                rating = player.rating,
-                id = getNextPlayerId(),
-                tpn = tpn
-            )
-        )
-        savedStateHandle["registeredPlayers"] = newList.toList()
-        updateMaxRounds()
-    }
+    fun addPlayer(player: ImportedPlayer){ tournamentStateHandler.addPlayer(player) }
 
     fun findPlayerById(id: Int): RegisteredPlayer?{
         return registeredPlayers.value.find{it.id == id}
     }
 
-    fun removePlayer(index: Int){
-        val newList = registeredPlayers.value.toMutableList()
-        val hasRecord = !newList[index].matchHistory.isEmpty()
-        if(hasRecord || isPaired()){
-            newList[index] = newList[index].copy(isActive = false)
-        }else{
-            newList.removeAt(index)
-        }
-        savedStateHandle["registeredPlayers"] = newList.toList()
-        updateMaxRounds()
-    }
+    fun removePlayer(index: Int){ tournamentStateHandler.removePlayer(index) }
 
     fun activatePlayer(index: Int){
         val newList = registeredPlayers.value.toMutableList()
@@ -284,121 +143,26 @@ class TournamentViewModel(
         savedStateHandle["registeredPlayers"] = newList.toList()
     }
 
-    fun addToPlayerScore(id: Int, amount: Float){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == id }
-        playerList[index] = playerList[index].let { it.copy(score = it.score + amount) }
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-    }
+    fun clearPairings(){ tournamentStateHandler.clearPairings() }
 
-    fun setPlayerReceivedBye(id: Int, value:Boolean = true){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == id }
-        playerList[index] = playerList[index].copy(receivedPairingBye = value)
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-    }
-
-    fun addDownfloat(playerId: Int, round:Int){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == playerId }
-        playerList[index] = playerList[index].let { it.copy(downfloats = it.downfloats.plus(round)) }
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-    }
-
-    fun addUpfloat(playerId: Int, round:Int){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == playerId }
-        playerList[index] = playerList[index].let { it.copy(upfloats = it.upfloats.plus(round)) }
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-    }
-
-    fun assignTpns(){
-        val newList = registeredPlayers.value.sortedByDescending { it.rating }.toMutableList()
-        for(i in 0..<newList.size){
-            newList[i] = newList[i].copy(tpn = i + 1)
-        }
-        savedStateHandle["registeredPlayers"] = newList.toList()
-    }
-
-    private fun addToMatchHistory(id: Int, item: MatchHistoryItem){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == id }
-        playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.plusElement(item)) }
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-    }
-
-    private fun removeFromMatchHistory(playerId: Int, round: Int, color: PlayerColor){
-        val playerList = registeredPlayers.value.toMutableList()
-        val index = playerList.indexOfFirst { it.id == playerId }
-        val oldScore = playerList[index].matchHistory.find { it.round == round && it.color == color}?.result ?: 0f
-        playerList[index] = playerList[index].let { it.copy(matchHistory = it.matchHistory.filterNot { match ->
-            match.round == round && match.color == color
-        }) }
-        savedStateHandle["registeredPlayers"] = playerList.toList()
-        addToPlayerScore(id = playerId, amount = -oldScore)
-    }
-
-    fun isPaired(): Boolean{
-        return !currentRoundPairings.value.isEmpty()
-    }
-
-    fun clearPairings(){
-        savedStateHandle["currentRoundPairings"] = listOf<Pairing>()
-    }
-
-    fun setPairs(newPairs: PairingList){
-        savedStateHandle["currentRoundPairings"] = newPairs
-    }
+    fun setPairs(newPairs: PairingList){ tournamentStateHandler.setPairs(newPairs) }
 
     fun generatePairs(
         onError: () -> Unit,
         onSuccess: () -> Unit
     ){
-        viewModelScope.launch {
-            val newPairs = mutableListOf<Pairing>()
-
-            if(activeTournament.value?.type == TournamentType.SWISS){
-                val success = withContext(Dispatchers.Default) {
-                    if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
-                        assignTpns()
-                    }
-
-                    generateSwissPairs(
-                        players = registeredPlayers.value.filter { it.isActive },
-                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
-                        maxRounds = activeTournament.value?.maxRounds ?: 0,
-                        output = newPairs
-                    ).also { ok ->
-                        if (ok) {
-                            savedStateHandle["currentRoundPairings"] = newPairs
-                        }
-                    }
-                }
-
-                if (success) onSuccess() else onError()
-            } else{
-                withContext(Dispatchers.Default) {
-                    generateRoundRobinPairs(
-                        players = registeredPlayers.value.sortedByDescending { it.rating },
-                        output = newPairs,
-                        roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
-                        doubleRoundRobin = activeTournament.value?.type == TournamentType.DOUBLE_ROUND_ROBIN
-                    )
-                }
-                savedStateHandle["currentRoundPairings"] = newPairs
-                onSuccess()
-            }
-
-        }
+        tournamentStateHandler.generatePairs(
+            onError = onError,
+            onSuccess = onSuccess
+        )
     }
 
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){
-        val pairingList = currentRoundPairings.value.toMutableList()
-        val pairing = pairingList[index].toMutableMap()
-        pairing[playerColor] = pairing[playerColor]?.copy(points = points) ?: HalfPairing()
-
-        pairingList[index] = pairing
-        savedStateHandle["currentRoundPairings"] = pairingList
+        tournamentStateHandler.setPairingScore(
+            index = index,
+            playerColor = playerColor,
+            points = points
+        )
     }
 
     fun save(context: Context): Boolean{
