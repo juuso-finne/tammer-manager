@@ -32,7 +32,7 @@ fun pairHeterogenousBracket(
 
     val limbo = incomingDownfloaters.takeLast(incomingDownfloaters.size - mdpsToPair).toMutableList()
 
-    if(isLastBracket && maxPairs < (incomingDownfloaters.size + residentPlayers.size) / 2){
+    if(isLastBracket && maxPairs * 2 < incomingDownfloaters.size + residentPlayers.size){
         s2.addAll(0, limbo)
         limbo.clear()
     }
