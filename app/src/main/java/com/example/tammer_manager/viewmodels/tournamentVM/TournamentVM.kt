@@ -1,4 +1,4 @@
-package com.example.tammer_manager.viewmodels
+package com.example.tammer_manager.viewmodels.tournamentVM
 
 import android.content.Context
 import android.net.Uri
@@ -6,12 +6,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tammer_manager.TPN_ASSIGNMENT_CUTOFF
+import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.file_management.deleteTournament
 import com.example.tammer_manager.data.file_management.listTournaments
 import com.example.tammer_manager.data.file_management.loadTournament
 import com.example.tammer_manager.data.file_management.saveGroup
 import com.example.tammer_manager.data.file_management.saveTournament
-import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
@@ -23,6 +23,7 @@ import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.data.tournament_admin.pairing.generateRoundRobinPairs
 import com.example.tammer_manager.data.tournament_admin.pairing.swiss.generateSwissPairs
+import com.example.tammer_manager.viewmodels.TournamentVMState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -90,7 +91,7 @@ class TournamentViewModel(
         savedStateHandle["currentGroup"] = data.currentGroup
     }
 
-    fun getVMState(): TournamentVMState{
+    fun getVMState(): TournamentVMState {
         return TournamentVMState(
             tournament = activeTournament.value!!,
             registeredPlayers = registeredPlayers.value,
@@ -249,12 +250,14 @@ class TournamentViewModel(
     fun addPlayer(player: ImportedPlayer){
         val newList = registeredPlayers.value.toMutableList()
         val tpn = (newList.maxOfOrNull { it.tpn } ?: 0) + 1
-        newList.add(RegisteredPlayer(
-            fullName = player.fullName,
-            rating = player.rating,
-            id = getNextPlayerId(),
-            tpn = tpn
-        ))
+        newList.add(
+            RegisteredPlayer(
+                fullName = player.fullName,
+                rating = player.rating,
+                id = getNextPlayerId(),
+                tpn = tpn
+            )
+        )
         savedStateHandle["registeredPlayers"] = newList.toList()
         updateMaxRounds()
     }
@@ -355,7 +358,7 @@ class TournamentViewModel(
             val newPairs = mutableListOf<Pairing>()
 
             if(activeTournament.value?.type == TournamentType.SWISS){
-                val success = withContext(Dispatchers.Default){
+                val success = withContext(Dispatchers.Default) {
                     if ((activeTournament.value?.roundsCompleted ?: 0) < TPN_ASSIGNMENT_CUTOFF) {
                         assignTpns()
                     }
@@ -365,8 +368,8 @@ class TournamentViewModel(
                         roundsCompleted = activeTournament.value?.roundsCompleted ?: 0,
                         maxRounds = activeTournament.value?.maxRounds ?: 0,
                         output = newPairs
-                    ).also{ ok ->
-                        if(ok){
+                    ).also { ok ->
+                        if (ok) {
                             savedStateHandle["currentRoundPairings"] = newPairs
                         }
                     }
@@ -374,7 +377,7 @@ class TournamentViewModel(
 
                 if (success) onSuccess() else onError()
             } else{
-                withContext(Dispatchers.Default){
+                withContext(Dispatchers.Default) {
                     generateRoundRobinPairs(
                         players = registeredPlayers.value.sortedByDescending { it.rating },
                         output = newPairs,
@@ -408,7 +411,8 @@ class TournamentViewModel(
             if (!deleteTournament(
                     context = context,
                     filename = filename.value
-                )){
+                )
+            ){
                 return false
             }
         }
@@ -419,10 +423,10 @@ class TournamentViewModel(
             var success: Boolean
             groupMap.value.keys.forEachIndexed{ i, group ->
                 success = saveGroup(
-                   context = context,
-                   filename = filename.value,
-                   groupIndex = i,
-                   data = groupMap.value[group]!!
+                    context = context,
+                    filename = filename.value,
+                    groupIndex = i,
+                    data = groupMap.value[group]!!
                 )
                 if(!success){ return false }
             }

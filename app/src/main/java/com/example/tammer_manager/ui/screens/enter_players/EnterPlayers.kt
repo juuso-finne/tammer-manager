@@ -17,7 +17,7 @@ import com.example.tammer_manager.ui.screens.enter_players.tabs.ManualEntry
 import com.example.tammer_manager.ui.screens.enter_players.tabs.PlayerPoolContainer
 import com.example.tammer_manager.ui.screens.enter_players.tabs.RegisteredPlayerContainer
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun EnterPlayers(

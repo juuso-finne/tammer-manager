@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.components.ConfirmDialog
 import com.example.tammer_manager.ui.components.ErrorDialog
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 import com.example.tammer_manager.ui.theme.Typography
 
 @Composable
