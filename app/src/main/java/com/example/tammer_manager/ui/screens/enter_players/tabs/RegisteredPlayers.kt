@@ -20,7 +20,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tammer_manager.R
@@ -132,7 +134,7 @@ fun RegisteredPlayerItem(
             ) {
                 if(player.isActive){
                     Icon(
-                        imageVector = Icons.Default.Delete,
+                        imageVector = ImageVector.vectorResource(R.drawable.person_remove_24px),
                         contentDescription = stringResource(R.string.remove_player),
                         tint = if (enabled) Color.Blue else Color.Gray
                     )
