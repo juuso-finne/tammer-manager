@@ -26,8 +26,6 @@
     <string name="player_is_not_active">Player is not active</string>
     <string name="reactivate_player">Reactivate player</string>
     <string name="remove_player">Remove player</string>
-    <string name="enter_from_list">Enter from list</string>
-    <string name="enter_manually">Enter manually</string>
     <string name="view_remove_players">View/remove players (%d)</string>
     <string name="save_changes">Save changes</string>
     <string name="reset_changes">Reset changes</string>
@@ -91,4 +89,6 @@
     <string name="tournament_type_swiss">Swiss</string>
     <string name="tournament_type_round_robin">Round robin</string>
     <string name="tournament_type_double_round_robin">Round robin (double)</string>
+    <string name="list_input">List input</string>
+    <string name="manual_input">Manual input</string>
 </resources>
