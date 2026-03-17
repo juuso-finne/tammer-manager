@@ -108,11 +108,7 @@ class TournamentViewModel(
 
     fun removePlayer(index: Int){ tournamentStateHandler.removePlayer(index) }
 
-    fun activatePlayer(index: Int){
-        val newList = registeredPlayers.value.toMutableList()
-        newList[index] = newList[index].copy(isActive = true)
-        savedStateHandle["registeredPlayers"] = newList.toList()
-    }
+    fun activatePlayer(index: Int){ playerStateHandler.activatePlayer(index) }
 
     fun findPlayerById(id: Int): RegisteredPlayer?{
         return registeredPlayers.value.find{it.id == id}
