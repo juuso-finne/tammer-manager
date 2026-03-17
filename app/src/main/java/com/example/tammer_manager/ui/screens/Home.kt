@@ -91,6 +91,8 @@ fun Home(
             }
         }
 
+        Spacer(Modifier.height(35.dp))
+
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
@@ -114,43 +116,6 @@ fun Home(
             ){
                 Text(stringResource(R.string.load))
             }
-        }
-
-
-        Button(
-            onClick = {
-                vmTournament.initateTournament(
-                    name = "Placeholder",
-                    maxRounds = 5,
-                    TournamentType.SWISS,
-                   tieBreaks = listOf())
-                listOf(
-                    ImportedPlayer("Hannu Hanhi", 2000),
-                    ImportedPlayer("Aku Ankka", 1900),
-                    ImportedPlayer("Sari Shakinpelaaja", 1800),
-                    ImportedPlayer("Rymy-Eetu", 1750),
-                    ImportedPlayer("Sakke Shakinpelaaja", 1700),
-                    ImportedPlayer("Matti Mainio", 1650),
-                    ImportedPlayer("Paavo Puuntuuppaaja", 1600),
-                    ImportedPlayer("Jussi Juonio", 1550),
-                    ImportedPlayer("Kaino Vieno", 1500),
-                    ImportedPlayer("Esko Unohtumaton", 1450),
-                    ImportedPlayer("Antti Antinpoika", 1400),
-                ).forEach { vmTournament.addPlayer(it) }
-            }
-        ) {
-            Text("Create placeholder tournament of 11 [DEBUG/DEV]")
-        }
-
-        Button(
-            onClick = {
-                vmTournament.initateTournament(name = "Placeholder", maxRounds = 5, TournamentType.SWISS, tieBreaks = listOf())
-                for(i in 0 until 50){
-                    vmTournament.addPlayer(ImportedPlayer("Player $i", 1000 + i*20))
-                }
-            }
-        ) {
-            Text("Create placeholder tournament of 50 [DEBUG/DEV]")
         }
     }
 }
