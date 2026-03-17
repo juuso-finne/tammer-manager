@@ -25,8 +25,8 @@ class GenerateRoundRobinPairsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerC.id))
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
+                    Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerD.id))
                 )
             )
         )
@@ -42,8 +42,8 @@ class GenerateRoundRobinPairsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerA.id))
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerC.id))
+                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
                 )
             )
         )
@@ -59,8 +59,8 @@ class GenerateRoundRobinPairsTest {
                     Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
                 ),
                 mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerD.id))
+                    Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerC.id))
                 )
             )
         )
@@ -75,48 +75,6 @@ class GenerateRoundRobinPairsTest {
         val pairings = mutableListOf<Pairing>()
 
         generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 0, doubleRoundRobin = false)
-
-        assertThat(pairings).containsExactlyElementsIn(
-            listOf(
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id, 1f)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
-                ),
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerA.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerD.id))
-                ),
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
-                )
-            )
-        )
-
-        pairings.clear()
-
-        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 1, doubleRoundRobin = false)
-
-        assertThat(pairings).containsExactlyElementsIn(
-            listOf(
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerD.id, 1f)),
-                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
-                ),
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerE.id))
-                ),
-                mapOf(
-                    Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
-                    Pair(PlayerColor.BLACK, HalfPairing(playerA.id))
-                )
-            )
-        )
-
-        pairings.clear()
-
-        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 2, doubleRoundRobin = false)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -137,7 +95,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 3, doubleRoundRobin = false)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 1, doubleRoundRobin = false)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -158,7 +116,7 @@ class GenerateRoundRobinPairsTest {
 
         pairings.clear()
 
-        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 4, doubleRoundRobin = false)
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 2, doubleRoundRobin = false)
 
         assertThat(pairings).containsExactlyElementsIn(
             listOf(
@@ -173,6 +131,48 @@ class GenerateRoundRobinPairsTest {
                 mapOf(
                     Pair(PlayerColor.WHITE, HalfPairing(playerD.id)),
                     Pair(PlayerColor.BLACK, HalfPairing(playerE.id))
+                )
+            )
+        )
+
+        pairings.clear()
+
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 3, doubleRoundRobin = false)
+
+        assertThat(pairings).containsExactlyElementsIn(
+            listOf(
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id, 1f)),
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
+                ),
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerA.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerD.id))
+                ),
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerE.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerB.id))
+                )
+            )
+        )
+
+        pairings.clear()
+
+        generateRoundRobinPairs(players = players, output = pairings, roundsCompleted = 4, doubleRoundRobin = false)
+
+        assertThat(pairings).containsExactlyElementsIn(
+            listOf(
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerD.id, 1f)),
+                    Pair(PlayerColor.BLACK, HalfPairing(null,0f))
+                ),
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerC.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerE.id))
+                ),
+                mapOf(
+                    Pair(PlayerColor.WHITE, HalfPairing(playerB.id)),
+                    Pair(PlayerColor.BLACK, HalfPairing(playerA.id))
                 )
             )
         )
