@@ -37,12 +37,12 @@ fun TabRow(
 
         Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_FROM_LIST.ordinal,
             onClick = { setSelectedTab(SelectedTab.ENTER_FROM_LIST) },
-            text = { Text(stringResource(R.string.enter_from_list)) }
+            text = { Text(stringResource(R.string.list_input)) }
         )
 
         Tab(selected = selectedTab == SelectedTab.MANUAL_ENTRY,
             onClick = { setSelectedTab(SelectedTab.MANUAL_ENTRY) },
-            text = { Text(stringResource(R.string.enter_manually)) }
+            text = { Text(stringResource(R.string.manual_input)) }
             )
 
         Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS,
