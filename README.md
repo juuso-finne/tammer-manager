@@ -18,3 +18,9 @@ Install [Android Studio](https://developer.android.com/studio) and follow the [i
 ![input from list](https://github.com/user-attachments/assets/8db76264-d6db-4745-94b2-67df503d57bf "Player input from list")
 ![manual player input](https://github.com/user-attachments/assets/605477c7-e239-4f36-93e9-f6f222e28bc9 "Adding player information manually")
 ![active players](https://github.com/user-attachments/assets/76d500cf-c060-4b2f-97c4-9fd4185c126f "Players entered in tournament")
+
+![split tournament](https://github.com/user-attachments/assets/3dac9da4-00d0-41ff-9c95-57c301096438 "Splitting tournament in groups")
+
+![Entering round results](https://github.com/user-attachments/assets/1db19bd8-d56e-427f-99ee-e6dbdfad7f0f "Entering round results")
+![Standings with details hidden](https://github.com/user-attachments/assets/6b1db749-9e92-44fb-bc5e-8516aacc5346 "Standings with details hidden")
+![Standings with details visible](https://github.com/user-attachments/assets/8799e85c-1672-4f42-9d4f-b39f071f6067 "Standings with details visible")
