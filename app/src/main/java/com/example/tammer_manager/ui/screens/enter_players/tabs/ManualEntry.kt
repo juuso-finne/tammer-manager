@@ -16,10 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.export_import.ImportedPlayer
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 import kotlinx.coroutines.launch
 import org.apache.commons.lang3.math.NumberUtils
 
@@ -27,7 +29,6 @@ import org.apache.commons.lang3.math.NumberUtils
 fun ManualEntry(
     vmTournament: TournamentViewModel,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier.Companion
 ) {
     val scope = rememberCoroutineScope()
 
@@ -36,21 +37,21 @@ fun ManualEntry(
     val (rating, setRating) = remember { mutableIntStateOf(1000) }
 
     Column(
-        modifier = Modifier.Companion
+        modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
-        horizontalAlignment = Alignment.Companion.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         TextField(
-            label = { Text("Family name") },
+            label = { Text(stringResource(R.string.family_name)) },
             value = familyName,
             onValueChange = { setFamilyName(it) },
         )
 
         TextField(
-            label = { Text("Given name") },
+            label = { Text(stringResource(R.string.given_name)) },
             value = givenName,
             onValueChange = { setGivenName(it) },
         )
@@ -63,6 +64,7 @@ fun ManualEntry(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
+        val message = stringResource(R.string.x_added, "$familyName, $givenName")
         Button(
             onClick = {
                 val newPlayer = ImportedPlayer(
@@ -71,7 +73,7 @@ fun ManualEntry(
                 )
 
                 vmTournament.addPlayer(newPlayer)
-                scope.launch { snackbarHostState.showSnackbar("${newPlayer.fullName} added") }
+                scope.launch { snackbarHostState.showSnackbar(message) }
                 setGivenName("")
                 setFamilyName("")
             },
@@ -83,6 +85,6 @@ fun ManualEntry(
             ,
             modifier = Modifier.padding(top = 10.dp)
         )
-        { Text("Enter player") }
+        { Text(stringResource(R.string.enter_player)) }
     }
 }

@@ -15,26 +15,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
+import com.example.tammer_manager.ui.components.ConfirmDialog
 import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun EnterResults(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier.Companion
+    navController: NavController
 ) {
     vmTournament.activeTournament.collectAsState().value?.let { activeTournament ->
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.Companion.fillMaxSize(),
-            horizontalAlignment = Alignment.Companion.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val pairingList = vmTournament.currentRoundPairings.collectAsState().value
             val playerCount = vmTournament.registeredPlayers.collectAsState().value.size
@@ -44,6 +46,7 @@ fun EnterResults(
 
             val (pairingError, setPairingError) = remember { mutableStateOf(false) }
             val (loadingPairs, setLoadingPairs) = remember { mutableStateOf(false) }
+            val (clearPairsDialog, setClearPairsDialog) = remember { mutableStateOf(false) }
 
             val isGrouped = vmTournament.isGrouped.collectAsState().value
 
@@ -51,7 +54,7 @@ fun EnterResults(
                 pairingError ->
                     ErrorDialog(
                         onDismissRequest = { setPairingError(false) },
-                        errorText = "Unable to complete automatic pairing."
+                        errorText = stringResource(R.string.error_auto_pairing)
                     )
             }
 
@@ -61,7 +64,7 @@ fun EnterResults(
 
             if(playerCount <= 1){
                 Text(
-                    text ="Need more players to start tournament",
+                    text = stringResource(R.string.need_more_players),
                     style = Typography.headlineMedium
                 )
             } else if (completedRounds < maxRounds){
@@ -75,21 +78,21 @@ fun EnterResults(
                 )
             } else{
                 Text(
-                    text ="Tournament finished",
+                    text = stringResource(R.string.tournament_finished),
                     style = Typography.headlineMedium
                 )
             }
 
             if (loadingPairs) {
                 Text(
-                    text = "Generating pairs...",
+                    text = stringResource(R.string.generating_pairs),
                     style = Typography.headlineSmall
                 )
             }
 
             if (!pairingList.isEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.Companion
+                    modifier = Modifier
                         .padding(horizontal = 5.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -119,13 +122,13 @@ fun EnterResults(
                 Button(
                     onClick = { navController.navigate("standings") }
                 ) {
-                    Text("View results")
+                    Text(stringResource(R.string.view_results))
                 }
 
                 Button(
                     onClick = { navController.navigate("editResults") }
                 ) {
-                    Text("Edit results")
+                    Text(stringResource(R.string.edit_results))
                 }
             } else {
                 Row(
@@ -147,7 +150,7 @@ fun EnterResults(
                             pairingList.isEmpty() &&
                             !loadingPairs &&
                             playerCount > 1
-                    ) { Text("Generate pairs") }
+                    ) { Text(stringResource(R.string.generate_pairs)) }
 
                     Button(
                         enabled =
@@ -158,7 +161,7 @@ fun EnterResults(
                             }
                             && !pairingList.isEmpty(),
                         onClick = { vmTournament.finishRound() }
-                    ) { Text("Finish round") }
+                    ) { Text(stringResource(R.string.finish_round)) }
                 }
 
                 Row(
@@ -167,15 +170,28 @@ fun EnterResults(
                 ){
                     Button(
                         onClick = { navController.navigate("manualPairing") }
-                    ){ Text("Manual pairing") }
+                    ){ Text(stringResource(R.string.manual_pairing)) }
 
                     Button(
-                        onClick = { vmTournament.clearPairings() },
+                        onClick = { setClearPairsDialog(true) },
                         enabled = !pairingList.isEmpty()
                     ) {
-                        Text("Clear pairs")
+                        Text(stringResource(R.string.clear_pairs))
                     }
                 }
+            }
+
+            when { clearPairsDialog ->
+                ConfirmDialog(
+                    onDismissRequest = { setClearPairsDialog(false) },
+                    onConfirmRequest = {
+                        vmTournament.clearPairings()
+                        setClearPairsDialog(false)
+                    },
+                    confirmButtonText = stringResource(R.string.yes),
+                    dismissButtonText = stringResource(R.string.no),
+                    dialogText = stringResource(R.string.confirm_clear_all)
+                )
             }
         }
     }?: NoActiveTournament()

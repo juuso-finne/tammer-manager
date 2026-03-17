@@ -28,10 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.tammer_manager.data.export_import.exportResults
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.MatchHistoryItem
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
@@ -39,14 +40,13 @@ import com.example.tammer_manager.ui.components.ErrorDialog
 import com.example.tammer_manager.ui.components.GroupSelector
 import com.example.tammer_manager.ui.components.NoActiveTournament
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun Standings(
-    vmTournament: TournamentViewModel,
-    modifier: Modifier = Modifier
+    vmTournament: TournamentViewModel
 ){
     vmTournament.activeTournament.collectAsState().value?.let {
         Column(
@@ -103,9 +103,9 @@ fun Standings(
 
             Text(
                 text =
-                    if (completedRounds >= maxRounds && maxRounds != 0) "Final standings"
-                    else if (completedRounds != 0) "Standings after round $completedRounds"
-                    else "Standings",
+                    if (completedRounds >= maxRounds && maxRounds != 0) stringResource(R.string.final_standings)
+                    else if (completedRounds != 0) stringResource(R.string.standings_after_round_x, completedRounds)
+                    else stringResource(R.string.standings),
                 style = Typography.headlineMedium
             )
 
@@ -119,21 +119,22 @@ fun Standings(
                     .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-
+                if(tieBreaks.isNotEmpty()){
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                     ){
-                    Text(
-                        style = Typography.labelLarge,
-                        text = "Show tie-breaks"
-                    )
+                        Text(
+                            style = Typography.labelLarge,
+                            text = "Show tie-breaks"
+                        )
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
 
-                    Switch(
-                        checked = showTieBreaks,
-                        onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
-                    )
+                        Switch(
+                            checked = showTieBreaks,
+                            onCheckedChange = { setShowTieBreaks(!showTieBreaks) },
+                        )
+                    }
                 }
 
                 Row(
@@ -152,8 +153,6 @@ fun Standings(
                     )
                 }
             }
-
-
 
             LazyColumn(
                 modifier = Modifier
@@ -180,16 +179,15 @@ fun Standings(
                     LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
                 )
             }) {
-                Text ("Export as xslx")
+                Text (stringResource(R.string.export_as_xlsx))
             }
 
             when{ exportError ->
                 ErrorDialog(
                     onDismissRequest = { setExportError(false) },
-                    errorText = "Unable to export results to xlsx"
+                    errorText = stringResource(R.string.error_export)
                 )
             }
-
         }
     }?: NoActiveTournament()
 }
@@ -277,11 +275,10 @@ fun RoundResults(
 
         var resultText = "${players.indexOfFirst { it.id == match.opponentId } + 1}:"
 
-        if(match.result == .5f){
-            resultText += "½"
-        } else{
-            resultText += "${match.result.toInt()}"
-        }
+        resultText +=
+            if(match.result == .5f) "½"
+            else "${match.result.toInt()}"
+
 
         return resultText
     }

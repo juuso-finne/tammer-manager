@@ -15,10 +15,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun SplitTournament(
@@ -32,7 +34,7 @@ fun SplitTournament(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ){
-        Text(text = "Split tournament", style = Typography.headlineMedium)
+        Text(text = stringResource(R.string.split_tournament), style = Typography.headlineMedium)
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f),
@@ -52,7 +54,7 @@ fun SplitTournament(
                     )
 
                     TextField(
-                        label = {Text("Group")},
+                        label = {Text(stringResource(R.string.group))},
                         value = player.group,
                         onValueChange = {
                             val newPlayers = players.toMutableList()
@@ -78,8 +80,8 @@ fun SplitTournament(
                 navController.navigate("home")
             }
         ){
-            Text("Split")
+            Text(stringResource(R.string.split))
         }
-        Button({navController.navigate("home")}) { Text("Cancel") }
+        Button({navController.navigate("home")}) { Text(stringResource(R.string.cancel)) }
     }
 }

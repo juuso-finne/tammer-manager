@@ -20,12 +20,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.ui.screens.enter_players.TextRow
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun RegisteredPlayerContainer(
@@ -75,7 +79,11 @@ fun RegisteredHeader(modifier: Modifier = Modifier) {
                 .weight(1f)
                 .padding(vertical = 5.dp),
             style = Typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            texts = listOf("Name", "Rating", "Active")
+            texts = listOf(
+                stringResource(R.string.name),
+                stringResource(R.string.rating),
+                stringResource(R.string.active)
+            )
         )
     }
 }
@@ -102,14 +110,14 @@ fun RegisteredPlayerItem(
             if(player.isActive){
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Player is active",
+                    contentDescription = stringResource(R.string.player_is_active),
                     tint = Color.Green
                 )
             }else{
                 Icon (
                     imageVector = Icons.Default.Close,
                     tint = Color.Red,
-                    contentDescription = "Player is NOT active"
+                    contentDescription = stringResource(R.string.player_is_not_active)
                 )
             }
 
@@ -126,15 +134,15 @@ fun RegisteredPlayerItem(
             ) {
                 if(player.isActive){
                     Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Remove player",
+                        imageVector = ImageVector.vectorResource(R.drawable.person_remove_24px),
+                        contentDescription = stringResource(R.string.remove_player),
                         tint = if (enabled) Color.Blue else Color.Gray
                     )
                 }else{
                     Icon (
                         imageVector = Icons.Default.Add,
                         tint = Color.Blue,
-                        contentDescription = "Reactivate player"
+                        contentDescription = stringResource(R.string.reactivate_player)
                     )
                 }
             }

@@ -1,6 +1,5 @@
 package com.example.tammer_manager.ui.screens
 
-import android.util.Log
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,22 +34,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.classes.HalfPairing
 import com.example.tammer_manager.data.tournament_admin.classes.Pairing
 import com.example.tammer_manager.data.tournament_admin.classes.RegisteredPlayer
 import com.example.tammer_manager.data.tournament_admin.enums.PlayerColor
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun ManualPairing(
     vmTournament: TournamentViewModel,
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ){
     val currentRoundPairings by vmTournament.currentRoundPairings.collectAsState()
     val players = vmTournament.registeredPlayers.collectAsState().value.filter{it.isActive}
@@ -95,14 +95,14 @@ fun ManualPairing(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add new pair",
+                    contentDescription = stringResource(R.string.add_new_pair),
                     tint = if (addButtonEnabled) Color.Blue else Color.DarkGray,
                 )
             }
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Pairs remaining: ${remainingPairs.value}",
+                text = stringResource(R.string.pairs_remaining, remainingPairs.value),
                 style = Typography.labelMedium
             )
         }
@@ -126,38 +126,35 @@ fun ManualPairing(
                 }
             }
         }
-
         Button(
+            enabled = unpairedPlayers.value.size < 2 && unsavedChanges,
             onClick = {
-                localPairs.clear()
-                localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
+                val localPairsCopy = localPairs.toMutableList()
+                if (unpairedPlayers.value.size == 1){
+                    val playerReceivingBye = unpairedPlayers.value[0]
+                    localPairsCopy.add(mapOf(
+                        PlayerColor.WHITE to HalfPairing(playerReceivingBye.id, 1f),
+                        PlayerColor.BLACK to HalfPairing(null, 0f)
+                    ))
+                }
+                vmTournament.setPairs(localPairsCopy)
             }
-        ){
-            Text("Clear all")
+        ) {
+            Text(stringResource(R.string.save_changes))
         }
 
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Button(
-                enabled =
-                    unpairedPlayers.value.size < 2 &&
-                    unsavedChanges
-                ,
                 onClick = {
-                    val localPairsCopy = localPairs.toMutableList()
-                    if (unpairedPlayers.value.size == 1){
-                        val playerReceivingBye = unpairedPlayers.value[0]
-                        localPairsCopy.add(mapOf(
-                            PlayerColor.WHITE to HalfPairing(playerReceivingBye.id, 1f),
-                            PlayerColor.BLACK to HalfPairing(null, 0f)
-                        ))
-                    }
-                    vmTournament.setPairs(localPairsCopy)
+                    localPairs.clear()
+                    localPairs.addAll(List<Pairing>(remainingPairs.value){mapOf()})
                 }
-            ) {
-                Text("Save changes")
+            ){
+                Text(stringResource(R.string.clear_all))
             }
 
             Button(
@@ -167,12 +164,12 @@ fun ManualPairing(
                     localPairs.addAll(globalPairs)
                 }
             ){
-                Text("Reset changes")
+                Text(stringResource(R.string.reset_changes))
             }
         }
 
         Button(onClick = { navController.navigate("enterResults") }){
-            Text ("Return")
+            Text (stringResource(R.string.return_))
         }
     }
 }
@@ -214,7 +211,7 @@ fun PlayerRow(
                 .background(color = color.colorValue)
                 .border(width = borderThickness, color = Color.Black)
                 .fillMaxHeight()
-                .layout() { measurable, constraints ->
+                .layout { measurable, constraints ->
                     val placeable = measurable.measure(constraints)
                     val currentHeight = placeable.height
 
@@ -243,7 +240,7 @@ fun PlayerRow(
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Choose player",
+                contentDescription = stringResource(R.string.choose_player),
                 tint = Color.Blue
             )
         }
@@ -261,7 +258,6 @@ fun PlayerRow(
 fun ManualPairingItem(
     vmTournament: TournamentViewModel,
     pairing: Pairing,
-    modifier: Modifier = Modifier,
     borderThickness: Dp = 1.dp,
     selectPlayer: (
         color: PlayerColor,
@@ -295,7 +291,7 @@ fun ManualPairingItem(
             }
         }
 
-        Column() {
+        Column {
             IconButton(
                 onClick = { deletePair() },
                 modifier = Modifier
@@ -308,7 +304,7 @@ fun ManualPairingItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete pair",
+                    contentDescription = stringResource(R.string.delete_pair),
                     tint = Color.Blue
                 )
             }
@@ -359,7 +355,7 @@ fun PlayerDropdownItem(
         text = {
             Text(
                 text =
-                    if (player == null) "<Empty>"
+                    if (player == null) stringResource(R.string.empty)
                     else "${player.fullName}, ${player.rating} ($scoreAsText)",
                 style = Typography.bodyLarge
             )

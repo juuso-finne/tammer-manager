@@ -1,6 +1,5 @@
 package com.example.tammer_manager.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,31 +10,26 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import com.example.tammer_manager.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-val items = listOf(
-    MenuItem("home", "Main menu"),
-    MenuItem("enterPlayers", "Enter players"),
-    MenuItem("enterResults", "Enter results"),
-    MenuItem("standings", "Standings")
-)
-
 
 @Composable
 fun NavigationMenu(
     drawerState: DrawerState,
-    modifier: Modifier = Modifier,
-    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp),
+    itemTextStyle: TextStyle = TextStyle(fontSize = 18.sp, color = Color.Black),
     onItemClick: (String) -> Unit,
     scope: CoroutineScope,
     content: @Composable () -> Unit,
@@ -62,23 +56,34 @@ fun NavigationList(
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
+
+    val items = listOf(
+        MenuItem("home", stringResource(R.string.main_menu)),
+        MenuItem("enterPlayers", stringResource(R.string.enter_players)),
+        MenuItem("enterResults", stringResource(R.string.enter_results)),
+        MenuItem("standings", stringResource(R.string.standings))
+    )
+
     LazyColumn(modifier) {
         item{
             CloseMenuButton(drawerState, scope)
         }
         items(items.size) { i ->
-            Column() {
+            Column {
                 val item = items[i]
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onItemClick(item.route) }
-                        .padding(16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = item.text,
-                        style = itemTextStyle
-                    )
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onItemClick(item.route) }
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = item.text,
+                            style = itemTextStyle
+                        )
+                    }
                 }
 
                 HorizontalDivider()
@@ -92,16 +97,20 @@ fun CloseMenuButton(
     drawerState: DrawerState,
     scope: CoroutineScope
 ) {
-    Column() {
+    Column {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { scope.launch { drawerState.close() } }
-            .padding(16.dp)
+            .padding(top = 16.dp)
         ){
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close menu"
-            )
+            IconButton(
+                onClick = { scope.launch { drawerState.close() } }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.close_menu)
+                )
+            }
+
         }
         HorizontalDivider()
     }

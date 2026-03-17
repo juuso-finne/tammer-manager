@@ -9,11 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 enum class SelectedTab (){
     ENTER_FROM_LIST,
@@ -28,24 +30,24 @@ fun TabRow(
     vmTournament: TournamentViewModel,
     selectedTab: SelectedTab,
     setSelectedTab: (SelectedTab) -> Unit,
-    modifier: Modifier = Modifier) {
+    ) {
 
     val numberOfRegisteredPlayers = vmTournament.registeredPlayers.collectAsState().value.size
     PrimaryTabRow(selectedTabIndex = selectedTab.ordinal) {
 
         Tab(selected = selectedTab.ordinal == SelectedTab.ENTER_FROM_LIST.ordinal,
             onClick = { setSelectedTab(SelectedTab.ENTER_FROM_LIST) },
-            text = {Text("Enter from list")}
+            text = { Text(stringResource(R.string.enter_from_list)) }
         )
 
         Tab(selected = selectedTab == SelectedTab.MANUAL_ENTRY,
             onClick = { setSelectedTab(SelectedTab.MANUAL_ENTRY) },
-            text = { Text("Enter manually") }
+            text = { Text(stringResource(R.string.enter_manually)) }
             )
 
         Tab(selected = selectedTab == SelectedTab.VIEW_PLAYERS,
             onClick = { setSelectedTab(SelectedTab.VIEW_PLAYERS) },
-            text = {Text("View/remove players ($numberOfRegisteredPlayers)")}
+            text = { Text(stringResource(R.string.view_remove_players, numberOfRegisteredPlayers)) }
         )
     }
 }

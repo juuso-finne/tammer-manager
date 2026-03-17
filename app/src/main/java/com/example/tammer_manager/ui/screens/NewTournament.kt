@@ -30,14 +30,16 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.tournament_admin.enums.TieBreak
 import com.example.tammer_manager.data.tournament_admin.enums.TournamentType
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 import org.apache.commons.lang3.math.NumberUtils
 
 @Composable
@@ -48,18 +50,17 @@ fun NewTorunament(
     val (tournamentName, setTournamentName) = remember { mutableStateOf("") }
     val (rounds, setRounds) = remember { mutableIntStateOf(0) }
     val (type, setType) = remember {mutableStateOf(TournamentType.SWISS)}
-    val (doubleRoundRobin, setDoubleRoundRobin) = remember { mutableStateOf(false) }
     val selectedTieBreaks = remember { mutableStateListOf<TieBreak>() }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         TextField(
-            label = { Text("Tournament name") },
+            label = { Text(stringResource(R.string.tournament_name)) },
             value = tournamentName,
             onValueChange = { setTournamentName(it) },
         )
@@ -72,16 +73,10 @@ fun NewTorunament(
 
         if(type == TournamentType.SWISS){
             TextField(
-                label = { Text("Rounds") },
+                label = { Text(stringResource(R.string.rounds)) },
                 value = if (rounds == 0) "" else rounds.toString(),
                 onValueChange = { setRounds(NumberUtils.toInt(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
-        } else {
-            RadioGroupDouble(
-                modifier = Modifier.padding(horizontal = 10.dp),
-                doubleroundRobin = doubleRoundRobin,
-                setdoubleRoundRobin = setDoubleRoundRobin
             )
         }
 
@@ -107,23 +102,22 @@ fun NewTorunament(
                     name =  tournamentName,
                     maxRounds = if (type == TournamentType.SWISS) rounds else 0,
                     type = type,
-                    doubleRoundRobin = doubleRoundRobin && type == TournamentType.ROUND_ROBIN,
                     tieBreaks = selectedTieBreaks
                 )
-                navController.navigate("Home")
+                navController.navigate("home")
             },
             enabled =
-                (rounds > 0 || type == TournamentType.ROUND_ROBIN) &&
+                (rounds > 0 || type != TournamentType.SWISS) &&
                 tournamentName.isNotEmpty()
             ,
             modifier = Modifier.padding(top = 10.dp)
         )
-        { Text("Create tournament") }
+        { Text(stringResource(R.string.create_tournament)) }
 
         Button(
-            onClick = { navController.navigate("Home") }
+            onClick = { navController.navigate("home") }
         ){
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
     }
 }
@@ -140,81 +134,23 @@ fun RadioGroupType(
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         TournamentType.entries.forEach {
-            Row(
+            Column(
                 Modifier
                     .selectable(
                         selected = (it == selectedType),
                         onClick = { setType(it) },
                         role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    ),
             ) {
                 RadioButton(
                     selected = (it == selectedType),
                     onClick = null
                 )
                 Text(
-                    text = it.toString(),
+                    text = stringResource(it.label),
                     style = Typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun RadioGroupDouble(
-    modifier: Modifier = Modifier,
-    doubleroundRobin: Boolean,
-    setdoubleRoundRobin: (Boolean) -> Unit
-){
-    Row (modifier = modifier
-        .fillMaxWidth()
-        .selectableGroup(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ){
-            Row(
-                Modifier
-                    .selectable(
-                        selected = (!doubleroundRobin),
-                        onClick = { setdoubleRoundRobin(false) },
-                        role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(
-                    selected = (!doubleroundRobin),
-                    onClick = null
-                )
-                Text(
-                    text = "Single",
-                    style = Typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-        Row(
-            Modifier
-                .selectable(
-                    selected = (doubleroundRobin),
-                    onClick = { setdoubleRoundRobin(true) },
-                    role = Role.RadioButton
-                )
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            RadioButton(
-                selected = (doubleroundRobin),
-                onClick = null
-            )
-            Text(
-                text = "Double",
-                style = Typography.bodyLarge,
-                modifier = Modifier.padding(start = 16.dp)
-            )
         }
     }
 }
@@ -234,7 +170,7 @@ fun TieBreakSelector(
     ){
 
         Text(
-            text = "Tie-break ${index + 1}:",
+            text = stringResource(R.string.tie_break_x, index + 1),
             style = Typography.bodyLarge
         )
 
@@ -254,7 +190,7 @@ fun TieBreakSelector(
                 style = Typography.bodyLarge,
                 text =
                     if(selectedTieBreaks.size > index) selectedTieBreaks[index].toString()
-                    else "<select>"
+                    else stringResource(R.string.select)
             )
 
             IconButton(
@@ -264,7 +200,7 @@ fun TieBreakSelector(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Choose tie-break",
+                    contentDescription = stringResource(R.string.choose_tie_break),
                     tint = Color.Blue
                 )
             }
@@ -276,7 +212,7 @@ fun TieBreakSelector(
         ){
             if(selectedTieBreaks.size > index){
                 DropdownMenuItem(
-                    text = { Text ("<remove>") },
+                    text = { Text (stringResource(R.string.remove)) },
                     onClick = {
                         selectedTieBreaks.removeAt(index)
                         setIsOpen(false)

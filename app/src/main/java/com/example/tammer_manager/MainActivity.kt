@@ -26,7 +26,7 @@ import com.example.tammer_manager.ui.screens.enter_results.EditResults
 import com.example.tammer_manager.ui.screens.save_and_load.FileBrowser
 import com.example.tammer_manager.ui.screens.save_and_load.SaveTournament
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 const val TPN_ASSIGNMENT_CUTOFF = 4
 
@@ -64,8 +64,7 @@ fun App( context: Context) {
             composable("playerImport") { PlayerImport(
                 context = context,
                 vmPlayerPool = vmPlayerPool,
-                navController = navController,
-                snackBarHostState = snackbarHostState
+                navController = navController
             ) }
 
             composable (route = "enterPlayers") { EnterPlayers(

@@ -22,14 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tammer_manager.R
 import com.example.tammer_manager.data.export_import.ImportedPlayer
 import com.example.tammer_manager.ui.screens.enter_players.TextRow
 import com.example.tammer_manager.ui.theme.Typography
 import com.example.tammer_manager.viewmodels.PlayerPoolViewModel
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun PlayerPoolContainer(
@@ -51,7 +53,7 @@ fun PlayerPoolContainer(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            players = vmPlayerPool.playerPool.collectAsState().value.filter(){ p ->
+            players = vmPlayerPool.playerPool.collectAsState().value.filter{ p ->
                 Regex(
                     pattern = Regex.escape(searchTerm),
                     option= RegexOption.IGNORE_CASE
@@ -64,7 +66,7 @@ fun PlayerPoolContainer(
             setSearchTerm = setSearchTerm
         )
 
-        Button(onClick = {navController.navigate("playerImport")}) { Text("Import player list")}
+        Button(onClick = {navController.navigate("playerImport")}) { Text(stringResource(R.string.import_player_list))}
     }
 }
 
@@ -75,7 +77,7 @@ fun PlayerPool(
     modifier: Modifier = Modifier
 ) {
     Box(modifier) {
-        LazyColumn() {
+        LazyColumn {
             items(players.size) { i ->
                 PlayerPoolItem(
                     player =  players[i],
@@ -90,7 +92,7 @@ fun PlayerPool(
 
 
 @Composable
-fun PlayerPoolHeader(modifier: Modifier = Modifier) {
+fun PlayerPoolHeader() {
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(end = 58.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -99,7 +101,10 @@ fun PlayerPoolHeader(modifier: Modifier = Modifier) {
                 .weight(1f)
                 .padding(vertical = 5.dp),
             style = Typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            texts = listOf("Name", "Rating")
+            texts = listOf(
+                stringResource(R.string.name),
+                stringResource(R.string.rating)
+            )
         )
     }
 }
@@ -108,9 +113,8 @@ fun PlayerPoolHeader(modifier: Modifier = Modifier) {
 fun PlayerPoolItem(
     player: ImportedPlayer,
     vmTournament: TournamentViewModel,
-    modifier: Modifier = Modifier
 ) {
-    val playerRegistered = vmTournament.registeredPlayers.collectAsState().value.any(){
+    val playerRegistered = vmTournament.registeredPlayers.collectAsState().value.any{
             p -> p.fullName == player.fullName && p.rating == player.rating
     }
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -132,7 +136,7 @@ fun PlayerPoolItem(
                 Icon(
                     imageVector = Icons.Default.Add,
                     tint = if (enabled) Color.Blue else Color.DarkGray,
-                    contentDescription = "Add player to tournament"
+                    contentDescription = stringResource(R.string.add_player_to_tournament)
                 )
             }
         }
@@ -143,22 +147,11 @@ fun PlayerPoolItem(
 fun SearchBar(
     searchTerm: String,
     setSearchTerm: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         modifier = Modifier.padding(vertical = 5.dp),
         value = searchTerm,
         onValueChange = { setSearchTerm(it) },
-        label = {Text("Search player")}
+        label = {Text(stringResource(R.string.search_player))}
     )
-}
-
-@Composable
-fun ButtonRow(navController: NavController, modifier: Modifier = Modifier) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
-    ){
-
-    }
 }

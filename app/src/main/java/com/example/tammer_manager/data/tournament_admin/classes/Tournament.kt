@@ -12,7 +12,6 @@ data class Tournament (
     var name: String,
     val maxRounds: Int,
     val type: TournamentType,
-    val doubleRoundRobin: Boolean = false,
     var roundsCompleted: Int = 0,
     val tieBreaks: List<TieBreak>
 ): Parcelable

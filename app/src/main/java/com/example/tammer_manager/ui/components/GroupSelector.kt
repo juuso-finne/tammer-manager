@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.example.tammer_manager.R
 import com.example.tammer_manager.ui.theme.Typography
-import com.example.tammer_manager.viewmodels.TournamentViewModel
+import com.example.tammer_manager.viewmodels.tournamentVM.TournamentViewModel
 
 @Composable
 fun GroupSelector(
@@ -33,7 +35,7 @@ fun GroupSelector(
         verticalAlignment = Alignment.CenterVertically
     ){
         Text(
-            text = "Group $currentGroup",
+            text = stringResource(R.string.group_x, currentGroup),
             style = Typography.bodyLarge
         )
 
@@ -44,7 +46,7 @@ fun GroupSelector(
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Choose group",
+                contentDescription = stringResource(R.string.choose_group),
                 tint = Color.Blue
             )
         }
@@ -55,7 +57,7 @@ fun GroupSelector(
             groups.minus(setOf(currentGroup)).forEach {
                 DropdownMenuItem(
                     modifier = modifier,
-                    text = { Text(text = "Group $it") },
+                    text = { Text(text = stringResource(R.string.group_x, it)) },
                     onClick = {
                         vmTournament.switchGroup(it)
                         setIsOpen(false)
