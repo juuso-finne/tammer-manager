@@ -47,7 +47,7 @@ fun EditResults(
         }
 
         val reconstructedPairings = remember(players, currentlyEditingRound) {
-            reconstructPairings(players = players, round = currentlyEditingRound)
+            vmTournament.reconstructPairings(round = currentlyEditingRound)
         }
 
         val (localResults, setLocalResults) = remember (players, currentlyEditingRound) {

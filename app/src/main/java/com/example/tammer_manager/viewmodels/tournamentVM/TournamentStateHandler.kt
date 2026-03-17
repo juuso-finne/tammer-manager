@@ -273,4 +273,13 @@ class TournamentStateHandler(
         pairingList[index] = pairing
         savedStateHandle["currentRoundPairings"] = pairingList
     }
+
+    fun reconstructPairings(round: Int): PairingList{
+        val registeredPlayers = savedStateHandle.get<List<RegisteredPlayer>>("registeredPlayers")!!
+
+        return com.example.tammer_manager.data.tournament_admin.reconstructPairings(
+            players = registeredPlayers,
+            round = round
+        )
+    }
 }

@@ -128,6 +128,10 @@ class TournamentViewModel(
         )
     }
 
+    fun reconstructPairings(round: Int): PairingList {
+        return tournamentStateHandler.reconstructPairings(round)
+    }
+
     fun setPairingScore(index: Int, playerColor: PlayerColor, points: Float){
         tournamentStateHandler.setPairingScore(
             index = index,
